@@ -75,5 +75,12 @@
     "notFound": "Archivo no encontrado",
     "tooLarge": "El archivo es demasiado grande",
     "uploadFailed": "No se pudo subir el archivo"
+  },
+  "branding": {
+    "invalidTheme": "Check the name, colors and image URLs. Use HTTPS or a local branding/media path.",
+    "invalidAsset": "Use a PNG, JPEG, WebP, GIF or ICO image up to 5 MB.",
+    "failedToSave": "Could not save appearance settings.",
+    "failedToRead": "Could not read appearance settings.",
+    "conflict": "Appearance was changed in another session. Reload settings before saving."
   }
 }

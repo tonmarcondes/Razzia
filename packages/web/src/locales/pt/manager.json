@@ -47,6 +47,48 @@
   "tabs": {
     "play": "Jogar",
     "quizz": "Quizzes",
-    "results": "Resultados"
+    "results": "Resultados",
+    "appearance": "Aparência"
+  },
+  "appearance": {
+    "identity": "Identidade",
+    "appName": "Nome do sistema",
+    "font": "Família da fonte",
+    "logo": "Logotipo",
+    "favicon": "Ícone da aba (favicon)",
+    "imageUrl": "URL da imagem ou caminho local",
+    "uploadFor": "Enviar imagem — {{label}}",
+    "removeFor": "Remover imagem — {{label}}",
+    "colors": "Cores do sistema",
+    "color": {
+      "primary": "Principal",
+      "secondary": "Fundo da página",
+      "correct": "Resposta correta",
+      "background": "Cartões",
+      "foreground": "Texto dos cartões"
+    },
+    "colorValue": "Valor da cor — {{label}}",
+    "answerColor": "Cor da resposta {{number}}",
+    "backgrounds": "Papéis de parede",
+    "defaultBackground": "Papel de parede padrão",
+    "stage": {
+      "home": "Início e acesso",
+      "lobby": "Sala de espera",
+      "game": "Perguntas",
+      "results": "Resultados e pódio"
+    },
+    "uploadHint": "PNG, JPEG, WebP, GIF ou ICO, até 5 MB. Deixe uma tela vazia para usar o papel de parede padrão.",
+    "applyHint": "Confira a prévia antes de salvar. Salvar recarrega esta janela e aplica o tema nos próximos acessos. Partidas já abertas mantêm a aparência atual.",
+    "previewStage": "Tela da prévia",
+    "preview": "Prévia da aparência",
+    "previewQuestion": "Pergunta de exemplo",
+    "previewAnswer": "Resposta {{number}}",
+    "unsaved": "Você tem alterações não salvas.",
+    "save": "Salvar e aplicar",
+    "discard": "Descartar alterações",
+    "reset": "Restaurar aparência padrão",
+    "resetConfirm": "Restaurar o nome, as cores, o logotipo e os fundos originais? As imagens enviadas serão mantidas para partidas já abertas.",
+    "saved": "Aparência salva",
+    "reload": "Recarregar configurações"
   }
 }

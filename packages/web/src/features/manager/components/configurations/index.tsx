@@ -1,3 +1,4 @@
+import ConfigAppearance from "@razzia/web/features/manager/components/configurations/ConfigAppearance"
 import Card from "@razzia/web/components/Card"
 import LanguageSwitcher from "@razzia/web/components/LanguageSwitcher"
 import { useManagerStore } from "@razzia/web/features/game/stores/manager"
@@ -26,10 +27,13 @@ const tabs = [
     nameKey: "manager:tabs.results",
     component: ConfigResults,
   },
+  { nameKey: "manager:tabs.appearance", component: ConfigAppearance },
 ]
 
 const Configurations = () => {
-  const [selectedTab, setSelectedTab] = useState(0)
+  const [selectedTab, setSelectedTab] = useState(() =>
+    window.location.hash === "#appearance" ? 3 : 0,
+  )
   const { resetManager } = useManagerStore()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
@@ -38,6 +42,11 @@ const Configurations = () => {
 
   const handleSelect = (index: number) => () => {
     setSelectedTab(index)
+    window.history.replaceState(
+      window.history.state,
+      "",
+      `${window.location.pathname}${window.location.search}${index === 3 ? "#appearance" : ""}`,
+    )
   }
 
   const { mutate: logout } = useMutation({
@@ -51,7 +60,13 @@ const Configurations = () => {
   })
 
   return (
-    <Card className="max-h-128 w-full max-w-md">
+    <Card
+      className={
+        selectedTab === 3
+          ? "fixed inset-y-4 left-1/2 z-20 w-[calc(100%-2rem)] max-w-5xl -translate-x-1/2"
+          : "max-h-128 w-full max-w-md"
+      }
+    >
       <div className="mb-4 flex items-center justify-between">
         <p className="text-lg font-semibold">
           {t("manager:configurationsTitle")}

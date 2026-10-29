@@ -47,6 +47,48 @@
   "tabs": {
     "play": "Oyna",
     "quizz": "Test",
-    "results": "Sonuçlar"
+    "results": "Sonuçlar",
+    "appearance": "Appearance"
+  },
+  "appearance": {
+    "identity": "Identity",
+    "appName": "System name",
+    "font": "Font family",
+    "logo": "Logo",
+    "favicon": "Favicon",
+    "imageUrl": "Image URL or local path",
+    "uploadFor": "Upload image — {{label}}",
+    "removeFor": "Remove image — {{label}}",
+    "colors": "System colors",
+    "color": {
+      "primary": "Primary",
+      "secondary": "Page background",
+      "correct": "Correct answer",
+      "background": "Cards",
+      "foreground": "Card text"
+    },
+    "colorValue": "Color value — {{label}}",
+    "answerColor": "Answer color {{number}}",
+    "backgrounds": "Wallpapers",
+    "defaultBackground": "Default wallpaper",
+    "stage": {
+      "home": "Home and sign-in",
+      "lobby": "Waiting room",
+      "game": "Questions",
+      "results": "Results and podium"
+    },
+    "uploadHint": "PNG, JPEG, WebP, GIF or ICO, up to 5 MB. Leave a screen empty to use the default wallpaper.",
+    "applyHint": "Preview changes before saving. Saving reloads this window and applies the theme on new visits. Already-open games keep their current appearance.",
+    "previewStage": "Preview screen",
+    "preview": "Appearance preview",
+    "previewQuestion": "Preview question",
+    "previewAnswer": "Answer {{number}}",
+    "unsaved": "You have unsaved changes.",
+    "save": "Save and apply",
+    "discard": "Discard changes",
+    "reset": "Restore default appearance",
+    "resetConfirm": "Restore the original name, colors, logo and wallpapers? Uploaded assets are retained for already-open games.",
+    "saved": "Appearance saved",
+    "reload": "Reload settings"
   }
 }

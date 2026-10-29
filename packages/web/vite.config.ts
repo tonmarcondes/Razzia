@@ -10,7 +10,9 @@ import { defineConfig, type Plugin } from "vite"
 import packageJson from "../../package.json" with { type: "json" }
 
 const configDir = (name: string) =>
-  fileURLToPath(new URL(`../../config/${name}`, import.meta.url))
+  process.env.CONFIG_PATH
+    ? path.resolve(process.env.CONFIG_PATH, name)
+    : fileURLToPath(new URL(`../../config/${name}`, import.meta.url))
 
 const brandingMimeTypes: Record<string, string> = {
   ".json": "application/json",

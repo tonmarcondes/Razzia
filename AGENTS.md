@@ -17,14 +17,14 @@ The golden rule is to follow the original project's conventions for commits, bra
 
 ## Git and contribution workflow
 
-- `origin` is the user's fork. `upstream` is `Ralex91/Razzia`. Check the actual remotes before pushing.
+- `origin` is the user's fork. `upstream` is read-only reference material. All new branches, commits, pull requests, and messages stay in the user's fork; do not publish to the original repository. Check the actual remotes before pushing.
 - Fetch and inspect upstream `dev` before each new feature. Update the fork's `dev` through a separate, reviewed synchronization change when necessary; preserve fork changes such as Portuguese.
-- Create each branch from the current fork `dev`. An upstream contribution should use the current upstream `dev` as its base and include only its intended changes.
+- Create each branch from the current fork `dev`.
 - Use `feat/`, `fix/`, `chore/`, `docs/`, or `test/` as appropriate. Keep one coherent feature or fix per PR. Infrastructure synchronization and product features belong in separate PRs.
 - Use Conventional Commits in English, following the repository's history, for example `feat(auth): add teacher accounts` or `docs: define multi-user access model`.
 - Keep PR titles, descriptions, identifiers, comments, and technical documentation in the repository's existing English style. Communicate with the user in their preferred language.
 - Target `dev`, not `main`, for ordinary contributions. Do not rewrite published `main` or `dev` history to clean up a feature branch.
-- Coordinate an upstream multi-user proposal with issues #34 and #169; do not assume a fork feature is accepted upstream. Do not send maintainer messages unless the user has authorized them.
+- Use original issues #34 and #169 only as background research. Do not open upstream proposals or contact its maintainers.
 - Link related issues accurately. Use `Closes` only when the PR actually fulfills the issue; a design document does not close a feature request.
 
 ## Toolchain and verification

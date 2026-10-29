@@ -75,5 +75,12 @@
     "notFound": "Mídia não encontrada",
     "tooLarge": "O arquivo é muito grande",
     "uploadFailed": "Não foi possível enviar o arquivo"
+  },
+  "branding": {
+    "invalidTheme": "Confira o nome, as cores e os endereços das imagens. Use HTTPS ou um caminho local de branding/mídia.",
+    "invalidAsset": "Use uma imagem PNG, JPEG, WebP, GIF ou ICO de até 5 MB.",
+    "failedToSave": "Não foi possível salvar a aparência.",
+    "failedToRead": "Não foi possível ler as configurações de aparência.",
+    "conflict": "A aparência foi alterada em outra sessão. Recarregue as configurações antes de salvar."
   }
 }

@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes"
 
 type DomainErrorStatus =
+  | StatusCodes.CONFLICT
   | StatusCodes.BAD_REQUEST
   | StatusCodes.NOT_FOUND
   | StatusCodes.UNSUPPORTED_MEDIA_TYPE

@@ -15,7 +15,7 @@ test("applies the instance branding", async ({ page }) => {
   await page.goto("/")
 
   await expect(page).toHaveTitle("My Quiz")
-  await expect(page.getByRole("img", { name: "My Quiz" })).toBeVisible()
+  await expect(page.getByRole("heading", { name: "My Quiz" })).toBeVisible()
 
   const cssVariable = (name: string) =>
     page.evaluate(

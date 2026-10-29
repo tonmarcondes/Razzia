@@ -2,6 +2,10 @@
 
 Status: proposed implementation specification. This document does not enable accounts, permissions, sharing, a database, or a branding editor. No institutional identity provider or production capacity has been confirmed.
 
+## Implementation status
+
+The appearance editor was delivered ahead of account management at the user's request. See [branding](branding.md). It is currently restricted to the existing manager session; account roles remain planned. When local accounts are introduced, restrict global appearance management to administrators. The account/storage/privacy release gates below still apply.
+
 ## Goals and baseline
 
 Support several teachers independently preparing quizzes and running simultaneous classes in one instance. Participants continue joining with the existing six-digit PIN, without accounts. Teachers can reuse shared quizzes while keeping class results separate.

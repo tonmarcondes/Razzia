@@ -89,6 +89,10 @@ All of these require a bearer whose role is `manager`, and answer `401 errors:au
 
 The quiz body is validated against the same schema as the files in `config/quizz` — see [Quiz](quiz.md).
 
+### Appearance
+
+The authenticated `/api/branding` endpoints manage runtime appearance, with revision checks and bounded image uploads. See [Appearance editor and management API](branding.md#appearance-editor). Branding assets remain intentionally public; the manager routes are protected.
+
 ### Media
 
 `POST /api/media` takes a `multipart/form-data` body with a single `file` field, up to 100 MB (`413 errors:media.tooLarge` beyond). The type is detected from the file's content, not its name or declared MIME: PNG, JPEG, WebP and GIF images, MP3, OGG and WAV audio, MP4 and WebM video. Anything else is refused with `415 errors:media.invalidType`.
