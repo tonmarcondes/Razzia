@@ -1,8 +1,11 @@
+import type { BackgroundStage } from "@razzia/common/validators/branding"
 import defaultBackground from "@razzia/web/assets/background.png"
 import { getBranding, imageFallback } from "@razzia/web/branding"
 
-const GameBackground = () => {
-  const background = getBranding()?.background ?? defaultBackground
+const GameBackground = ({ stage = "game" }: { stage?: BackgroundStage }) => {
+  const theme = getBranding()
+  const background =
+    theme?.backgrounds?.[stage] ?? theme?.background ?? defaultBackground
 
   return (
     <div className="fixed top-0 left-0 h-full w-full">

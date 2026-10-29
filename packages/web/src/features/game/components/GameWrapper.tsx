@@ -1,3 +1,4 @@
+import type { BackgroundStage } from "@razzia/common/validators/branding"
 import { EVENTS, QUIZZ_MODES } from "@razzia/common/constants"
 import {
   STATUS,
@@ -41,7 +42,7 @@ const GameWrapper = ({
   manager,
 }: Props) => {
   const { isConnected } = useSocket()
-  const { player, gameMode } = usePlayerStore()
+  const { player, gameMode, status: playerStatus } = usePlayerStore()
   const { players, inviteCode, locked, status } = useManagerStore()
   const { questionStates, setQuestionStates } = useQuestionStore()
   const { isFullscreen, toggle: toggleFullscreen } = useFullscreen()
@@ -88,9 +89,31 @@ const GameWrapper = ({
     onNext?.()
   }
 
+  let backgroundStage: BackgroundStage = "game"
+
+  if (
+    statusName === STATUS.SHOW_ROOM ||
+    (!manager &&
+      playerStatus?.name === STATUS.WAIT &&
+      playerStatus.data.text === "game:waitingForPlayers")
+  ) {
+    backgroundStage = "lobby"
+  } else if (
+    statusName &&
+    [
+      STATUS.FINISHED,
+      STATUS.SUMMARY,
+      STATUS.SHOW_LEADERBOARD,
+      STATUS.SHOW_RESULT,
+      STATUS.SHOW_RESPONSES,
+    ].some((s) => s === statusName)
+  ) {
+    backgroundStage = "results"
+  }
+
   return (
     <section className="relative flex min-h-dvh">
-      <GameBackground />
+      <GameBackground stage={backgroundStage} />
 
       <div className="z-10 flex w-full flex-1 flex-col justify-between">
         {!isConnected && !statusName ? (

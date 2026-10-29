@@ -30,7 +30,19 @@ export default defineConfig({
     locale: "en-US",
     trace: "retain-on-failure",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    {
+      name: "chromium",
+      testIgnore: "**/appearance.spec.ts",
+      use: { ...devices["Desktop Chrome"] },
+    },
+    {
+      name: "appearance",
+      testMatch: "**/appearance.spec.ts",
+      dependencies: ["chromium"],
+      use: { ...devices["Desktop Chrome"] },
+    },
+  ],
   webServer: [
     {
       command: "node --import tsx src/index.ts",
@@ -48,6 +60,7 @@ export default defineConfig({
       command:
         "node node_modules/vite/bin/vite.js build && node node_modules/vite/bin/vite.js preview --strictPort",
       cwd: join(root, "packages/web"),
+      env: { CONFIG_PATH },
       url: "http://localhost:3000",
       reuseExistingServer: false,
     },

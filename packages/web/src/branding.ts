@@ -1,17 +1,10 @@
+import {
+  brandingSchema,
+  type BrandingTheme,
+} from "@razzia/common/validators/branding"
 import type { ReactEventHandler } from "react"
-import { z } from "zod"
 
-const brandingSchema = z.object({
-  appName: z.string().optional(),
-  colors: z.record(z.string(), z.string()).optional(),
-  answerColors: z.array(z.string()).optional(),
-  font: z.object({ family: z.string(), url: z.string().optional() }).optional(),
-  logo: z.string().optional(),
-  favicon: z.string().optional(),
-  background: z.string().optional(),
-})
-
-export type BrandingTheme = z.infer<typeof brandingSchema>
+export type { BrandingTheme }
 
 let current: BrandingTheme | null = null
 

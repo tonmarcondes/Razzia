@@ -5,6 +5,7 @@ import type { PropsWithChildren } from "react"
 
 const Background = ({ children }: PropsWithChildren) => {
   const branding = getBranding()
+  const background = branding?.backgrounds?.home ?? branding?.background
   const logo = branding?.logo ?? defaultLogo
   const appName = branding?.appName ?? "Razzia"
 
@@ -15,12 +16,25 @@ const Background = ({ children }: PropsWithChildren) => {
         <div className="bg-primary/15 absolute right-[-10vmin] bottom-[-45vmin] min-h-[75vmin] min-w-[75vmin] rotate-20 rounded-4xl" />
       </div>
 
-      <img
-        src={logo}
-        onError={imageFallback(defaultLogo)}
-        className="mb-10 h-16"
-        alt={appName}
-      />
+      {background && (
+        <img
+          src={background}
+          alt=""
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+        />
+      )}
+      {branding?.appName && !branding.logo ? (
+        <h1 className="text-primary relative mb-10 max-w-full px-4 text-center text-4xl font-black break-words sm:text-6xl">
+          {appName}
+        </h1>
+      ) : (
+        <img
+          src={logo}
+          onError={imageFallback(defaultLogo)}
+          className="relative mb-10 h-16 max-w-full object-contain"
+          alt={appName}
+        />
+      )}
       {children}
 
       <a

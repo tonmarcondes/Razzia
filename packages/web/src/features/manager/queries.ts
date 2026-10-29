@@ -69,3 +69,20 @@ export const managerLogin = (password: string) =>
   unwrap(api.auth.manager.$post({ json: { password } }))
 
 export const managerLogout = () => unwrap(api.auth.logout.$post())
+
+export const brandingQuery = () =>
+  queryOptions({
+    queryKey: ["branding"],
+    queryFn: () => unwrap(api.branding.$get()),
+  })
+
+export const saveBranding = (json: {
+  theme: import("@razzia/common/validators/branding").BrandingTheme
+  revision: string
+}) => unwrap(api.branding.$put({ json }))
+
+export const restoreBranding = (revision: string) =>
+  unwrapEmpty(api.branding.$delete({ json: { revision } }))
+
+export const uploadBranding = (file: File) =>
+  unwrap(api.branding.assets.$post({ form: { file } }))
