@@ -10,4 +10,10 @@ This folder covers the basic setup (config, quizzes, branding) as well as more a
 - [HTTP API](http-api.md): the `/api` surface — sessions, quiz and result CRUD, game creation.
 - [Testing](testing.md): running and writing the unit, integration and e2e tests.
 
+## Fork development
+
+- [Agent instructions](../AGENTS.md): architecture, contribution conventions, verification and deployment rules for this fork.
+- [Upstream review, 2026-10-29](upstream-review-2026-10-29.md): available changes, reusable capabilities and related proposals.
+- [Multi-user design](multi-user-design.md): proposed accounts, permissions, sharing, storage and delivery gates; not implemented functionality.
+
 Back to the [main README](../README.md).
