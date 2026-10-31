@@ -3,6 +3,13 @@ import { app, createSocketServer } from "@razzia/socket/app"
 import { initConfig } from "@razzia/socket/services/config"
 import Registry from "@razzia/socket/services/registry"
 
+import { authMode } from "@razzia/socket/env"
+import { assertAccountModeReady } from "@razzia/socket/services/accounts"
+
+if (authMode === "local") {
+  assertAccountModeReady()
+}
+
 const WS_PORT = Number(process.env.SOCKET_PORT) || 3001
 
 initConfig()

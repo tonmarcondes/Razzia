@@ -82,5 +82,19 @@
     "failedToSave": "Não foi possível salvar a aparência.",
     "failedToRead": "Não foi possível ler as configurações de aparência.",
     "conflict": "A aparência foi alterada em outra sessão. Recarregue as configurações antes de salvar."
+  },
+  "accounts": {
+    "invalidLogin": "Use de 3 a 64 letras, números, pontos, sublinhados, @ ou hífens no login.",
+    "passwordPolicy": "A senha não atende às regras exibidas ou é muito comum.",
+    "passwordReused": "Escolha uma senha diferente da atual.",
+    "passwordMismatch": "As senhas não coincidem.",
+    "invalidCredentials": "Login ou senha inválidos.",
+    "notFound": "Conta não encontrada.",
+    "alreadyInitialized": "O administrador já foi inicializado.",
+    "loginExists": "Este login já está em uso.",
+    "lastAdmin": "Mantenha pelo menos um administrador ativo.",
+    "changeRequired": "Troque a senha temporária antes de continuar.",
+    "busy": "A autenticação está ocupada. Tente novamente em instantes.",
+    "rateLimited": "Muitas tentativas. Tente novamente em 15 minutos."
   }
 }

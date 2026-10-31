@@ -15,6 +15,9 @@ import { StatusCodes } from "http-status-codes"
 import { Server as ServerIO } from "socket.io"
 import type { z } from "zod"
 
+import { authMode } from "@razzia/socket/env"
+import { getAccounts, accountEvents } from "@razzia/socket/services/accounts"
+
 const eventValidators: Partial<Record<string, z.ZodType>> =
   clientEventValidators
 
@@ -72,6 +75,10 @@ export const createSocketServer = (server: ServerType): Server => {
   })
 
   setIo(io)
+  const revoke = (sid: string) =>
+    io.in(`account-session:${sid}`).disconnectSockets(true)
+  accountEvents.on("revoked", revoke)
+  server.once("close", () => accountEvents.off("revoked", revoke))
 
   io.use((socket, next) => {
     const token = socket.handshake.auth.token as string | undefined
@@ -84,7 +91,18 @@ export const createSocketServer = (server: ServerType): Server => {
 
     verifyToken(token)
       .then((claims) => {
+        if (
+          authMode === "local" &&
+          claims.role === "manager" &&
+          getAccounts().current(claims).mustReset
+        ) {
+          next(authError("TOKEN_INVALID", "errors:accounts.changeRequired"))
+
+          return
+        }
+
         socket.data = {
+          claims,
           clientId: claims.sub,
           role: claims.role,
         }
@@ -104,7 +122,41 @@ export const createSocketServer = (server: ServerType): Server => {
       `A user connected: socketId: ${socket.id}, clientId: ${socket.data.clientId}`,
     )
 
+    if (authMode === "local" && socket.data.claims?.sid) {
+      socket.join(`account-session:${socket.data.claims.sid}`)
+      const timeout = setTimeout(
+        () => socket.disconnect(true),
+        Math.max(1, socket.data.claims.exp * 1000 - Date.now()),
+      )
+      timeout.unref()
+      socket.once("disconnect", () => clearTimeout(timeout))
+    }
+
     socket.use((packet, next) => {
+      if (packet[0].startsWith("manager:") && socket.data.role !== "manager") {
+        socket.emit(EVENTS.GAME.ERROR_MESSAGE, "errors:auth.unauthorized")
+
+        return
+      }
+
+      if (authMode === "local" && socket.data.role === "manager") {
+        try {
+          const { claims } = socket.data
+
+          if (
+            !claims ||
+            claims.exp * 1000 <= Date.now() ||
+            getAccounts().current(claims).mustReset
+          ) {
+            throw new Error("Session revoked")
+          }
+        } catch {
+          socket.disconnect(true)
+
+          return
+        }
+      }
+
       const validator = eventValidators[packet[0]]
 
       if (!validator) {

@@ -1,4 +1,10 @@
+import ConfigAccounts from "@razzia/web/features/manager/components/configurations/ConfigAccounts"
+import {
+  accountQuery,
+  authConfigQuery,
+} from "@razzia/web/features/manager/accounts"
 import ConfigAppearance from "@razzia/web/features/manager/components/configurations/ConfigAppearance"
+import Button from "@razzia/web/components/Button"
 import Card from "@razzia/web/components/Card"
 import LanguageSwitcher from "@razzia/web/components/LanguageSwitcher"
 import { useManagerStore } from "@razzia/web/features/game/stores/manager"
@@ -8,13 +14,13 @@ import ConfigSelectQuizz from "@razzia/web/features/manager/components/configura
 import ConfigTabButton from "@razzia/web/features/manager/components/configurations/ConfigTabButton"
 import { managerLogout } from "@razzia/web/features/manager/queries"
 import { setToken } from "@razzia/web/lib/session"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { LogOut } from "lucide-react"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 
-const tabs = [
+const baseTabs = [
   {
     nameKey: "manager:tabs.play",
     component: ConfigSelectQuizz,
@@ -31,6 +37,23 @@ const tabs = [
 ]
 
 const Configurations = () => {
+  const { data: authConfig } = useQuery(authConfigQuery())
+  const { data: me, isError } = useQuery({
+    ...accountQuery(),
+    enabled: authConfig?.mode === "local",
+  })
+  const tabs =
+    authConfig?.mode === "local"
+      ? [
+          ...baseTabs.filter(
+            (tab) =>
+              !me?.user?.mustReset &&
+              (tab.nameKey !== "manager:tabs.appearance" ||
+                me?.user?.role === "admin"),
+          ),
+          { nameKey: "manager:tabs.accounts", component: ConfigAccounts },
+        ]
+      : baseTabs
   const [selectedTab, setSelectedTab] = useState(() =>
     window.location.hash === "#appearance" ? 3 : 0,
   )
@@ -38,7 +61,11 @@ const Configurations = () => {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
   const { t } = useTranslation()
-  const TabComponent = tabs[selectedTab].component
+  const activeIndex = Math.min(selectedTab, tabs.length - 1)
+  const TabComponent = tabs[activeIndex].component
+  const wide =
+    tabs[activeIndex].nameKey === "manager:tabs.appearance" ||
+    tabs[activeIndex].nameKey === "manager:tabs.accounts"
 
   const handleSelect = (index: number) => () => {
     setSelectedTab(index)
@@ -59,10 +86,24 @@ const Configurations = () => {
     },
   })
 
+  if (isError) {
+    return (
+      <Card>
+        <Button onClick={() => window.location.assign("/manager")}>
+          {t("manager:accounts.signIn")}
+        </Button>
+      </Card>
+    )
+  }
+
+  if (authConfig?.mode === "local" && !me) {
+    return <Card>{t("manager:accounts.loading")}</Card>
+  }
+
   return (
     <Card
       className={
-        selectedTab === 3
+        wide
           ? "fixed inset-y-4 left-1/2 z-20 w-[calc(100%-2rem)] max-w-5xl -translate-x-1/2"
           : "max-h-128 w-full max-w-md"
       }
@@ -82,11 +123,11 @@ const Configurations = () => {
           </button>
         </div>
       </div>
-      <div className="bg-muted flex shrink-0 overflow-hidden rounded-lg">
+      <div className="bg-muted flex shrink-0 flex-wrap rounded-lg">
         {tabs.map((tab, index) => (
           <ConfigTabButton
             key={tab.nameKey}
-            active={index === selectedTab}
+            active={index === activeIndex}
             onClick={handleSelect(index)}
           >
             {t(tab.nameKey)}

@@ -51,7 +51,8 @@
     "play": "Graj",
     "quizz": "Quizy",
     "results": "Wyniki",
-    "appearance": "Appearance"
+    "appearance": "Appearance",
+    "accounts": "Account and users"
   },
   "appearance": {
     "identity": "Identity",
@@ -119,5 +120,36 @@
     },
     "summary": "{{subject}} — {{count}} questions",
     "general": "General"
+  },
+  "accounts": {
+    "login": "Login",
+    "name": "Display name",
+    "role": "Role",
+    "teacher": "Teacher",
+    "admin": "Administrator",
+    "users": "User administration",
+    "temporaryPassword": "Temporary password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "changePassword": "Change password and sign out",
+    "changeRequired": "Change your temporary password before using the system.",
+    "policy": "Minimum {{min}} characters. Spaces and long passphrases are allowed. Common passwords are rejected.",
+    "upper": "Uppercase required",
+    "lower": "Lowercase required",
+    "digit": "Number required",
+    "symbol": "Symbol required",
+    "create": "Create account",
+    "reset": "Reset password",
+    "resetFor": "Reset password for {{name}}. All sessions will be revoked.",
+    "saved": "Account updated",
+    "active": "Active",
+    "disabled": "Disabled",
+    "disable": "Disable",
+    "enable": "Enable",
+    "makeTeacher": "Set as teacher",
+    "makeAdmin": "Set as administrator",
+    "signIn": "Sign in again",
+    "loading": "Loading account…"
   }
 }

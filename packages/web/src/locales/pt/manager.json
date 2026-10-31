@@ -48,7 +48,8 @@
     "play": "Jogar",
     "quizz": "Quizzes",
     "results": "Resultados",
-    "appearance": "Aparência"
+    "appearance": "Aparência",
+    "accounts": "Conta e usuários"
   },
   "appearance": {
     "identity": "Identidade",
@@ -116,5 +117,36 @@
     },
     "summary": "{{subject}} — {{count}} questões",
     "general": "Geral"
+  },
+  "accounts": {
+    "login": "Login",
+    "name": "Nome de exibição",
+    "role": "Perfil",
+    "teacher": "Professor",
+    "admin": "Administrador",
+    "users": "Administração de usuários",
+    "temporaryPassword": "Senha temporária",
+    "currentPassword": "Senha atual",
+    "newPassword": "Nova senha",
+    "confirmPassword": "Confirme a nova senha",
+    "changePassword": "Alterar senha e sair",
+    "changeRequired": "Troque sua senha temporária antes de usar o sistema.",
+    "policy": "Mínimo de {{min}} caracteres. Espaços e frases longas são permitidos. Senhas comuns são recusadas.",
+    "upper": "Exige letra maiúscula",
+    "lower": "Exige letra minúscula",
+    "digit": "Exige número",
+    "symbol": "Exige símbolo",
+    "create": "Criar conta",
+    "reset": "Redefinir senha",
+    "resetFor": "Redefinir senha de {{name}}. Todas as sessões serão encerradas.",
+    "saved": "Conta atualizada",
+    "active": "Ativo",
+    "disabled": "Desativado",
+    "disable": "Desativar",
+    "enable": "Ativar",
+    "makeTeacher": "Definir como professor",
+    "makeAdmin": "Definir como administrador",
+    "signIn": "Entrar novamente",
+    "loading": "Carregando conta…"
   }
 }

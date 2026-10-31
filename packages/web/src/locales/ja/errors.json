@@ -82,5 +82,19 @@
     "failedToSave": "Could not save appearance settings.",
     "failedToRead": "Could not read appearance settings.",
     "conflict": "Appearance was changed in another session. Reload settings before saving."
+  },
+  "accounts": {
+    "invalidLogin": "Use 3–64 letters, numbers, dots, underscores, @ or hyphens for login.",
+    "passwordPolicy": "Password does not meet the displayed policy or is too common.",
+    "passwordReused": "Choose a different password from the current one.",
+    "passwordMismatch": "Passwords do not match.",
+    "invalidCredentials": "Invalid login or password.",
+    "notFound": "Account not found.",
+    "alreadyInitialized": "The administrator has already been initialized.",
+    "loginExists": "This login is already in use.",
+    "lastAdmin": "Keep at least one active administrator.",
+    "changeRequired": "Change your temporary password before continuing.",
+    "busy": "Authentication is busy. Try again shortly.",
+    "rateLimited": "Too many attempts. Try again in 15 minutes."
   }
 }

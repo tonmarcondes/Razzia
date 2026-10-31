@@ -12,7 +12,8 @@ it("keeps legacy mode as the default", async () => {
 
 it("refuses premature local-mode activation instead of falling back to shared access", async () => {
   vi.stubEnv("AUTH_MODE", "local")
+  vi.stubEnv("JWT_SECRET", undefined)
   await expect(import("@razzia/socket/env")).rejects.toThrow(
-    "Local account mode is not available",
+    "Local accounts require an explicit durable JWT_SECRET",
   )
 })

@@ -6,9 +6,12 @@ import { quizz } from "@razzia/socket/api/routes/quizz"
 import { results } from "@razzia/socket/api/routes/results"
 import { Hono } from "hono"
 
+import { users } from "@razzia/socket/api/routes/accounts"
+
 const routes = new Hono()
   .get("/health", (c) => c.json({ status: "ok" }))
   .route("/auth", auth)
+  .route("/users", users)
   .route("/branding", branding)
   .route("/quizz", quizz)
   .route("/results", results)
