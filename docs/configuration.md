@@ -53,3 +53,7 @@ config/
 ```
 
 See [Quiz Configuration](quiz.md) and [Custom Branding](branding.md).
+
+## Account-mode preparation
+
+`AUTH_MODE` currently accepts only `legacy` (the default). Other values, including `local`, fail startup rather than falling back to shared-manager access. Local-account authentication and privacy controls are not yet available. See [account storage tools](account-storage.md) for isolated offline migration rehearsals.

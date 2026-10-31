@@ -1,7 +1,7 @@
 import { defineConfig } from "rolldown"
 
 export default defineConfig({
-  input: "src/index.ts",
+  input: { index: "src/index.ts", "account-storage": "src/storage/cli.ts" },
   platform: "node",
   transform: {
     define: {
@@ -9,7 +9,9 @@ export default defineConfig({
     },
   },
   output: {
-    file: "dist/index.cjs",
+    dir: "dist",
+    entryFileNames: "[name].cjs",
+    chunkFileNames: "[name]-[hash].cjs",
     format: "cjs",
     minify: true,
     sourcemap: true,

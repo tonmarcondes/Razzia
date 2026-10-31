@@ -14,6 +14,8 @@ This folder covers the basic setup (config, quizzes, branding) as well as more a
 
 - [Agent instructions](../AGENTS.md): architecture, contribution conventions, verification and deployment rules for this fork.
 - [Upstream review, 2026-10-29](upstream-review-2026-10-29.md): available changes, reusable capabilities and related proposals.
-- [Multi-user design](multi-user-design.md): proposed accounts, permissions, sharing, storage and delivery gates; not implemented functionality.
+- [Multi-user design](multi-user-design.md): accounts, permissions, sharing and delivery gates; account activation remains pending.
+
+- [Account storage](account-storage.md): offline inventory, transactional migration and consistent backup tooling; local accounts remain disabled.
 
 Back to the [main README](../README.md).

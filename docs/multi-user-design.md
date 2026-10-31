@@ -1,10 +1,12 @@
 # Multi-user training-center design
 
-Status: proposed implementation specification. This document does not enable accounts, permissions, sharing, a database, or a branding editor. No institutional identity provider or production capacity has been confirmed.
+Status: implementation in stages. The appearance editor is delivered; the offline account-storage foundation is implemented. Authentication, resource isolation and sharing remain planned and unavailable. No institutional identity provider or production capacity has been confirmed.
 
 ## Implementation status
 
 The appearance editor was delivered ahead of account management at the user's request. See [branding](branding.md). It is currently restricted to the existing manager session; account roles remain planned. When local accounts are introduced, restrict global appearance management to administrators. The account/storage/privacy release gates below still apply.
+
+The first account-storage stage provides a transactional schema, read-only inventory, explicit legacy migration and SQLite-consistent backup/restore tooling. See [account storage](account-storage.md) and [ADR 0001](adr/0001-local-account-storage.md). It does not switch the running application away from JSON or enable local accounts.
 
 ## Goals and baseline
 
@@ -178,7 +180,7 @@ Each item is a separate coherent branch/PR from updated fork `dev`, with relevan
 
 The account feature is not deployable in local mode merely because storage or login has merged. Steps 3-5 form a release gate. Sharing and appearance do not need to be bundled into authentication PRs.
 
-For upstream contributions, coordinate with issues [#34](https://github.com/Ralex91/Razzia/issues/34) and [#169](https://github.com/Ralex91/Razzia/issues/169) before presenting a large implementation. Keep institutional names/assets configurable, and do not assume the closed PR #184 is accepted precedent.
+Original issues [#34](https://github.com/Ralex91/Razzia/issues/34) and [#169](https://github.com/Ralex91/Razzia/issues/169) are background references only. All implementation and PRs stay in this fork; do not contact upstream maintainers. Keep institutional names/assets configurable, and do not assume the closed PR #184 is accepted precedent.
 
 ## Acceptance scenarios
 
