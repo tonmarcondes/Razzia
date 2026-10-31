@@ -7,7 +7,7 @@ import { z } from "zod"
 
 const playerAnswer = z.strictObject({
   playerName: z.string(),
-  answerIds: z.array(z.number().int()).nullable(),
+  answerIds: z.array(z.number()).nullable(),
   correct: z.boolean().optional(),
   points: z.number().optional(),
 })

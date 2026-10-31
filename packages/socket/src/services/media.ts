@@ -100,7 +100,16 @@ export const saveMedia = async (file: File): Promise<UploadedMedia> => {
     name = generateName()
   }
 
-  fs.writeFileSync(join(dir, name), buffer)
+  const temporary = join(dir, `.upload-${crypto.randomUUID()}.tmp`)
+
+  try {
+    fs.writeFileSync(temporary, buffer, { flag: "wx", mode: 0o600 })
+    fs.renameSync(temporary, join(dir, name))
+  } finally {
+    if (fs.existsSync(temporary)) {
+      fs.unlinkSync(temporary)
+    }
+  }
 
   return toUploadedMedia(name, type)
 }

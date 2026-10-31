@@ -1,3 +1,4 @@
+import { accountQuery, usersQuery } from "@razzia/web/features/manager/accounts"
 import type { QuizzValidated } from "@razzia/common/validators/quizz"
 import AlertDialog from "@razzia/web/components/AlertDialog"
 import Button from "@razzia/web/components/Button"
@@ -8,10 +9,16 @@ import {
   quizzKeys,
   quizzListQuery,
 } from "@razzia/web/features/manager/queries"
-import { api, ApiError, unwrap } from "@razzia/web/lib/api"
+import { api, ApiError, unwrap, unwrapEmpty } from "@razzia/web/lib/api"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
-import { Download, SquarePen, Trash2, Upload } from "lucide-react"
+import {
+  ArrowRightLeft,
+  Download,
+  SquarePen,
+  Trash2,
+  Upload,
+} from "lucide-react"
 
 import { type ChangeEvent, useRef, useState } from "react"
 
@@ -48,6 +55,14 @@ const ConfigManageQuizz = () => {
   const navigate = useNavigate()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { t } = useTranslation()
+
+  const { data: me } = useQuery(accountQuery())
+  const { data: users } = useQuery({
+    ...usersQuery(),
+    enabled: me?.user?.role === "admin",
+  })
+  const [transfer, setTransfer] = useState<string | null>(null)
+  const [owner, setOwner] = useState("")
 
   const [review, setReview] = useState<Review | null>(null)
 
@@ -255,6 +270,56 @@ const ConfigManageQuizz = () => {
           onChange={handleSpreadsheetImport}
         />
       </div>
+      {transfer && (
+        <form
+          className="mb-3 space-y-2 border p-3"
+          onSubmit={async (event) => {
+            event.preventDefault()
+            setBusy(true)
+
+            try {
+              await unwrapEmpty(
+                api.quizz[":id"].owner.$post({
+                  param: { id: transfer },
+                  json: { ownerId: owner },
+                }),
+              )
+              setTransfer(null)
+              await invalidate()
+              toast.success(t("manager:accounts.transferred"))
+            } catch (error) {
+              onError(error as Error, "errors:quizz.failedToSave")
+            } finally {
+              setBusy(false)
+            }
+          }}
+        >
+          <label className="block">
+            {t("manager:accounts.transferTo")}
+            <select
+              className="bg-background w-full rounded border p-2"
+              value={owner}
+              onChange={(event) => setOwner(event.target.value)}
+              required
+            >
+              <option value="">{t("manager:accounts.selectOwner")}</option>
+              {users?.users
+                .filter((user) => user.active)
+                .map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.displayName} ({user.login})
+                  </option>
+                ))}
+            </select>
+          </label>
+          <Button disabled={busy || !owner}>
+            {t("manager:accounts.transfer")}
+          </Button>
+          <Button type="button" onClick={() => setTransfer(null)}>
+            {t("common:cancel")}
+          </Button>
+        </form>
+      )}
       {review && (
         <section
           aria-label={t("manager:spreadsheet.review")}
@@ -322,6 +387,18 @@ const ConfigManageQuizz = () => {
               >
                 XLSX
               </button>
+              {me?.user?.role === "admin" && (
+                <button
+                  title={t("manager:accounts.transfer")}
+                  className="rounded-sm p-2"
+                  onClick={() => {
+                    setTransfer(q.id)
+                    setOwner("")
+                  }}
+                >
+                  <ArrowRightLeft className="size-4" />
+                </button>
+              )}
               <AlertDialog
                 trigger={
                   <button

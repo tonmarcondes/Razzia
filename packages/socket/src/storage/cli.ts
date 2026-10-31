@@ -8,13 +8,22 @@ import path from "node:path"
 import { Accounts } from "@razzia/socket/services/accounts"
 import fs from "node:fs"
 
+import { activateLocalStore } from "@razzia/socket/storage/activation"
+
 const main = async () => {
   const [command, configArgument, argument] = process.argv.slice(2)
 
   if (
     !command ||
     !configArgument ||
-    !["inspect", "migrate", "backup", "check", "bootstrap"].includes(command)
+    ![
+      "inspect",
+      "migrate",
+      "backup",
+      "check",
+      "bootstrap",
+      "activate",
+    ].includes(command)
   ) {
     throw new Error(
       "Usage: account-storage <inspect|migrate|backup|check> <config-directory> [manifest-hash|backup-file]",
@@ -60,11 +69,22 @@ const main = async () => {
   }
 
   const store = new LocalDatabase(configPath, {
-    readOnly: command !== "migrate" && command !== "bootstrap",
+    readOnly:
+      command !== "migrate" &&
+      command !== "bootstrap" &&
+      command !== "activate",
   })
 
   try {
-    if (command === "bootstrap") {
+    if (command === "activate") {
+      if (!argument) {
+        throw new Error("Reviewed migration hash required")
+      }
+
+      console.log(
+        JSON.stringify(activateLocalStore(store, configPath, argument)),
+      )
+    } else if (command === "bootstrap") {
       if (!argument) {
         throw new Error("Administrator login required")
       }

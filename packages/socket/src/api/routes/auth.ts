@@ -49,6 +49,14 @@ const readRequestToken = async (c: Context): Promise<string | undefined> => {
     : undefined
 }
 
+import { setMediaCookie } from "@razzia/socket/services/media-cookie"
+
+const sessionResponse = (c: Context, session: SessionResponse) => {
+  setMediaCookie(c, session.token, session.expiresAt)
+
+  return c.json(session, 200)
+}
+
 const freshPlayerSession = (): Promise<SessionResponse> =>
   mintToken(newClientId(), SESSION_ROLES.PLAYER)
 
@@ -95,7 +103,10 @@ const routes = new Hono()
       const sid = getAccounts().createSession(result.user.id, sub, result.hash)
       clearLoginLimit(login)
 
-      return c.json(await mintToken(sub, SESSION_ROLES.MANAGER, sid))
+      return sessionResponse(
+        c,
+        await mintToken(sub, SESSION_ROLES.MANAGER, sid),
+      )
     },
   )
   .post(
@@ -116,20 +127,23 @@ const routes = new Hono()
       checkLoginLimit("password-change", claims.sid ?? claims.sub)
       await getAccounts().change(claims, currentPassword, password)
 
-      return c.json(await mintToken(newClientId(), SESSION_ROLES.PLAYER))
+      return sessionResponse(
+        c,
+        await mintToken(newClientId(), SESSION_ROLES.PLAYER),
+      )
     },
   )
   .post("/session", async (c) => {
     const token = await readRequestToken(c)
 
     if (!token) {
-      return c.json(await freshPlayerSession())
+      return sessionResponse(c, await freshPlayerSession())
     }
 
     try {
       const claims = await verifyToken(token)
 
-      return c.json({
+      return sessionResponse(c, {
         token,
         clientId: claims.sub,
         role: claims.role,
@@ -144,7 +158,8 @@ const routes = new Hono()
             getAccounts().revoke(getAccounts().current(claims).id, claims.sid)
           }
 
-          return c.json(
+          return sessionResponse(
+            c,
             await mintToken(
               authMode === "local" ? newClientId() : claims.sub,
               SESSION_ROLES.PLAYER,
@@ -155,7 +170,7 @@ const routes = new Hono()
         }
       }
 
-      return c.json(await freshPlayerSession())
+      return sessionResponse(c, await freshPlayerSession())
     }
   })
   .post(
@@ -184,7 +199,8 @@ const routes = new Hono()
 
       const claims = await readClaims(c)
 
-      return c.json(
+      return sessionResponse(
+        c,
         await mintToken(claims?.sub ?? newClientId(), SESSION_ROLES.MANAGER),
       )
     },
@@ -203,7 +219,8 @@ const routes = new Hono()
       getAccounts().revoke(getAccounts().current(claims).id, claims.sid)
     }
 
-    return c.json(
+    return sessionResponse(
+      c,
       await mintToken(
         authMode === "local" ? newClientId() : claims.sub,
         SESSION_ROLES.PLAYER,

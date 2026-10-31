@@ -1,12 +1,12 @@
 # Multi-user training-center design
 
-Status: implementation in stages. The appearance editor is delivered; the offline account-storage foundation is implemented. Authentication is implemented behind the activation gate; resource isolation and sharing remain planned and unavailable. No institutional identity provider or production capacity has been confirmed.
+Status: implementation in stages. The appearance editor is delivered; the offline account-storage foundation is implemented. Authentication and resource isolation are implemented with explicit activation; sharing remains planned and unavailable. No institutional identity provider or production capacity has been confirmed.
 
 ## Implementation status
 
 The appearance editor was delivered ahead of account management at the user's request. See [branding](branding.md). It is currently restricted to the existing manager session; account roles remain planned. When local accounts are introduced, restrict global appearance management to administrators. The account/storage/privacy release gates below still apply.
 
-Account authentication and administration are implemented but remain gated until resource isolation is complete. See [local accounts](local-accounts.md).
+Account authentication, administration and resource isolation are implemented. Activation still requires migration, bootstrap and the durable release marker. See [local accounts](local-accounts.md) and [teacher isolation](teacher-isolation.md).
 
 The first account-storage stage provides a transactional schema, read-only inventory, explicit legacy migration and SQLite-consistent backup/restore tooling. See [account storage](account-storage.md) and [ADR 0001](adr/0001-local-account-storage.md). It does not switch the running application away from JSON or enable local accounts.
 
@@ -18,7 +18,7 @@ The foundation is upstream 4.0.2 plus this fork's Portuguese support. See [the u
 
 Preserve React, Hono, Socket.IO, the pnpm package boundaries, Zod contracts, current question/scoring logic, and JSON import/export. Extend the current backend services; do not introduce another server, game engine, public registration service, or identity provider.
 
-## What the current system already does
+## Legacy baseline
 
 - The registry can hold several games; each has a manager client, players, settings, and a PIN. It does not provide persistent teacher accounts or private resource ownership.
 - HTTP handles authentication and persistent resources. Socket.IO handles live game commands and state.

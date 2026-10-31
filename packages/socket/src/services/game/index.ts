@@ -1,5 +1,6 @@
 import { createDefaultGameSettings, EVENTS } from "@razzia/common/constants"
 import type {
+  GameResult,
   GameSettings,
   Player,
   Quizz,
@@ -58,7 +59,19 @@ class Game {
     { name: Status; data: StatusDataMap[Status] }
   >()
 
-  constructor(io: Server, managerClientId: string, quizz: Quizz) {
+  readonly appliedQuiz: Quizz
+
+  constructor(
+    io: Server,
+    manager:
+      string | { clientId: string; onResult: (result: GameResult) => void },
+    source: Quizz,
+  ) {
+    const quizz = structuredClone(source)
+    const managerClientId =
+      typeof manager === "string" ? manager : manager.clientId
+    const onResult = typeof manager === "string" ? saveResult : manager.onResult
+    this.appliedQuiz = structuredClone(quizz)
     this.io = io
     this.gameId = uuid()
     this.inviteCode = createInviteCode()
@@ -92,7 +105,7 @@ class Game {
         this.playerStatus.clear()
         this.managerStatus = null
       },
-      onGameFinished: saveResult,
+      onGameFinished: onResult,
       getSettings: () => this._settings,
     })
 

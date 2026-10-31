@@ -75,11 +75,17 @@ const configServer = (): Plugin => ({
   name: "razzia-config-server",
   configureServer(server) {
     server.middlewares.use(serveBranding)
-    server.middlewares.use(serveMedia)
+
+    if (process.env.AUTH_MODE !== "local") {
+      server.middlewares.use(serveMedia)
+    }
   },
   configurePreviewServer(server) {
     server.middlewares.use(serveBranding)
-    server.middlewares.use(serveMedia)
+
+    if (process.env.AUTH_MODE !== "local") {
+      server.middlewares.use(serveMedia)
+    }
   },
 })
 
@@ -94,6 +100,7 @@ const serverOptions = {
       target: socketUrl,
       ws: true,
     },
+    "/media": { target: socketUrl },
     "/api": {
       target: socketUrl,
     },

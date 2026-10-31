@@ -54,9 +54,11 @@ const Configurations = () => {
           { nameKey: "manager:tabs.accounts", component: ConfigAccounts },
         ]
       : baseTabs
-  const [selectedTab, setSelectedTab] = useState(() =>
-    window.location.hash === "#appearance" ? 3 : 0,
-  )
+  const [selectedTab, setSelectedTab] = useState(() => {
+    const indexes: Record<string, number> = { "#appearance": 3, "#accounts": 4 }
+
+    return indexes[window.location.hash] ?? 0
+  })
   const { resetManager } = useManagerStore()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
@@ -69,10 +71,14 @@ const Configurations = () => {
 
   const handleSelect = (index: number) => () => {
     setSelectedTab(index)
+    const hashes: Record<string, string> = {
+      "manager:tabs.appearance": "#appearance",
+      "manager:tabs.accounts": "#accounts",
+    }
     window.history.replaceState(
       window.history.state,
       "",
-      `${window.location.pathname}${window.location.search}${index === 3 ? "#appearance" : ""}`,
+      `${window.location.pathname}${window.location.search}${hashes[tabs[index].nameKey] ?? ""}`,
     )
   }
 

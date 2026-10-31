@@ -29,6 +29,18 @@ class Registry {
     console.log(`Game ${game.gameId} added. Total games: ${this.games.length}`)
   }
 
+  canReadMedia(clientId: string, name: string, manager = false) {
+    return this.games.some(
+      (game) =>
+        (manager
+          ? game.manager.clientId === clientId
+          : game.players.some((p) => p.clientId === clientId)) &&
+        game.appliedQuiz.questions.some(
+          (q) => q.media?.url === `/media/${name}`,
+        ),
+    )
+  }
+
   getGameById(gameId: string): Game | undefined {
     return this.games.find((g) => g.gameId === gameId)
   }

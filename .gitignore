@@ -4,3 +4,4 @@
 .secrets
 release.json
 /coverage
+/packages/e2e/.local-config

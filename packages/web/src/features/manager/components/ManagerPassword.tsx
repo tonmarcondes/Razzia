@@ -32,9 +32,10 @@ const ManagerPassword = ({ onSubmit, disabled, local }: Props) => {
   return (
     <Card>
       {local && (
-        <label>
+        <label className="mb-4 block">
           {t("manager:accounts.login")}
           <Input
+            className="mt-1 block w-full"
             autoComplete="username"
             value={login}
             onChange={(e) => setLogin(e.target.value)}

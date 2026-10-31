@@ -1,3 +1,4 @@
+import { randomInt } from "node:crypto"
 import { MAX_POINTS } from "@razzia/common/constants"
 import type { Question } from "@razzia/common/types/game"
 import type { Socket } from "@razzia/common/types/game/socket"
@@ -55,18 +56,28 @@ export const withPlayerGame = (
   callback(game)
 }
 
-export const createInviteCode = (length = 6) => {
-  let result = ""
-  const characters = "0123456789"
-  const charactersLength = characters.length
+export const allocateInviteCode = (
+  generate: () => string,
+  isUsed: (code: string) => boolean,
+) => {
+  for (let attempt = 0; attempt < 64; attempt += 1) {
+    const code = generate()
 
-  for (let i = 0; i < length; i += 1) {
-    const randomIndex = Math.floor(Math.random() * charactersLength)
-    result += characters.charAt(randomIndex)
+    if (!isUsed(code)) {
+      return code
+    }
   }
-
-  return result
+  throw new Error("Unable to allocate an unused game PIN")
 }
+
+export const createInviteCode = (length = 6) =>
+  allocateInviteCode(
+    () =>
+      randomInt(10 ** length)
+        .toString()
+        .padStart(length, "0"),
+    (code) => Boolean(Registry.getInstance().getGameByInviteCode(code)),
+  )
 
 export const orderToPoint = (
   index: number,
