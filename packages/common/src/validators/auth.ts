@@ -11,6 +11,7 @@ export const inviteCodeValidator = z
   .length(6, "errors:auth.invalidInviteCode")
 
 export const sessionClaimsValidator = z.object({
+  sid: z.uuid().optional(),
   sub: z.string().min(1),
   role: z.enum(SESSION_ROLES),
   iat: z.number(),

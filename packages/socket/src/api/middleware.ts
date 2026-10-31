@@ -6,6 +6,9 @@ import type { Context } from "hono"
 import { createMiddleware } from "hono/factory"
 import { StatusCodes } from "http-status-codes"
 
+import { authMode } from "@razzia/socket/env"
+import { getAccounts } from "@razzia/socket/services/accounts"
+
 const UNAUTHORIZED = { error: "errors:auth.unauthorized" } as const
 
 const getBearerToken = (c: Context): string | undefined => {
@@ -53,7 +56,21 @@ export const requireManager = createMiddleware<ApiEnv>(async (c, next) => {
     return c.json(UNAUTHORIZED, StatusCodes.UNAUTHORIZED)
   }
 
+  if (authMode === "local" && getAccounts().current(claims).mustReset) {
+    return c.json({ error: "errors:accounts.changeRequired" }, 403)
+  }
+
   c.set("claims", claims)
 
   await next()
 })
+
+export const requireAdministrator = createMiddleware<ApiEnv>(
+  async (c, next) => {
+    if (authMode === "local") {
+      getAccounts().admin(c.get("claims"))
+    }
+
+    await next()
+  },
+)

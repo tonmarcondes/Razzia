@@ -1,5 +1,5 @@
 import { EVENTS } from "@razzia/common/constants"
-import type { SessionRole } from "@razzia/common/types/auth"
+import type { SessionClaims, SessionRole } from "@razzia/common/types/auth"
 import type {
   GameSettings,
   GameUpdateQuestion,
@@ -16,6 +16,7 @@ import {
 import type { z } from "zod"
 
 export interface SocketData {
+  claims?: SessionClaims
   clientId: string
   role: SessionRole
 }

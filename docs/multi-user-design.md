@@ -1,10 +1,12 @@
 # Multi-user training-center design
 
-Status: implementation in stages. The appearance editor is delivered; the offline account-storage foundation is implemented. Authentication, resource isolation and sharing remain planned and unavailable. No institutional identity provider or production capacity has been confirmed.
+Status: implementation in stages. The appearance editor is delivered; the offline account-storage foundation is implemented. Authentication is implemented behind the activation gate; resource isolation and sharing remain planned and unavailable. No institutional identity provider or production capacity has been confirmed.
 
 ## Implementation status
 
 The appearance editor was delivered ahead of account management at the user's request. See [branding](branding.md). It is currently restricted to the existing manager session; account roles remain planned. When local accounts are introduced, restrict global appearance management to administrators. The account/storage/privacy release gates below still apply.
+
+Account authentication and administration are implemented but remain gated until resource isolation is complete. See [local accounts](local-accounts.md).
 
 The first account-storage stage provides a transactional schema, read-only inventory, explicit legacy migration and SQLite-consistent backup/restore tooling. See [account storage](account-storage.md) and [ADR 0001](adr/0001-local-account-storage.md). It does not switch the running application away from JSON or enable local accounts.
 

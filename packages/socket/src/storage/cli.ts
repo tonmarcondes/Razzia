@@ -5,13 +5,16 @@ import {
 } from "@razzia/socket/storage/legacy-migration"
 import path from "node:path"
 
+import { Accounts } from "@razzia/socket/services/accounts"
+import fs from "node:fs"
+
 const main = async () => {
   const [command, configArgument, argument] = process.argv.slice(2)
 
   if (
     !command ||
     !configArgument ||
-    !["inspect", "migrate", "backup", "check"].includes(command)
+    !["inspect", "migrate", "backup", "check", "bootstrap"].includes(command)
   ) {
     throw new Error(
       "Usage: account-storage <inspect|migrate|backup|check> <config-directory> [manifest-hash|backup-file]",
@@ -57,11 +60,32 @@ const main = async () => {
   }
 
   const store = new LocalDatabase(configPath, {
-    readOnly: command !== "migrate",
+    readOnly: command !== "migrate" && command !== "bootstrap",
   })
 
   try {
-    if (command === "migrate") {
+    if (command === "bootstrap") {
+      if (!argument) {
+        throw new Error("Administrator login required")
+      }
+
+      const input = JSON.parse(fs.readFileSync(0, "utf8")) as {
+        displayName: string
+        password: string
+      }
+      const user = await new Accounts(store).bootstrap(
+        argument,
+        input.displayName,
+        input.password,
+      )
+      console.log(
+        JSON.stringify({
+          id: user.id,
+          login: user.login,
+          mustReset: user.mustReset,
+        }),
+      )
+    } else if (command === "migrate") {
       console.log(JSON.stringify(migrateLegacy(store, configPath, argument)))
     } else if (command === "backup") {
       if (!argument) {

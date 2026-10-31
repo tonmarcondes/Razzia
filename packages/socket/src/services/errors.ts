@@ -1,6 +1,8 @@
 import { StatusCodes } from "http-status-codes"
 
 type DomainErrorStatus =
+  | StatusCodes.FORBIDDEN
+  | StatusCodes.TOO_MANY_REQUESTS
   | StatusCodes.CONFLICT
   | StatusCodes.BAD_REQUEST
   | StatusCodes.NOT_FOUND

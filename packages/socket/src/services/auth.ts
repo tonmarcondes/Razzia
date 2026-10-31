@@ -9,7 +9,8 @@ import {
   joinTicketClaimsValidator,
   sessionClaimsValidator,
 } from "@razzia/common/validators/auth"
-import { jwtSecret } from "@razzia/socket/env"
+import { getAccounts } from "@razzia/socket/services/accounts"
+import { authMode, jwtSecret } from "@razzia/socket/env"
 import { sign, verify } from "hono/jwt"
 import { v7 as uuid } from "uuid"
 
@@ -32,17 +33,33 @@ const parseClaims = (payload: unknown): SessionClaims => {
 export const mintToken = async (
   sub: string,
   role: SessionRole,
+  sid?: string,
 ): Promise<SessionResponse> => {
   const iat = Math.floor(Date.now() / 1000)
   const exp = iat + (role === SESSION_ROLES.MANAGER ? MANAGER_TTL : PLAYER_TTL)
 
-  const token = await sign({ sub, role, iat, exp }, jwtSecret, ALGORITHM)
+  if (authMode === "local" && role === SESSION_ROLES.MANAGER && !sid) {
+    throw new Error("Account session required")
+  }
+
+  const token = await sign(
+    { sub, role, iat, exp, ...(sid ? { sid } : {}) },
+    jwtSecret,
+    ALGORITHM,
+  )
 
   return { token, clientId: sub, role, expiresAt: exp }
 }
 
-export const verifyToken = async (token: string): Promise<SessionClaims> =>
-  parseClaims(await verify(token, jwtSecret, ALGORITHM))
+export const verifyToken = async (token: string): Promise<SessionClaims> => {
+  const claims = parseClaims(await verify(token, jwtSecret, ALGORITHM))
+
+  if (authMode === "local" && claims.role === SESSION_ROLES.MANAGER) {
+    getAccounts().current(claims)
+  }
+
+  return claims
+}
 
 export const verifyIgnoringExpiry = async (
   token: string,
