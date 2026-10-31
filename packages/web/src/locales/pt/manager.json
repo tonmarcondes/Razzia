@@ -113,7 +113,10 @@
       "scoring": "O tempo de leitura, as regras de pontuação ou o comportamento de múltiplas respostas podem diferir no Kahoot.",
       "cell": "Fórmulas e células com formatação rica, links ou objetos não são aceitas; use valores simples.",
       "empty": "Nenhuma questão encontrada.",
-      "defaults": "O nome do arquivo será o título do quiz. Tempo de leitura: 5 segundos; pontuação padrão; várias respostas corretas exigem seleção exata. A planilha não contém mídias nem regras originais do jogo."
+      "defaults": "O nome do arquivo será o título do quiz. Tempo de leitura: 5 segundos; pontuação padrão; várias respostas corretas exigem seleção exata. A planilha não contém mídias nem regras originais do jogo.",
+      "adapted": "Formato em português: respostas A–D, tema e justificativa preservados; tempo de resposta definido em 30 segundos.",
+      "worksheets": "Apenas a aba de questões foi importada; as demais abas de apoio não fazem parte do quiz.",
+      "lengths": "Texto preservado integralmente no Razzia, mas excede os limites do modelo oficial do Kahoot e impede a exportação nesse modelo."
     },
     "summary": "{{subject}} — {{count}} questões",
     "general": "Geral"
