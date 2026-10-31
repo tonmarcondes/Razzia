@@ -262,11 +262,13 @@ test("exports and imports a quizz as JSON", async ({ page }) => {
 
   const subject = uniqueSubject("Imported quizz")
 
-  await page.locator("input[type=file]").setInputFiles({
-    name: "quizz.json",
-    mimeType: "application/json",
-    buffer: Buffer.from(JSON.stringify({ ...exported, subject })),
-  })
+  await page
+    .getByLabel(t("manager:quizz.import"), { exact: true })
+    .setInputFiles({
+      name: "quizz.json",
+      mimeType: "application/json",
+      buffer: Buffer.from(JSON.stringify({ ...exported, subject })),
+    })
 
   await expect(page.getByText(t("quizz:quizzSaved"))).toBeVisible()
   await expect(page.getByText(subject, { exact: true })).toBeVisible()

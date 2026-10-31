@@ -144,3 +144,7 @@ Because a survey question has no right answer, `solutions` is left out entirely,
 `type` keeps its meaning in a survey: it decides whether a player may pick several answers, not how they are scored.
 
 The mode belongs to the quiz rather than to a single game, because whether the questions have right answers is a property of the content. Switching an existing quiz to survey mode in the editor keeps its `solutions` on file so you can switch back; they are simply never sent to the clients while the mode is `"survey"`. A quiz without `gameMode` is read as `"quiz"`, so files written before this option keep working untouched.
+
+## Spreadsheet exchange
+
+See [Kahoot spreadsheet exchange](kahoot-exchange.md) for supported XLSX import/export and compatibility limits. Native JSON remains the complete quiz definition; media files are stored separately.
