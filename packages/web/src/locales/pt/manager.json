@@ -90,5 +90,31 @@
     "resetConfirm": "Restaurar o nome, as cores, o logotipo e os fundos originais? As imagens enviadas serão mantidas para partidas já abertas.",
     "saved": "Aparência salva",
     "reload": "Recarregar configurações"
+  },
+  "spreadsheet": {
+    "help": "JSON mantém o quiz nativo. XLSX troca questões padrão com o Kahoot.",
+    "import": "Importar XLSX do Kahoot",
+    "export": "Exportar XLSX para Kahoot",
+    "review": "Revisão de compatibilidade da planilha",
+    "limits": "Nada será salvo ou baixado antes da confirmação. Questões incompatíveis bloqueiam a exportação. Mantenha o JSON para preservar o quiz completo (arquivos de mídia são separados).",
+    "confirm": "Confirmar conversão",
+    "invalid": "Planilha inválida. Use o modelo de questões do Kahoot (.xlsx, máximo 1 MiB), e não um relatório de partida.",
+    "row": "Linha/questão {{row}}",
+    "issues": {
+      "mode": "Somente o modo quiz é compatível.",
+      "count": "Máximo de 100 questões.",
+      "type": "Este tipo de questão não é compatível.",
+      "question": "A pergunta deve ter de 1 a 120 caracteres.",
+      "answers": "Informe de 2 a 4 alternativas preenchidas, com até 75 caracteres cada.",
+      "time": "Tempos permitidos: 5, 10, 20, 30, 60 ou 120 segundos.",
+      "solutions": "As respostas corretas devem ser números únicos que apontem para alternativas existentes.",
+      "metadata": "Mídias, explicações e categorias não serão incluídas.",
+      "scoring": "O tempo de leitura, as regras de pontuação ou o comportamento de múltiplas respostas podem diferir no Kahoot.",
+      "cell": "Fórmulas e células com formatação rica, links ou objetos não são aceitas; use valores simples.",
+      "empty": "Nenhuma questão encontrada.",
+      "defaults": "O nome do arquivo será o título do quiz. Tempo de leitura: 5 segundos; pontuação padrão; várias respostas corretas exigem seleção exata. A planilha não contém mídias nem regras originais do jogo."
+    },
+    "summary": "{{subject}} — {{count}} questões",
+    "general": "Geral"
   }
 }

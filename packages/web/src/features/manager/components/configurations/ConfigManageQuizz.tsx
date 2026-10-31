@@ -12,7 +12,9 @@ import { api, ApiError, unwrap } from "@razzia/web/lib/api"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { Download, SquarePen, Trash2, Upload } from "lucide-react"
-import { type ChangeEvent, useRef } from "react"
+
+import { type ChangeEvent, useRef, useState } from "react"
+
 import toast from "react-hot-toast"
 import { useTranslation } from "react-i18next"
 
@@ -30,12 +32,124 @@ const downloadJson = (data: unknown, filename: string) => {
   URL.revokeObjectURL(url)
 }
 
+interface Review {
+  subject: string
+  count: number
+  errors: Array<{ row: number; key: string }>
+
+  warnings: Array<{ row: number; key: string }>
+
+  confirm: () => void
+}
+
 const ConfigManageQuizz = () => {
   const { data, isPending } = useQuery(quizzListQuery())
   const queryClient = useQueryClient()
   const navigate = useNavigate()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { t } = useTranslation()
+
+  const [review, setReview] = useState<Review | null>(null)
+
+  const [busy, setBusy] = useState(false)
+
+  const spreadsheetInput = useRef<HTMLInputElement>(null)
+
+  const spreadsheetError = () => toast.error(t("manager:spreadsheet.invalid"))
+
+  const handleSpreadsheetImport = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+
+    e.target.value = ""
+
+    if (!file) {
+      return
+    }
+
+    setReview(null)
+
+    setBusy(true)
+
+    try {
+      const { readKahoot, MAX_SPREADSHEET_BYTES } =
+        await import("@razzia/web/features/manager/spreadsheet/kahoot")
+
+      if (file.size > MAX_SPREADSHEET_BYTES) {
+        throw new Error("size")
+      }
+
+      const result = await readKahoot(
+        await file.arrayBuffer(),
+        file.name.replace(/\.xlsx$/i, ""),
+      )
+
+      setReview({
+        ...result,
+        subject: result.quizz.subject,
+        count: result.quizz.questions.length,
+        confirm: () => {
+          importQuizz(result.quizz)
+
+          setReview(null)
+        },
+      })
+    } catch {
+      spreadsheetError()
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const handleSpreadsheetExport = async (id: string) => {
+    setReview(null)
+
+    setBusy(true)
+
+    try {
+      const quizz = await unwrap(api.quizz[":id"].$get({ param: { id } }))
+
+      const { reviewExport, writeKahoot } =
+        await import("@razzia/web/features/manager/spreadsheet/kahoot")
+
+      setReview({
+        ...reviewExport(quizz),
+        subject: quizz.subject,
+        count: quizz.questions.length,
+        confirm: () => {
+          setReview(null)
+
+          setBusy(true)
+
+          void writeKahoot(quizz)
+            .then((buffer) => {
+              const url = URL.createObjectURL(
+                new Blob([buffer], {
+                  type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                }),
+              )
+
+              const a = document.createElement("a")
+
+              a.href = url
+
+              a.download = `${quizz.subject}.xlsx`
+
+              a.click()
+
+              setTimeout(() => URL.revokeObjectURL(url), 1000)
+            })
+
+            .catch(spreadsheetError)
+
+            .finally(() => setBusy(false))
+        },
+      })
+    } catch {
+      spreadsheetError()
+    } finally {
+      setBusy(false)
+    }
+  }
 
   const invalidate = () =>
     queryClient.invalidateQueries({ queryKey: quizzKeys.all })
@@ -101,7 +215,8 @@ const ConfigManageQuizz = () => {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="mb-4 flex shrink-0 gap-2">
+      <p className="mb-2 text-sm">{t("manager:spreadsheet.help")}</p>
+      <div className="mb-4 flex shrink-0 flex-wrap gap-2">
         <Button
           className="flex-1"
           onClick={() => navigate({ to: "/manager/quizz" })}
@@ -119,13 +234,60 @@ const ConfigManageQuizz = () => {
           ref={fileInputRef}
           type="file"
           accept=".json"
+          aria-label={t("manager:quizz.import")}
           className="hidden"
           onChange={handleImport}
         />
       </div>
+      <div className="mb-2">
+        <Button
+          disabled={busy}
+          onClick={() => spreadsheetInput.current?.click()}
+        >
+          {t("manager:spreadsheet.import")}
+        </Button>
+        <input
+          ref={spreadsheetInput}
+          type="file"
+          accept=".xlsx"
+          className="hidden"
+          aria-label={t("manager:spreadsheet.import")}
+          onChange={handleSpreadsheetImport}
+        />
+      </div>
+      {review && (
+        <section
+          aria-label={t("manager:spreadsheet.review")}
+          className="mb-3 max-h-60 shrink-0 overflow-auto rounded border p-3"
+        >
+          <h3>{t("manager:spreadsheet.review")}</h3>
+          <p>
+            {t("manager:spreadsheet.summary", {
+              subject: review.subject,
+              count: review.count,
+            })}
+          </p>
+          <p>{t("manager:spreadsheet.limits")}</p>
+          <ul>
+            {[...review.errors, ...review.warnings].map((item, i) => (
+              <li key={i}>
+                {item.row
+                  ? t("manager:spreadsheet.row", { row: item.row })
+                  : t("manager:spreadsheet.general")}
+                : {t(`manager:spreadsheet.issues.${item.key}`)}
+              </li>
+            ))}
+          </ul>
+          {review.errors.length === 0 && (
+            <Button onClick={review.confirm}>
+              {t("manager:spreadsheet.confirm")}
+            </Button>
+          )}
+          <Button onClick={() => setReview(null)}>{t("common:cancel")}</Button>
+        </section>
+      )}
       <div className="min-h-0 flex-1 space-y-2 overflow-auto p-0.5">
         {isPending && <SkeletonRows className="h-12" />}
-
         {quizz.map((q) => (
           <div
             key={q.id}
@@ -145,7 +307,6 @@ const ConfigManageQuizz = () => {
               >
                 <SquarePen className="size-4" />
               </button>
-
               <button
                 className="text-accent-foreground hover:bg-accent-foreground/10 rounded-sm p-2"
                 onClick={() => handleExport(q.id)()}
@@ -153,7 +314,14 @@ const ConfigManageQuizz = () => {
               >
                 <Download className="size-4" />
               </button>
-
+              <button
+                disabled={busy}
+                className="rounded-sm p-2"
+                title={t("manager:spreadsheet.export")}
+                onClick={() => handleSpreadsheetExport(q.id)}
+              >
+                XLSX
+              </button>
               <AlertDialog
                 trigger={
                   <button

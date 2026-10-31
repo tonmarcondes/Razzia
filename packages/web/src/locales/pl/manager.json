@@ -93,5 +93,31 @@
     "resetConfirm": "Restore the original name, colors, logo and wallpapers? Uploaded assets are retained for already-open games.",
     "saved": "Appearance saved",
     "reload": "Reload settings"
+  },
+  "spreadsheet": {
+    "help": "JSON keeps the native quiz. XLSX exchanges standard questions with Kahoot.",
+    "import": "Import Kahoot XLSX",
+    "export": "Export Kahoot XLSX",
+    "review": "Spreadsheet compatibility review",
+    "limits": "No data is saved or downloaded until you confirm. Unsupported questions block export. Keep JSON for a full quiz backup (media files are separate).",
+    "confirm": "Confirm conversion",
+    "invalid": "Invalid spreadsheet. Use the Kahoot question template (.xlsx, maximum 1 MiB), not a game report.",
+    "row": "Row/question {{row}}",
+    "issues": {
+      "mode": "Only quiz mode is supported.",
+      "count": "Maximum 100 questions.",
+      "type": "This question type is unsupported.",
+      "question": "Question must have 1–120 characters.",
+      "answers": "Provide 2–4 non-empty answers, maximum 75 characters each.",
+      "time": "Allowed times: 5, 10, 20, 30, 60 or 120 seconds.",
+      "solutions": "Correct answers must be unique numbers pointing to existing answers.",
+      "metadata": "Media, explanations and categories will not be included.",
+      "scoring": "Reading delay, scoring rules or multi-answer behavior may differ in Kahoot.",
+      "cell": "Formulas and rich, linked or embedded cells are unsupported; use plain values.",
+      "empty": "No questions found.",
+      "defaults": "The filename becomes the quiz title. Reading delay: 5 seconds; default scoring; multiple correct answers use strict selection. The spreadsheet contains no media or original game rules."
+    },
+    "summary": "{{subject}} — {{count}} questions",
+    "general": "General"
   }
 }
