@@ -205,13 +205,15 @@ export const readKahoot = async (
 
   await workbook.xlsx.load(buffer)
 
-  if (workbook.worksheets.length !== 1) {
+  if (
+    !workbook.worksheets.length ||
+    workbook.worksheets.length > 10 ||
+    workbook.worksheets.some((s) => s.rowCount > 1000 || s.columnCount > 20)
+  ) {
     throw new Error("template")
   }
 
-  const [sheet] = workbook.worksheets
-
-  const expected = [
+  const official = [
     "Question",
     "Answer 1",
     "Answer 2",
@@ -220,21 +222,58 @@ export const readKahoot = async (
     "Time limit",
     "Correct answer(s)",
   ]
+  const portuguese = [
+    "Número",
+    "Tema",
+    "Pergunta Kahoot",
+    "Alternativa A",
+    "Alternativa B",
+    "Alternativa C",
+    "Alternativa D",
+    "Resposta correta",
+    "Justificativa / foco de estudo",
+  ]
+  const matches: Array<{
+    sheet: ExcelJS.Worksheet
+    header: number
+    adapted: boolean
+  }> = []
+  for (const sheet of workbook.worksheets) {
+    for (let r = 1; r <= Math.min(sheet.rowCount, 30); r += 1) {
+      if (
+        official.every((name, i) =>
+          sheet.getCell(r, i + 2).text.startsWith(name),
+        )
+      ) {
+        matches.push({ sheet, header: r, adapted: false })
 
-  let header = 0
+        break
+      }
 
-  for (let r = 1; r <= Math.min(sheet.rowCount, 30); r += 1) {
-    if (
-      expected.every((name, i) => sheet.getCell(r, i + 2).text.startsWith(name))
-    ) {
-      header = r
+      if (
+        portuguese.every((name, i) => sheet.getCell(r, i + 1).value === name)
+      ) {
+        matches.push({ sheet, header: r, adapted: true })
 
-      break
+        break
+      }
     }
   }
 
-  if (!header || sheet.rowCount > 1000 || sheet.columnCount > 20) {
+  // Never guess which quiz to import when several sheets contain questions.
+  if (matches.length !== 1) {
     throw new Error("template")
+  }
+
+  const [{ sheet, header, adapted }] = matches
+  const warnings = [issue(0, "defaults")]
+
+  if (adapted) {
+    warnings.push(issue(0, "adapted"))
+  }
+
+  if (workbook.worksheets.length > 1) {
+    warnings.push(issue(0, "worksheets"))
   }
 
   const questions: QuizzValidated["questions"] = []
@@ -242,7 +281,9 @@ export const readKahoot = async (
   const errors: SpreadsheetIssue[] = []
 
   for (let r = header + 1; r <= sheet.rowCount; r += 1) {
-    const cells = Array.from({ length: 7 }, (_, i) => sheet.getCell(r, i + 2))
+    const cells = Array.from({ length: adapted ? 8 : 7 }, (_, i) =>
+      sheet.getCell(r, i + 2),
+    )
 
     if (cells.every((c) => c.value === null || c.value === "")) {
       continue
@@ -254,7 +295,10 @@ export const readKahoot = async (
       continue
     }
 
-    const values = cells.map((c) => c.text)
+    const text = cells.map((c) => c.text)
+    const values = adapted
+      ? [text[1], ...text.slice(2, 6), "30", text[6]]
+      : text
 
     const answers = values.slice(1, 5)
 
@@ -264,13 +308,21 @@ export const readKahoot = async (
 
     const [, , , , , , raw] = values
 
-    const solutions = /^\d+(\s*,\s*\d+)*$/.test(raw)
-      ? raw.split(",").map((s) => Number(s.trim()) - 1)
-      : []
+    let solutions: number[] = []
+
+    if (adapted && /^[A-D](\s*,\s*[A-D])*$/i.test(raw.trim())) {
+      solutions = raw
+        .toUpperCase()
+        .split(",")
+        .map((s) => s.trim().charCodeAt(0) - 65)
+    } else if (/^\d+(\s*,\s*\d+)*$/.test(raw)) {
+      solutions = raw.split(",").map((s) => Number(s.trim()) - 1)
+    }
 
     const q = {
       type: solutions.length > 1 ? ("multi" as const) : ("single" as const),
       question: values[0],
+      ...(adapted ? { category: text[0], note: text[7] } : {}),
       answers,
       solutions,
       cooldown: 5,
@@ -282,7 +334,25 @@ export const readKahoot = async (
 
     const review = reviewExport({ gameMode: "quiz", subject, questions: [q] })
 
-    errors.push(...review.errors.map((e) => ({ ...e, row: r })))
+    const rowErrors = review.errors.filter(
+      (e) => !adapted || !["question", "answers"].includes(e.key),
+    )
+
+    if (adapted) {
+      if (!q.question.trim()) {
+        rowErrors.push(issue(r, "question"))
+      }
+
+      if (answers.length < 2 || answers.some((a) => !a.trim())) {
+        rowErrors.push(issue(r, "answers"))
+      }
+
+      if (q.question.length > 120 || answers.some((a) => a.length > 75)) {
+        warnings.push(issue(r, "lengths"))
+      }
+    }
+
+    errors.push(...rowErrors.map((e) => ({ ...e, row: r })))
 
     questions.push(q)
   }
@@ -301,5 +371,5 @@ export const readKahoot = async (
     quizzValidator.parse(quizz)
   }
 
-  return { quizz, errors, warnings: [issue(0, "defaults")] }
+  return { quizz, errors, warnings }
 }

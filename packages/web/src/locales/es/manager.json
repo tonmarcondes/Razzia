@@ -113,7 +113,10 @@
       "scoring": "Reading delay, scoring rules or multi-answer behavior may differ in Kahoot.",
       "cell": "Formulas and rich, linked or embedded cells are unsupported; use plain values.",
       "empty": "No questions found.",
-      "defaults": "The filename becomes the quiz title. Reading delay: 5 seconds; default scoring; multiple correct answers use strict selection. The spreadsheet contains no media or original game rules."
+      "defaults": "The filename becomes the quiz title. Reading delay: 5 seconds; default scoring; multiple correct answers use strict selection. The spreadsheet contains no media or original game rules.",
+      "adapted": "Portuguese layout: A–D answers, topic and explanation preserved; response time defaults to 30 seconds.",
+      "worksheets": "Only the question worksheet is imported; other supporting worksheets are not part of the quiz.",
+      "lengths": "Text is preserved in full in Razzia, but exceeds the official Kahoot template limits and blocks export to that template."
     },
     "summary": "{{subject}} — {{count}} questions",
     "general": "General"

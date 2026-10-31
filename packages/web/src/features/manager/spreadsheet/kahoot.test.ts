@@ -101,3 +101,112 @@ describe("Kahoot spreadsheet exchange", () => {
     ])
   })
 })
+
+const portugueseWorkbook = () => {
+  const w = new ExcelJS.Workbook()
+  w.addWorksheet("Lista de temas").addRow([
+    "Nº",
+    "Tema prioritário",
+    "Foco de estudo",
+  ])
+  const s = w.addWorksheet("Questões")
+  s.addRow([
+    "Número",
+    "Tema",
+    "Pergunta Kahoot",
+    "Alternativa A",
+    "Alternativa B",
+    "Alternativa C",
+    "Alternativa D",
+    "Resposta correta",
+    "Justificativa / foco de estudo",
+  ])
+  s.addRow([
+    1,
+    "Aviação",
+    "Qual alternativa?",
+    "Ação",
+    "Não",
+    "Sim",
+    "Outra",
+    "C",
+    "Explicação",
+  ])
+
+  return { w, s }
+}
+
+describe("Portuguese question workbook", () => {
+  it("selects the question sheet and preserves letters, topic and explanation", async () => {
+    const { w } = portugueseWorkbook()
+    const result = await readKahoot(await w.xlsx.writeBuffer(), "Treinamento")
+    expect(result.errors).toEqual([])
+    expect(result.quizz.questions).toEqual([
+      {
+        type: "single",
+        question: "Qual alternativa?",
+        answers: ["Ação", "Não", "Sim", "Outra"],
+        solutions: [2],
+        category: "Aviação",
+        note: "Explicação",
+        cooldown: 5,
+        time: 30,
+      },
+    ])
+    expect(result.warnings.map((i) => i.key)).toEqual([
+      "defaults",
+      "adapted",
+      "worksheets",
+    ])
+  })
+  it("preserves long text without weakening official export limits", async () => {
+    const { w, s } = portugueseWorkbook()
+    s.getCell("D2").value = "A".repeat(90)
+    const result = await readKahoot(await w.xlsx.writeBuffer(), "x")
+    expect(result.errors).toEqual([])
+    expect(result.quizz.questions[0].answers[0]).toHaveLength(90)
+    expect(result.warnings).toContainEqual({ row: 2, key: "lengths" })
+    expect(reviewExport(result.quizz).errors).toContainEqual({
+      row: 1,
+      key: "answers",
+    })
+  })
+  it("rejects ambiguous worksheets", async () => {
+    const { w, s } = portugueseWorkbook()
+    w.addWorksheet("Other questions").addRow(s.getRow(1).values)
+    await expect(readKahoot(await w.xlsx.writeBuffer(), "x")).rejects.toThrow(
+      "template",
+    )
+  })
+  it("reports invalid letters, duplicates, gaps and formulas in metadata", async () => {
+    await Promise.all(
+      ["E", "A,A"].map(async (answer) => {
+        const { w, s } = portugueseWorkbook()
+        s.getCell("H2").value = answer
+        expect(
+          (await readKahoot(await w.xlsx.writeBuffer(), "x")).errors,
+        ).toContainEqual({ row: 2, key: "solutions" })
+      }),
+    )
+    const { w, s } = portugueseWorkbook()
+    s.getCell("E2").value = ""
+    expect(
+      (await readKahoot(await w.xlsx.writeBuffer(), "x")).errors,
+    ).toContainEqual({ row: 2, key: "answers" })
+    s.getCell("I2").value = { formula: "1+1" }
+    expect(
+      (await readKahoot(await w.xlsx.writeBuffer(), "x")).errors,
+    ).toContainEqual({ row: 2, key: "cell" })
+  })
+  it("maps multiple letter solutions without reordering answers", async () => {
+    const { w, s } = portugueseWorkbook()
+    s.getCell("H2").value = "a, D"
+    const result = await readKahoot(await w.xlsx.writeBuffer(), "x")
+    expect(result.errors).toEqual([])
+    expect(result.quizz.questions[0]).toMatchObject({
+      type: "multi",
+      solutions: [0, 3],
+      options: { scoringMode: "strict" },
+    })
+  })
+})
