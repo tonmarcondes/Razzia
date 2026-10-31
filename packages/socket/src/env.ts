@@ -7,6 +7,12 @@ const optional = (schema: z.ZodString) =>
   z.preprocess((value) => (value === "" ? undefined : value), schema.optional())
 
 const envSchema = z.object({
+  AUTH_MODE: z
+    .enum(["legacy"], {
+      error:
+        "Local account mode is not available until account authorization is implemented",
+    })
+    .default("legacy"),
   MANAGER_PASSWORD: optional(
     z.string().min(1, "MANAGER_PASSWORD cannot be empty"),
   ),
@@ -36,6 +42,8 @@ if (!parsed.success) {
       .join("\n")}`,
   )
 }
+
+export const authMode = parsed.data.AUTH_MODE
 
 export const managerPassword = parsed.data.MANAGER_PASSWORD
 
