@@ -74,3 +74,27 @@ export const activateLocalStore = (
 
   return { activated: true, manifestHash: expectedManifest }
 }
+
+export const isLocalStoreReady = (store: LocalDatabase) => {
+  const db = store.connection
+
+  return (
+    db.prepare("SELECT value FROM metadata WHERE key='local-mode-ready'").get()
+      ?.value === "true" &&
+    db
+      .prepare("SELECT value FROM metadata WHERE key='bootstrap-complete'")
+      .get()?.value === "true" &&
+    db
+      .prepare(
+        "SELECT count(*) AS count FROM media WHERE classification!='private'",
+      )
+      .get()?.count === 0 &&
+    Boolean(
+      db
+        .prepare(
+          "SELECT id FROM users WHERE role='admin' AND active=1 AND password_hash IS NOT NULL LIMIT 1",
+        )
+        .get(),
+    )
+  )
+}

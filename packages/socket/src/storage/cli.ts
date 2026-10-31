@@ -8,7 +8,10 @@ import path from "node:path"
 import { Accounts } from "@razzia/socket/services/accounts"
 import fs from "node:fs"
 
-import { activateLocalStore } from "@razzia/socket/storage/activation"
+import {
+  activateLocalStore,
+  isLocalStoreReady,
+} from "@razzia/socket/storage/activation"
 
 const main = async () => {
   const [command, configArgument, argument] = process.argv.slice(2)
@@ -44,7 +47,6 @@ const main = async () => {
       ),
       errors: inventory.errors,
       warnings: inventory.warnings,
-      localModeReady: false,
     }
 
     if (command === "inspect") {
@@ -120,7 +122,7 @@ const main = async () => {
         JSON.stringify({
           integrity: "ok",
           schemaVersion: store.version(),
-          localModeReady: false,
+          localModeReady: isLocalStoreReady(store),
         }),
       )
     }

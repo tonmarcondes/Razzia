@@ -1,3 +1,5 @@
+import { execFileSync } from "node:child_process"
+import path from "node:path"
 import { parseLegacyResult } from "@razzia/socket/storage/legacy-validation"
 import { app } from "@razzia/socket/app"
 import {
@@ -109,7 +111,17 @@ describe("teacher resource isolation", () => {
     const accounts = getAccounts()
     expect(() => assertAccountModeReady()).toThrow()
     await accounts.bootstrap("admin", "Administrator", TEMP)
+    const checkCli = () =>
+      JSON.parse(
+        execFileSync(
+          process.execPath,
+          ["--import", "tsx", "src/storage/cli.ts", "check", getPath()],
+          { cwd: path.resolve(import.meta.dirname, "../.."), encoding: "utf8" },
+        ),
+      ) as { localModeReady: boolean }
+    expect(checkCli().localModeReady).toBe(false)
     activateLocalStore(accounts.store, getPath(), inventory.manifestHash)
+    expect(checkCli().localModeReady).toBe(true)
     expect(() => assertAccountModeReady()).not.toThrow()
     expect(() => assertLegacyModeReady()).toThrow("refusing legacy")
     admin = await complete("admin")
