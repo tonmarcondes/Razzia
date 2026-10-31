@@ -8,6 +8,7 @@ import { createQuestion, createQuizz } from "@razzia/socket/test/fixtures"
 import fs from "node:fs"
 import { tmpdir } from "node:os"
 import path from "node:path"
+import { parseLegacyQuiz } from "@razzia/socket/storage/legacy-validation"
 import { DatabaseSync } from "node:sqlite"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 
@@ -180,6 +181,16 @@ describe("account storage foundation", () => {
 })
 
 describe("legacy migration", () => {
+  it("reports prototype-named unknown fields rather than silently dropping them", () => {
+    const data = JSON.parse(
+      JSON.stringify(createQuizz([createQuestion()])).replace(
+        '"subject":',
+        '"__proto__":"retained-input","subject":',
+      ),
+    ) as unknown
+    expect(() => parseLegacyQuiz(data)).toThrow("unsupported-fields")
+  })
+
   it("does not create a database or rewrite IDs during inspection", () => {
     write("quizz/legacy.json", {
       subject: "Legacy",

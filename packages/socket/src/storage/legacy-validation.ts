@@ -46,7 +46,7 @@ const assertNoDroppedFields = (input: unknown, parsed: unknown) => {
   }
 
   for (const key of Object.keys(input)) {
-    if (!(key in parsed)) {
+    if (!Object.hasOwn(parsed, key)) {
       throw new Error("unsupported-fields")
     }
 
