@@ -1,3 +1,4 @@
+import { isLocalStoreReady } from "@razzia/socket/storage/activation"
 import type { SessionClaims } from "@razzia/common/types/auth"
 import {
   accountLogin,
@@ -333,22 +334,7 @@ export const getAccounts = () => {
 }
 
 export const assertAccountModeReady = () => {
-  const a = getAccounts()
-
-  if (
-    a.db
-      .prepare("SELECT value FROM metadata WHERE key='local-mode-ready'")
-      .get()?.value !== "true" ||
-    a.db
-      .prepare("SELECT value FROM metadata WHERE key='bootstrap-complete'")
-      .get()?.value !== "true" ||
-    a.db
-      .prepare(
-        "SELECT count(*) AS count FROM media WHERE classification!='private'",
-      )
-      .get()?.count !== 0 ||
-    !a.list().some((user) => user.role === "admin" && user.active)
-  ) {
+  if (!isLocalStoreReady(getAccounts().store)) {
     throw new Error(
       "Local account mode requires migration, bootstrap and explicit activation",
     )

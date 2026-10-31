@@ -14,7 +14,7 @@ Use an isolated copy of the complete config directory for rehearsal. Do not run 
 node packages/socket/dist/account-storage.cjs inspect /absolute/rehearsal/config
 ```
 
-The JSON report contains counts, paths, diagnostic codes and a manifest hash, not question content or participant names. Treat source filenames as potentially sensitive. `inspect` makes no filesystem changes. Blocking errors produce exit status 1; resolve them in a reviewed source copy. It does not silently repair broken data. Unknown non-JSON files in quiz/result directories are reported as warnings and retained outside the import.
+The JSON report contains counts, paths, diagnostic codes and a manifest hash, not question content or participant names. Treat source filenames as potentially sensitive. `inspect` makes no filesystem changes and reports source inventory only; use `check` to inspect database readiness. Blocking errors produce exit status 1; resolve them in a reviewed source copy. It does not silently repair broken data. Unknown non-JSON files in quiz/result directories are reported as warnings and retained outside the import.
 
 ```sh
 node packages/socket/dist/account-storage.cjs migrate /absolute/rehearsal/config MANIFEST_HASH_FROM_INSPECT
