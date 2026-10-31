@@ -216,6 +216,14 @@ describe("teacher resource isolation", () => {
     expect(response.status).toBe(201)
     uploaded = ((await response.json()) as { name: string }).name
     expect((await media(uploaded, teacherB)).status).toBe(404)
+    expect((await media(uploaded, admin)).status).toBe(200)
+    expect(
+      getAccounts()
+        .db.prepare(
+          "SELECT action,resource_id FROM audit_events WHERE action='media.read' AND resource_id=?",
+        )
+        .get(uploaded),
+    ).toMatchObject({ action: "media.read", resource_id: uploaded })
     const range = await media(uploaded, teacherA, "bytes=0-3")
     expect(range.status).toBe(206)
     expect((await range.arrayBuffer()).byteLength).toBe(4)

@@ -270,17 +270,21 @@ export const localResources = {
     const user = this.principal(claims),
       a = getAccounts()
 
-    if (
-      !a.db
-        .prepare(
-          "SELECT name FROM media WHERE name=? AND classification='private'",
-        )
-        .get(name)
-    ) {
+    const media = a.db
+      .prepare(
+        "SELECT name,owner_id FROM media WHERE name=? AND classification='private'",
+      )
+      .get(name)
+
+    if (!media) {
       return false
     }
 
     if (user.role === "admin") {
+      if (media.owner_id !== user.id) {
+        a.audit(user.id, "media.read", name)
+      }
+
       return true
     }
 
