@@ -8,6 +8,7 @@ const optional = (schema: z.ZodString) =>
 
 const envSchema = z
   .object({
+    AUTH_COOKIE_SECURE: z.enum(["true", "false"]).optional(),
     AUTH_MODE: z.enum(["legacy", "local"]).default("legacy"),
     MANAGER_PASSWORD: optional(
       z.string().min(1, "MANAGER_PASSWORD cannot be empty"),

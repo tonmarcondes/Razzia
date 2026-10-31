@@ -15,6 +15,11 @@ import { getIo } from "@razzia/socket/services/io"
 import Registry from "@razzia/socket/services/registry"
 import { StatusCodes } from "http-status-codes"
 
+import { authMode } from "@razzia/socket/env"
+import { localResources } from "@razzia/socket/services/local-resources"
+
+import { setMediaCookie } from "@razzia/socket/services/media-cookie"
+
 const routes = apiFactory
   .createApp()
   .post(
@@ -23,14 +28,31 @@ const routes = apiFactory
     zValidator("json", createGameValidator, i18nHook),
     (c) => {
       const { quizzId } = c.req.valid("json")
-      const quizz = getQuizz().find((q) => q.id === quizzId)
+      const quizz =
+        authMode === "local"
+          ? localResources.quiz(c.get("claims"), quizzId).quizz
+          : getQuizz().find((q) => q.id === quizzId)
 
       if (!quizz) {
         return c.json({ error: "errors:quizz.notFound" }, StatusCodes.NOT_FOUND)
       }
 
       const registry = Registry.getInstance()
-      const game = new Game(getIo(), c.get("claims").sub, quizz)
+      const game = new Game(
+        getIo(),
+        authMode === "local"
+          ? {
+              clientId: c.get("claims").sub,
+              onResult: (result) =>
+                localResources.saveResult(game.gameId, result),
+            }
+          : c.get("claims").sub,
+        quizz,
+      )
+
+      if (authMode === "local") {
+        localResources.startRun(c.get("claims"), game.gameId, quizzId)
+      }
 
       registry.addGame(game)
       registry.markGameAsEmpty(game)
@@ -89,6 +111,11 @@ const routes = apiFactory
       }
 
       const { sub } = c.get("claims")
+      setMediaCookie(
+        c,
+        c.req.header("Authorization")?.slice(7) ?? "",
+        c.get("claims").exp,
+      )
 
       if (game.manager.clientId === sub) {
         return c.json(

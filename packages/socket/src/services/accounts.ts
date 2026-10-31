@@ -332,9 +332,47 @@ export const getAccounts = () => {
   return instance
 }
 
-// Account mode remains gated until the separate HTTP/socket/media isolation delivery.
 export const assertAccountModeReady = () => {
-  throw new Error(
-    "Local account mode is not available until account authorization is implemented",
-  )
+  const a = getAccounts()
+
+  if (
+    a.db
+      .prepare("SELECT value FROM metadata WHERE key='local-mode-ready'")
+      .get()?.value !== "true" ||
+    a.db
+      .prepare("SELECT value FROM metadata WHERE key='bootstrap-complete'")
+      .get()?.value !== "true" ||
+    a.db
+      .prepare(
+        "SELECT count(*) AS count FROM media WHERE classification!='private'",
+      )
+      .get()?.count !== 0 ||
+    !a.list().some((user) => user.role === "admin" && user.active)
+  ) {
+    throw new Error(
+      "Local account mode requires migration, bootstrap and explicit activation",
+    )
+  }
+}
+
+export const assertLegacyModeReady = () => {
+  if (!fs.existsSync(getPath("accounts/accounts.sqlite"))) {
+    return
+  }
+
+  const store = new LocalDatabase(getPath(), { readOnly: true })
+
+  try {
+    if (
+      store.connection
+        .prepare("SELECT value FROM metadata WHERE key='local-mode-ready'")
+        .get()?.value === "true"
+    ) {
+      throw new Error(
+        "This config has switched to local accounts; refusing legacy access",
+      )
+    }
+  } finally {
+    store.close()
+  }
 }

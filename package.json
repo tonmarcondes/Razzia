@@ -24,7 +24,8 @@
     "test:e2e:ui": "pnpm --filter @razzia/e2e test:ui",
     "docker:build": "docker build -t razzia:local .",
     "docker:scout": "pnpm docker:build && docker scout quickview razzia:local && docker scout cves razzia:local --only-severity critical,high",
-    "act:release": "act release -W .github/workflows/docker-release.yml --env GITHUB_REF_NAME=v0.0.1 -P ubuntu-latest=catthehacker/ubuntu:act-latest -s DOCKERHUB_USERNAME=dry-run"
+    "act:release": "act release -W .github/workflows/docker-release.yml --env GITHUB_REF_NAME=v0.0.1 -P ubuntu-latest=catthehacker/ubuntu:act-latest -s DOCKERHUB_USERNAME=dry-run",
+    "test:e2e:local": "pnpm --filter @razzia/e2e exec playwright test --config playwright.local.config.ts"
   },
   "devDependencies": {
     "@stylistic/eslint-plugin": "latest",

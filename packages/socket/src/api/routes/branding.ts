@@ -6,7 +6,10 @@ import {
   brandingUploadValidator,
 } from "@razzia/common/validators/branding"
 import { apiFactory } from "@razzia/socket/api/factory"
-import { requireManager } from "@razzia/socket/api/middleware"
+import {
+  requireManager,
+  requireAdministrator,
+} from "@razzia/socket/api/middleware"
 import {
   readBranding,
   writeBranding,
@@ -21,6 +24,7 @@ const invalid = (c: {
 const routes = apiFactory
   .createApp()
   .use(requireManager)
+  .use(requireAdministrator)
   .use(async (c, next) => {
     c.header("Cache-Control", "no-store")
     await next()

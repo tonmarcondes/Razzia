@@ -1,6 +1,6 @@
 # Local account authentication
 
-Status: authentication implemented; deployment remains blocked until the separate resource-isolation release gate is complete. Legacy login remains the default. Do not activate local mode by editing environment variables alone.
+Status: authentication and teacher isolation implemented. Legacy login remains the default. Local mode requires explicit migration, bootstrap and activation; see [teacher isolation](teacher-isolation.md). Do not enable it by changing environment variables alone.
 
 ## Identity and administration
 
@@ -40,4 +40,4 @@ Bootstrap initializes the disabled holding administrator once, with a forced pas
 - Administrator `/api/users` list/create, `PATCH /api/users/:id` and `POST /api/users/:id/reset`.
 - Manager settings add **Account and users**. Teachers see their own password form; administrators also see user administration. Portuguese is complete; other untranslated locales use English labels with full key parity.
 
-Authentication/account administration alone does not protect private quiz/media/report resources. The startup release gate remains closed until those HTTP/socket/media boundaries and migration cutover are implemented and tested.
+Authentication/account administration alone is not the privacy boundary. The startup gate now requires the explicit activation state documented in [teacher isolation](teacher-isolation.md); quiz/result/media routes enforce ownership and live-game scope.

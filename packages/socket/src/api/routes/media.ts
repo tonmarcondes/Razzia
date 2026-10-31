@@ -12,12 +12,22 @@ import {
 import { bodyLimit } from "hono/body-limit"
 import { StatusCodes } from "http-status-codes"
 
+import { authMode } from "@razzia/socket/env"
+import { localResources } from "@razzia/socket/services/local-resources"
+
 const MULTIPART_OVERHEAD = 64 * 1024
 
 const routes = apiFactory
   .createApp()
   .use(requireManager)
-  .get("/", (c) => c.json({ media: listMedia() }))
+  .get("/", (c) =>
+    c.json({
+      media:
+        authMode === "local"
+          ? localResources.media(c.get("claims"))
+          : listMedia(),
+    }),
+  )
   .post(
     "/",
     bodyLimit({
@@ -30,10 +40,19 @@ const routes = apiFactory
     }),
     zValidator("form", mediaUploadValidator, i18nHook),
     async (c) =>
-      c.json(await saveMedia(c.req.valid("form").file), StatusCodes.CREATED),
+      c.json(
+        await (authMode === "local"
+          ? localResources.upload(c.get("claims"), c.req.valid("form").file)
+          : saveMedia(c.req.valid("form").file)),
+        StatusCodes.CREATED,
+      ),
   )
   .delete("/:name", (c) => {
-    deleteMedia(c.req.param("name"))
+    if (authMode === "local") {
+      localResources.deleteMedia(c.get("claims"), c.req.param("name"))
+    } else {
+      deleteMedia(c.req.param("name"))
+    }
 
     return c.body(null, StatusCodes.NO_CONTENT)
   })

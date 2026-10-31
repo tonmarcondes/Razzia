@@ -54,6 +54,8 @@ config/
 
 See [Quiz Configuration](quiz.md) and [Custom Branding](branding.md).
 
-## Account-mode preparation
+## Local accounts
 
-`AUTH_MODE` currently accepts only `legacy` (the default). Other values, including `local`, fail startup rather than falling back to shared-manager access. Local-account authentication and privacy controls are not yet available. See [account storage tools](account-storage.md) for isolated offline migration rehearsals.
+`AUTH_MODE=legacy` is the default. `AUTH_MODE=local` requires an explicitly migrated, bootstrapped and activated store plus a durable `JWT_SECRET` of at least 32 characters; startup fails closed otherwise. In local mode `MANAGER_PASSWORD` does not authenticate a manager. `AUTH_COOKIE_SECURE` defaults to `true`; only isolated HTTP development/tests should set it to `false`.
+
+See [local accounts](local-accounts.md) for configurable password length/composition and [teacher isolation](teacher-isolation.md) for activation, private media and rollback boundaries. Offline [account storage tools](account-storage.md) support migration and consistent backup rehearsals.

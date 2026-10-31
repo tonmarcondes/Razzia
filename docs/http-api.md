@@ -162,3 +162,7 @@ When the generator is on, the ticket carries no `username` and the name is drawn
 ## Reverse proxies
 
 `/api` must be forwarded to the container like `/` and `/ws` — see [Reverse Proxy](reverse-proxy.md).
+
+## Local accounts and ownership
+
+See [local account endpoints](local-accounts.md) and [teacher isolation](teacher-isolation.md). In activated local mode the existing quiz/result/media routes scope access to the current account; branding and user administration require an administrator. Private media bytes are served through the backend with scoped HttpOnly cookie authentication. `POST /api/quizz/:id/owner` permits an administrator to transfer a quiz to an active account.

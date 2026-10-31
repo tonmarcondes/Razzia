@@ -23,7 +23,10 @@ const eventValidators: Partial<Record<string, z.ZodType>> =
 
 export const app = new Hono()
 
+import { serveTrainingMedia } from "@razzia/socket/services/private-media"
+
 app.route("/api", api)
+app.get("/media/:name", serveTrainingMedia)
 
 app.notFound((c) =>
   c.json({ error: "errors:api.notFound" }, StatusCodes.NOT_FOUND),

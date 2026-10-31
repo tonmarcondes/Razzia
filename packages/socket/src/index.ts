@@ -4,15 +4,22 @@ import { initConfig } from "@razzia/socket/services/config"
 import Registry from "@razzia/socket/services/registry"
 
 import { authMode } from "@razzia/socket/env"
-import { assertAccountModeReady } from "@razzia/socket/services/accounts"
+import {
+  assertLegacyModeReady,
+  assertAccountModeReady,
+} from "@razzia/socket/services/accounts"
 
 if (authMode === "local") {
   assertAccountModeReady()
+} else {
+  assertLegacyModeReady()
 }
 
 const WS_PORT = Number(process.env.SOCKET_PORT) || 3001
 
-initConfig()
+if (authMode === "legacy") {
+  initConfig()
+}
 
 process.on("uncaughtException", (error) => {
   console.error("Uncaught exception:", error)

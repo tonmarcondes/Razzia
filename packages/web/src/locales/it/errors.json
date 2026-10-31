@@ -74,7 +74,8 @@
     "missingFile": "Nessun file inviato",
     "notFound": "File non trovato",
     "tooLarge": "Il file è troppo grande",
-    "uploadFailed": "Caricamento del file non riuscito"
+    "uploadFailed": "Caricamento del file non riuscito",
+    "inUse": "This media is referenced by a quiz, game or result and must be retained."
   },
   "branding": {
     "invalidTheme": "Check the name, colors and image URLs. Use HTTPS or a local branding/media path.",

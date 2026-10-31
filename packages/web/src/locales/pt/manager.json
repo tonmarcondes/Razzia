@@ -147,6 +147,10 @@
     "makeTeacher": "Definir como professor",
     "makeAdmin": "Definir como administrador",
     "signIn": "Entrar novamente",
-    "loading": "Carregando conta…"
+    "loading": "Carregando conta…",
+    "transfer": "Transferir quiz",
+    "transferTo": "Novo proprietário",
+    "selectOwner": "Selecione uma conta ativa",
+    "transferred": "Propriedade do quiz transferida"
   }
 }

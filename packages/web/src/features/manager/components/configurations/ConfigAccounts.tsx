@@ -64,24 +64,26 @@ const AccountAdministration = () => {
           <p>{t("manager:accounts.resetFor", { name: reset.displayName })}</p>
         ) : (
           <>
-            <label>
+            <label className="block">
               {t("manager:accounts.login")}
               <Input
+                className="mt-1 block w-full"
                 autoComplete="off"
                 value={login}
                 onChange={(e) => setLogin(e.target.value)}
                 required
               />
             </label>
-            <label>
+            <label className="block">
               {t("manager:accounts.name")}
               <Input
+                className="mt-1 block w-full"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
               />
             </label>
-            <label>
+            <label className="block">
               {t("manager:accounts.role")}
               <select
                 className="bg-background border-input w-full rounded border p-2"
@@ -96,9 +98,10 @@ const AccountAdministration = () => {
             </label>
           </>
         )}
-        <label>
+        <label className="block">
           {t("manager:accounts.temporaryPassword")}
           <Input
+            className="mt-1 block w-full"
             type="password"
             autoComplete="new-password"
             value={password}
@@ -124,7 +127,7 @@ const AccountAdministration = () => {
       <ul className="space-y-3">
         {data?.users.map((user) => (
           <li className="rounded border p-2" key={user.id}>
-            <p>
+            <p className="break-words">
               {user.displayName} ({user.login}) —{" "}
               {t(`manager:accounts.${user.role}`)} —{" "}
               {t(
@@ -251,9 +254,10 @@ const ConfigAccounts = () => {
           void submit()
         }}
       >
-        <label>
+        <label className="block">
           {t("manager:accounts.currentPassword")}
           <Input
+            className="mt-1 block w-full"
             type="password"
             autoComplete="current-password"
             value={current}
@@ -261,9 +265,10 @@ const ConfigAccounts = () => {
             required
           />
         </label>
-        <label>
+        <label className="block">
           {t("manager:accounts.newPassword")}
           <Input
+            className="mt-1 block w-full"
             type="password"
             autoComplete="new-password"
             value={password}
@@ -271,9 +276,10 @@ const ConfigAccounts = () => {
             required
           />
         </label>
-        <label>
+        <label className="block">
           {t("manager:accounts.confirmPassword")}
           <Input
+            className="mt-1 block w-full"
             type="password"
             autoComplete="new-password"
             value={confirmation}

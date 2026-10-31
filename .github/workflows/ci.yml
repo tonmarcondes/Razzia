@@ -76,7 +76,9 @@ jobs:
         run: pnpm --filter @razzia/e2e exec playwright install-deps chromium
 
       - name: Run e2e tests
-        run: pnpm test:e2e
+        run: |
+          pnpm test:e2e
+          pnpm test:e2e:local
 
       - name: Upload Playwright traces
         if: failure()

@@ -1,6 +1,6 @@
 # ADR 0001: local-account persistence foundation
 
-Status: accepted for the storage foundation; local authentication remains disabled.
+Status: accepted. This ADR records the original storage foundation. Later [account authentication](../local-accounts.md) and [teacher isolation](../teacher-isolation.md) deliveries enable runtime access only after explicit activation.
 
 ## Context
 

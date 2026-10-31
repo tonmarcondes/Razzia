@@ -147,6 +147,10 @@
     "makeTeacher": "Set as teacher",
     "makeAdmin": "Set as administrator",
     "signIn": "Sign in again",
-    "loading": "Loading account…"
+    "loading": "Loading account…",
+    "transfer": "Transfer quiz",
+    "transferTo": "New owner",
+    "selectOwner": "Select an active account",
+    "transferred": "Quiz ownership transferred"
   }
 }

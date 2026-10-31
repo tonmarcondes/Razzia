@@ -74,7 +74,8 @@
     "missingFile": "Nenhum arquivo foi enviado",
     "notFound": "Mídia não encontrada",
     "tooLarge": "O arquivo é muito grande",
-    "uploadFailed": "Não foi possível enviar o arquivo"
+    "uploadFailed": "Não foi possível enviar o arquivo",
+    "inUse": "A mídia está vinculada a um quiz, partida ou resultado e precisa ser preservada."
   },
   "branding": {
     "invalidTheme": "Confira o nome, as cores e os endereços das imagens. Use HTTPS ou um caminho local de branding/mídia.",

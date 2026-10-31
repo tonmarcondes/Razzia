@@ -93,3 +93,7 @@ Keep e2e tests for what needs a browser and several clients. Logic that can be c
 - **Lint & Format**: `pnpm format` and `pnpm lint`.
 - **Tests**: the build, then the unit and integration tests.
 - **E2E Tests**: the Playwright tests. When a test fails, the traces are uploaded as the `playwright-traces` artifact. Open one with `pnpm --filter @razzia/e2e exec playwright show-trace <trace.zip>`.
+
+## Local-account browser acceptance
+
+After building, run `pnpm test:e2e:local`. This separate suite uses `packages/e2e/.local-config` and ports 3100/3101 with synthetic bootstrap credentials; it cannot target an arbitrary config directory. It verifies account UI, two simultaneous classes, data isolation, revocation and mobile layout. The standard legacy suite remains required, and CI runs both.
