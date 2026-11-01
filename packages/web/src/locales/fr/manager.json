@@ -159,5 +159,12 @@
     "profilePassword": "Confirm your password to save your profile",
     "saveProfile": "Save my profile",
     "edit": "Edit profile"
+  },
+  "library": {
+    "help": "Private quizzes are available to their creator and administrators. Public quizzes can be used by signed-in teachers; only the creator and administrators can edit.",
+    "visibilityFor": "Visibility of {{name}}",
+    "private": "Private",
+    "public": "Public",
+    "readOnly": "Public · read only"
   }
 }

@@ -1,4 +1,4 @@
-import { accountQuery, usersQuery } from "@razzia/web/features/manager/accounts"
+import { accountQuery } from "@razzia/web/features/manager/accounts"
 import type { QuizzValidated } from "@razzia/common/validators/quizz"
 import AlertDialog from "@razzia/web/components/AlertDialog"
 import Button from "@razzia/web/components/Button"
@@ -12,14 +12,7 @@ import {
 import { api, ApiError, unwrap, unwrapEmpty } from "@razzia/web/lib/api"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
-import {
-  ArrowRightLeft,
-  Braces,
-  Download,
-  SquarePen,
-  Trash2,
-  Upload,
-} from "lucide-react"
+import { Braces, Download, SquarePen, Trash2, Upload } from "lucide-react"
 
 import { type ChangeEvent, useRef, useState } from "react"
 
@@ -58,13 +51,6 @@ const ConfigManageQuizz = () => {
   const { t } = useTranslation()
 
   const { data: me } = useQuery(accountQuery())
-  const { data: users } = useQuery({
-    ...usersQuery(),
-    enabled: me?.user?.role === "admin",
-  })
-  const [transfer, setTransfer] = useState<string | null>(null)
-  const [owner, setOwner] = useState("")
-
   const [review, setReview] = useState<Review | null>(null)
 
   const [busy, setBusy] = useState(false)
@@ -227,11 +213,16 @@ const ConfigManageQuizz = () => {
     e.target.value = ""
   }
 
-  const quizz = data?.quizz ?? []
+  const quizz = (data?.quizz ?? []).map((q) => ({
+    ...q,
+    canEdit: "canEdit" in q ? Boolean(q.canEdit) : true,
+    visibility: "visibility" in q ? String(q.visibility) : "private",
+  }))
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <p className="mb-2 text-sm">{t("manager:spreadsheet.help")}</p>
+      {me?.user && <p className="mb-2 text-sm">{t("manager:library.help")}</p>}
       <div className="mb-4 flex shrink-0 flex-wrap gap-2">
         <Button
           className="flex-1"
@@ -273,56 +264,6 @@ const ConfigManageQuizz = () => {
           onChange={handleSpreadsheetImport}
         />
       </div>
-      {transfer && (
-        <form
-          className="mb-3 space-y-2 border p-3"
-          onSubmit={async (event) => {
-            event.preventDefault()
-            setBusy(true)
-
-            try {
-              await unwrapEmpty(
-                api.quizz[":id"].owner.$post({
-                  param: { id: transfer },
-                  json: { ownerId: owner },
-                }),
-              )
-              setTransfer(null)
-              await invalidate()
-              toast.success(t("manager:accounts.transferred"))
-            } catch (error) {
-              onError(error as Error, "errors:quizz.failedToSave")
-            } finally {
-              setBusy(false)
-            }
-          }}
-        >
-          <label className="block">
-            {t("manager:accounts.transferTo")}
-            <select
-              className="bg-background w-full rounded border p-2"
-              value={owner}
-              onChange={(event) => setOwner(event.target.value)}
-              required
-            >
-              <option value="">{t("manager:accounts.selectOwner")}</option>
-              {users?.users
-                .filter((user) => user.active)
-                .map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.displayName} ({user.login})
-                  </option>
-                ))}
-            </select>
-          </label>
-          <Button disabled={busy || !owner}>
-            {t("manager:accounts.transfer")}
-          </Button>
-          <Button type="button" onClick={() => setTransfer(null)}>
-            {t("common:cancel")}
-          </Button>
-        </form>
-      )}
       {review && (
         <section
           aria-label={t("manager:spreadsheet.review")}
@@ -359,22 +300,67 @@ const ConfigManageQuizz = () => {
         {quizz.map((q) => (
           <div
             key={q.id}
-            className="border-accent flex h-12 w-full items-center justify-between rounded-md border-2 p-3 pr-1.5"
+            className="border-accent flex w-full flex-col gap-2 rounded-md border-2 p-2"
           >
             <p className="text-foreground truncate font-medium">{q.subject}</p>
-            <div className="flex gap-0.5">
-              <button
-                className="text-accent-foreground hover:bg-accent-foreground/10 rounded-sm p-2"
-                title={t("manager:quizz.edit")}
-                onClick={() =>
-                  navigate({
-                    to: "/manager/quizz/$quizzId",
-                    params: { quizzId: q.id },
-                  })
-                }
-              >
-                <SquarePen className="size-4" />
-              </button>
+            <div className="flex flex-wrap items-center justify-end gap-1">
+              {me?.user &&
+                (q.canEdit ? (
+                  <label className="mr-auto text-sm">
+                    <span className="sr-only">
+                      {t("manager:library.visibilityFor", { name: q.subject })}
+                    </span>
+                    <select
+                      className="bg-background rounded border p-1"
+                      value={q.visibility}
+                      disabled={busy}
+                      onChange={async (event) => {
+                        const visibility = event.target.value as
+                          "private" | "public"
+                        setBusy(true)
+
+                        try {
+                          await unwrapEmpty(
+                            api.quizz[":id"].visibility.$patch({
+                              param: { id: q.id },
+                              json: { visibility },
+                            }),
+                          )
+                          await invalidate()
+                        } catch (error) {
+                          onError(error as Error, "errors:quizz.failedToSave")
+                        } finally {
+                          setBusy(false)
+                        }
+                      }}
+                    >
+                      <option value="private">
+                        {t("manager:library.private")}
+                      </option>
+                      <option value="public">
+                        {t("manager:library.public")}
+                      </option>
+                    </select>
+                  </label>
+                ) : (
+                  <span className="mr-auto text-sm">
+                    {t("manager:library.readOnly")}
+                  </span>
+                ))}
+              {q.canEdit && (
+                <button
+                  className="text-accent-foreground hover:bg-accent-foreground/10 rounded-sm p-2"
+                  title={t("manager:quizz.edit")}
+                  onClick={() =>
+                    navigate({
+                      to: "/manager/quizz/$quizzId",
+                      params: { quizzId: q.id },
+                    })
+                  }
+                >
+                  <SquarePen className="size-4" />
+                </button>
+              )}
               <button
                 className="text-accent-foreground hover:bg-accent-foreground/10 rounded-sm p-2"
                 onClick={() => handleExport(q.id)()}
@@ -390,34 +376,24 @@ const ConfigManageQuizz = () => {
               >
                 <Upload className="size-4" aria-hidden="true" /> Kahoot
               </button>
-              {me?.user?.role === "admin" && (
-                <button
-                  title={t("manager:accounts.transfer")}
-                  className="rounded-sm p-2"
-                  onClick={() => {
-                    setTransfer(q.id)
-                    setOwner("")
-                  }}
-                >
-                  <ArrowRightLeft className="size-4" />
-                </button>
+              {q.canEdit && (
+                <AlertDialog
+                  trigger={
+                    <button
+                      className="rounded-sm p-2 hover:bg-red-600/10"
+                      title={t("manager:quizz.delete")}
+                    >
+                      <Trash2 className="size-4 stroke-red-500" />
+                    </button>
+                  }
+                  title={t("manager:quizz.delete")}
+                  description={t("manager:quizz.deleteConfirm", {
+                    name: q.subject,
+                  })}
+                  confirmLabel={t("common:delete")}
+                  onConfirm={() => remove(q.id)}
+                />
               )}
-              <AlertDialog
-                trigger={
-                  <button
-                    className="rounded-sm p-2 hover:bg-red-600/10"
-                    title={t("manager:quizz.delete")}
-                  >
-                    <Trash2 className="size-4 stroke-red-500" />
-                  </button>
-                }
-                title={t("manager:quizz.delete")}
-                description={t("manager:quizz.deleteConfirm", {
-                  name: q.subject,
-                })}
-                confirmLabel={t("common:delete")}
-                onConfirm={() => remove(q.id)}
-              />
             </div>
           </div>
         ))}
