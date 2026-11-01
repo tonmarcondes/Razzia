@@ -3,6 +3,7 @@ import type { SessionClaims } from "@razzia/common/types/auth"
 import {
   accountLogin,
   createAccountValidator,
+  updateProfileValidator,
   type AccountPublic,
 } from "@razzia/common/validators/accounts"
 import { LocalDatabase } from "@razzia/socket/storage/database"
@@ -233,6 +234,7 @@ export class Accounts {
     claims: SessionClaims,
     id: string,
     input: {
+      login?: string
       displayName: string
       role: AccountPublic["role"]
       active: boolean
@@ -251,16 +253,72 @@ export class Accounts {
         throw invalidInput("errors:accounts.lastAdmin")
       }
 
+      this.availableLogin(input.login ?? target.login, id)
       this.db
         .prepare(
-          "UPDATE users SET display_name=?,role=?,active=?,updated_at=? WHERE id=?",
+          "UPDATE users SET login=?,display_name=?,role=?,active=?,updated_at=? WHERE id=?",
         )
-        .run(input.displayName, input.role, Number(input.active), now(), id)
+        .run(
+          input.login ?? target.login,
+          input.displayName,
+          input.role,
+          Number(input.active),
+          now(),
+          id,
+        )
       this.audit(actor, "account.update", id)
     })
     this.revoke(id)
 
     return this.get(id)
+  }
+  availableLogin(login: string, id: string) {
+    if (
+      this.db
+        .prepare("SELECT id FROM users WHERE login=? AND id<>?")
+        .get(login, id)
+    ) {
+      throw invalidInput("errors:accounts.loginExists")
+    }
+  }
+  async profile(claims: SessionClaims, input: unknown) {
+    const data = updateProfileValidator.parse(input)
+    const user = this.current(claims)
+
+    if (user.mustReset) {
+      throw new DomainError("errors:auth.unauthorized", 403)
+    }
+
+    const previous = String(
+      this.db.prepare("SELECT password_hash FROM users WHERE id=?").get(user.id)
+        ?.password_hash,
+    )
+
+    if (!(await verifyPassword(data.currentPassword, previous))) {
+      throw unauthorized()
+    }
+
+    return this.store.transaction(() => {
+      this.current(claims)
+
+      if (
+        this.db
+          .prepare("SELECT password_hash FROM users WHERE id=?")
+          .get(user.id)?.password_hash !== previous
+      ) {
+        throw unauthorized()
+      }
+
+      this.availableLogin(data.login, user.id)
+      this.db
+        .prepare(
+          "UPDATE users SET login=?,display_name=?,updated_at=? WHERE id=?",
+        )
+        .run(data.login, data.displayName, now(), user.id)
+      this.audit(user.id, "account.profile.update", user.id)
+
+      return this.get(user.id)
+    })
   }
   async reset(claims: SessionClaims, id: string, password: string) {
     const actor = this.admin(claims)

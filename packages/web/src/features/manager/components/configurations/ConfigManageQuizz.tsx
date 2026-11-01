@@ -14,6 +14,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import {
   ArrowRightLeft,
+  Braces,
   Download,
   SquarePen,
   Trash2,
@@ -257,9 +258,11 @@ const ConfigManageQuizz = () => {
       <div className="mb-2">
         <Button
           disabled={busy}
+          title={t("manager:spreadsheet.import")}
+          className="inline-flex items-center gap-2"
           onClick={() => spreadsheetInput.current?.click()}
         >
-          {t("manager:spreadsheet.import")}
+          <Download className="size-4" aria-hidden="true" /> Kahoot
         </Button>
         <input
           ref={spreadsheetInput}
@@ -377,15 +380,15 @@ const ConfigManageQuizz = () => {
                 onClick={() => handleExport(q.id)()}
                 title={t("manager:quizz.export")}
               >
-                <Download className="size-4" />
+                <Braces className="size-4" />
               </button>
               <button
                 disabled={busy}
-                className="rounded-sm p-2"
+                className="inline-flex items-center gap-1 rounded-sm p-2"
                 title={t("manager:spreadsheet.export")}
                 onClick={() => handleSpreadsheetExport(q.id)}
               >
-                XLSX
+                <Upload className="size-4" aria-hidden="true" /> Kahoot
               </button>
               {me?.user?.role === "admin" && (
                 <button

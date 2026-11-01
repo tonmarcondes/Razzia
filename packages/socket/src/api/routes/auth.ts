@@ -21,6 +21,7 @@ import { StatusCodes } from "http-status-codes"
 import {
   accountLoginValidator,
   changePasswordValidator,
+  updateProfileValidator,
 } from "@razzia/common/validators/accounts"
 import { getAccounts } from "@razzia/socket/services/accounts"
 import { passwordPolicy } from "@razzia/socket/services/passwords"
@@ -107,6 +108,27 @@ const routes = new Hono()
         c,
         await mintToken(sub, SESSION_ROLES.MANAGER, sid),
       )
+    },
+  )
+  .patch(
+    "/profile",
+    zValidator("json", updateProfileValidator, i18nHook),
+    async (c) => {
+      const claims = await readClaims(c)
+
+      if (
+        authMode !== "local" ||
+        !claims ||
+        claims.role !== SESSION_ROLES.MANAGER
+      ) {
+        return c.json({ error: "errors:auth.unauthorized" }, 401)
+      }
+
+      checkLoginLimit("profile-change", claims.sid ?? claims.sub)
+
+      return c.json({
+        user: await getAccounts().profile(claims, c.req.valid("json")),
+      })
     },
   )
   .post(

@@ -4,6 +4,7 @@ import type { z } from "zod"
 import type {
   createAccountValidator,
   updateAccountValidator,
+  updateProfileValidator,
 } from "@razzia/common/validators/accounts"
 
 export const authConfigQuery = () =>
@@ -42,3 +43,6 @@ export const resetAccount = (id: string, password: string) =>
   unwrapEmpty(
     api.users[":id"].reset.$post({ param: { id }, json: { password } }),
   )
+
+export const updateProfile = (json: z.infer<typeof updateProfileValidator>) =>
+  unwrap(api.auth.profile.$patch({ json }))

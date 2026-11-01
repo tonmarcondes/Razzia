@@ -41,3 +41,9 @@ Bootstrap initializes the disabled holding administrator once, with a forced pas
 - Manager settings add **Account and users**. Teachers see their own password form; administrators also see user administration. Portuguese is complete; other untranslated locales use English labels with full key parity.
 
 Authentication/account administration alone is not the privacy boundary. The startup gate now requires the explicit activation state documented in [teacher isolation](teacher-isolation.md); quiz/result/media routes enforce ownership and live-game scope.
+
+## Profile editing
+
+After mandatory password change, each local account may edit its normalized login and display name under **Account and users → My profile**, confirming the current password. `PATCH /api/auth/profile` only changes the authenticated account: submitted account IDs, roles or active flags cannot target another user or elevate privileges. Login uniqueness is enforced transactionally. Account/client/session identifiers remain stable and the authenticated session stays valid after a self-service profile change. Password confirmation is rate-limited; revoked sessions or concurrently replaced passwords cannot save changes.
+
+Administrators can select **Edit profile** in user administration to update another account's login, display name and role. The existing active/disabled and temporary password actions remain separate. Administrator updates revoke that account's sessions, including live sockets, and retain last-administrator protection. Both changes are audited. No email address, institutional ID or other new personal fields are collected.

@@ -157,6 +157,10 @@
     "transfer": "Transfer quiz",
     "transferTo": "New owner",
     "selectOwner": "Select an active account",
-    "transferred": "Quiz ownership transferred"
+    "transferred": "Quiz ownership transferred",
+    "profile": "My profile",
+    "profilePassword": "Confirm your password to save your profile",
+    "saveProfile": "Save my profile",
+    "edit": "Edit profile"
   }
 }

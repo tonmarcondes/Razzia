@@ -154,6 +154,10 @@
     "transfer": "Transferir quiz",
     "transferTo": "Novo proprietário",
     "selectOwner": "Selecione uma conta ativa",
-    "transferred": "Propriedade do quiz transferida"
+    "transferred": "Propriedade do quiz transferida",
+    "profile": "Meus dados",
+    "profilePassword": "Confirme sua senha para salvar seus dados",
+    "saveProfile": "Salvar meus dados",
+    "edit": "Editar dados"
   }
 }
