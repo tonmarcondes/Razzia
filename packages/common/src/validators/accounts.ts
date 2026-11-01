@@ -21,9 +21,16 @@ export const createAccountValidator = z.object({
 })
 
 export const updateAccountValidator = z.object({
+  login: accountLogin.optional(),
   displayName: z.string().trim().min(1).max(100),
   role: z.enum(["admin", "teacher"]),
   active: z.boolean(),
+})
+
+export const updateProfileValidator = z.object({
+  login: accountLogin,
+  displayName: z.string().trim().min(1).max(100),
+  currentPassword: accountPassword,
 })
 
 export const resetAccountValidator = z.object({ password: accountPassword })

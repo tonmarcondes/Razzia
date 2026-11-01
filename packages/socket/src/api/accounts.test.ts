@@ -72,6 +72,118 @@ describe("account HTTP and socket authorization", () => {
     await io.close()
     getAccounts().store.close()
   })
+  it("lets users edit only their own profile with password confirmation and lets admins edit accounts", async () => {
+    const created = await request("users", "POST", {
+      login: "profile-teacher",
+      displayName: "Original",
+      role: "teacher",
+      password: TEMP,
+    })
+    expect(created.status).toBe(201)
+    const { id } = (await created.json()) as { id: string }
+    let teacher = await login("profile-teacher", TEMP)
+    expect(
+      (
+        await request(
+          "auth/profile",
+          "PATCH",
+          {
+            login: "changed-teacher",
+            displayName: "Changed",
+            currentPassword: TEMP,
+          },
+          teacher,
+        )
+      ).status,
+    ).toBe(403)
+    expect(
+      (
+        await request(
+          "auth/password",
+          "POST",
+          { currentPassword: TEMP, password: PASS },
+          teacher,
+        )
+      ).status,
+    ).toBe(200)
+    teacher = await login("profile-teacher", PASS)
+    expect(
+      (
+        await request(
+          "auth/profile",
+          "PATCH",
+          {
+            login: "changed-teacher",
+            displayName: "Changed",
+            currentPassword: "wrong",
+          },
+          teacher,
+        )
+      ).status,
+    ).toBe(403)
+    expect(
+      (
+        await request(
+          "auth/profile",
+          "PATCH",
+          { login: " ADMIN ", displayName: "Changed", currentPassword: PASS },
+          teacher,
+        )
+      ).status,
+    ).toBe(400)
+    const changed = await request(
+      "auth/profile",
+      "PATCH",
+      {
+        id: "legacy-holding-administrator",
+        login: " Changed-Teacher ",
+        displayName: " Changed ",
+        currentPassword: PASS,
+        role: "admin",
+        active: false,
+      },
+      teacher,
+    )
+    expect(changed.status).toBe(200)
+    expect(((await changed.json()) as { user: unknown }).user).toMatchObject({
+      id,
+      login: "changed-teacher",
+      displayName: "Changed",
+      role: "teacher",
+      active: true,
+    })
+    expect((await request("auth/me", "GET", undefined, teacher)).status).toBe(
+      200,
+    )
+    expect(
+      (
+        await request(
+          `users/${id}`,
+          "PATCH",
+          { login: "forbidden", displayName: "x", role: "admin", active: true },
+          teacher,
+        )
+      ).status,
+    ).toBe(403)
+    expect(
+      (
+        await request(`users/${id}`, "PATCH", {
+          login: "renamed-by-admin",
+          displayName: "Edited by admin",
+          role: "teacher",
+          active: true,
+        })
+      ).status,
+    ).toBe(200)
+    expect((await request("auth/me", "GET", undefined, teacher)).status).toBe(
+      401,
+    )
+    const renamed = await login("renamed-by-admin", PASS)
+    expect((await request("auth/me", "GET", undefined, renamed)).status).toBe(
+      200,
+    )
+    expect(getAccounts().get(id).displayName).toBe("Edited by admin")
+  })
   it("rejects the legacy password and sessions without an account mapping", async () => {
     expect(
       (await request("auth/manager", "POST", { password: "legacy-secret" }, ""))

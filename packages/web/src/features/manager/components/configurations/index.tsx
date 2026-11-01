@@ -16,7 +16,7 @@ import { managerLogout } from "@razzia/web/features/manager/queries"
 import { setToken } from "@razzia/web/lib/session"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
-import { LogOut } from "lucide-react"
+import { LogOut, Palette, UsersRound } from "lucide-react"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 
@@ -133,10 +133,20 @@ const Configurations = () => {
         {tabs.map((tab, index) => (
           <ConfigTabButton
             key={tab.nameKey}
+            title={t(tab.nameKey)}
+            aria-label={t(tab.nameKey)}
             active={index === activeIndex}
             onClick={handleSelect(index)}
           >
-            {t(tab.nameKey)}
+            {tab.nameKey === "manager:tabs.appearance" && (
+              <Palette className="mx-auto size-5" aria-hidden="true" />
+            )}
+            {tab.nameKey === "manager:tabs.accounts" && (
+              <UsersRound className="mx-auto size-5" aria-hidden="true" />
+            )}
+            {!["manager:tabs.appearance", "manager:tabs.accounts"].includes(
+              tab.nameKey,
+            ) && t(tab.nameKey)}
           </ConfigTabButton>
         ))}
       </div>

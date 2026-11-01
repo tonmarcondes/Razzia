@@ -86,15 +86,19 @@ test("administers teachers, isolates two simultaneous classes and revokes a live
     .click()
   const create = async (name: string, displayName: string) => {
     await admin
+      .getByRole("region", { name: tr("manager:accounts.users") })
       .getByLabel(tr("manager:accounts.login"), { exact: true })
       .fill(name)
     await admin
+      .getByRole("region", { name: tr("manager:accounts.users") })
       .getByLabel(tr("manager:accounts.name"), { exact: true })
       .fill(displayName)
     await admin
+      .getByRole("region", { name: tr("manager:accounts.users") })
       .getByLabel(tr("manager:accounts.temporaryPassword"), { exact: true })
       .fill(TEACHER_TEMP)
     await admin
+      .getByRole("region", { name: tr("manager:accounts.users") })
       .getByRole("button", { name: tr("manager:accounts.create"), exact: true })
       .click()
     await expect(
@@ -103,6 +107,25 @@ test("administers teachers, isolates two simultaneous classes and revokes a live
   }
   await create("teacher-a", "Professor A")
   await create("teacher-b", "Professor B")
+  const administration = admin.getByRole("region", {
+    name: tr("manager:accounts.users"),
+  })
+  await administration
+    .getByRole("listitem")
+    .filter({ hasText: "teacher-b" })
+    .getByRole("button", { name: tr("manager:accounts.edit"), exact: true })
+    .click()
+  await administration
+    .getByLabel(tr("manager:accounts.name"), { exact: true })
+    .fill("Professor B atualizado")
+  await administration
+    .getByRole("button", { name: tr("common:save"), exact: true })
+    .click()
+  await expect(
+    administration.getByText("Professor B atualizado (teacher-b)", {
+      exact: false,
+    }),
+  ).toBeVisible()
   const a = await browser.newContext({ baseURL, locale: "pt-BR" }),
     b = await browser.newContext({ baseURL, locale: "pt-BR" })
   const pa = await browser.newContext({ baseURL, locale: "en-US" }),
@@ -116,6 +139,46 @@ test("administers teachers, isolates two simultaneous classes and revokes a live
     await login(hostA, "teacher-a", TEACHER_TEMP)
     await change(hostA, TEACHER_TEMP, TEACHER)
     await login(hostA, "teacher-a", TEACHER)
+    await hostA
+      .getByRole("button", { name: tr("manager:tabs.accounts"), exact: true })
+      .click()
+    const profile = hostA.getByRole("region", {
+      name: tr("manager:accounts.profile"),
+    })
+    await profile
+      .getByLabel(tr("manager:accounts.login"), { exact: true })
+      .fill("teacher-a-updated")
+    await profile
+      .getByLabel(tr("manager:accounts.name"), { exact: true })
+      .fill("Professor A atualizado")
+    await profile
+      .getByLabel(tr("manager:accounts.profilePassword"), { exact: true })
+      .fill(TEACHER)
+    await profile
+      .getByRole("button", {
+        name: tr("manager:accounts.saveProfile"),
+        exact: true,
+      })
+      .click()
+    await expect(
+      profile.getByLabel(tr("manager:accounts.login"), { exact: true }),
+    ).toHaveValue("teacher-a-updated")
+    await expect(
+      hostA.getByRole("heading", { name: tr("manager:accounts.users") }),
+    ).toHaveCount(0)
+    expect(
+      (
+        await api(hostA, "auth/profile", {
+          method: "PATCH",
+          body: {
+            login: "teacher-a",
+            displayName: "Professor A",
+            currentPassword: TEACHER,
+          },
+        })
+      ).status,
+    ).toBe(200)
+    await hostA.goto("/manager/config")
     await login(hostB, "teacher-b", TEACHER_TEMP)
     await change(hostB, TEACHER_TEMP, TEACHER)
     await login(hostB, "teacher-b", TEACHER)
