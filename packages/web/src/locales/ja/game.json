@@ -64,5 +64,8 @@
   },
   "showQrCode": "QRコードを表示",
   "streak": "連続正解",
-  "pinDigit": "PIN の {{position}} 桁目"
+  "pinDigit": "PIN の {{position}} 桁目",
+  "stop": "Stop game",
+  "stopConfirm": "End this game and remove all participants? It cannot be resumed. No partial report will be generated.",
+  "stopped": "The host ended the game."
 }

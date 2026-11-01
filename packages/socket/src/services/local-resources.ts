@@ -281,6 +281,31 @@ export const localResources = {
       return source.quizz
     })
   },
+  stopRun(claims: SessionClaims, id: string) {
+    const a = getAccounts()
+    a.store.transaction(() => {
+      const user = this.principal(claims)
+      const run = a.db
+        .prepare(
+          "SELECT id FROM game_runs WHERE id=? AND host_user_id=? AND host_session_id=?",
+        )
+        .get(id, user.id, claims.sid ?? null)
+
+      if (!run) {
+        throw notFound("errors:game.notFound")
+      }
+
+      const updated = a.db
+        .prepare(
+          "UPDATE game_runs SET ended_at=? WHERE id=? AND ended_at IS NULL",
+        )
+        .run(new Date().toISOString(), id)
+
+      if (updated.changes) {
+        a.audit(user.id, "game.stop", id)
+      }
+    })
+  },
   saveResult(runId: string, result: GameResult) {
     const a = getAccounts(),
       payload = JSON.stringify(parseLegacyResult(result))

@@ -5,6 +5,7 @@ import {
   type Status,
   type StatusDataMap,
 } from "@razzia/common/types/game/status"
+import AlertDialog from "@razzia/web/components/AlertDialog"
 import Button from "@razzia/web/components/Button"
 import GameBackground from "@razzia/web/components/GameBackground"
 import Loader from "@razzia/web/components/Loader"
@@ -22,7 +23,7 @@ import { MANAGER_SKIP_BTN } from "@razzia/web/features/game/utils/constants"
 import type { Status as GameStatus } from "@razzia/web/features/game/utils/createStatus"
 import { useFullscreen } from "@razzia/web/hooks/useFullscreen"
 import clsx from "clsx"
-import { Maximize, Minimize, Users } from "lucide-react"
+import { CircleStop, Maximize, Minimize, Users } from "lucide-react"
 import { type PropsWithChildren, useState } from "react"
 import toast from "react-hot-toast"
 import { useTranslation } from "react-i18next"
@@ -31,6 +32,7 @@ type Props = PropsWithChildren & {
   statusName: Status | undefined
   onNext?: () => void
   onBack?: () => void
+  onStop?: () => void
   manager?: boolean
 }
 
@@ -39,6 +41,7 @@ const GameWrapper = ({
   statusName,
   onNext,
   onBack,
+  onStop,
   manager,
 }: Props) => {
   const { isConnected } = useSocket()
@@ -125,7 +128,7 @@ const GameWrapper = ({
           </div>
         ) : (
           <>
-            <div className="flex w-full justify-between p-4">
+            <div className="flex w-full flex-wrap justify-between gap-2 p-4">
               {questionStates && (
                 <div className="flex items-center rounded-md bg-white p-2 px-4 text-lg font-bold text-black">
                   {`${questionStates.current} / ${questionStates.total}`}
@@ -140,6 +143,25 @@ const GameWrapper = ({
                   {t("common:exit")}
                 </Button>
               )}
+
+              {manager &&
+                onStop &&
+                statusName !== STATUS.SHOW_ROOM &&
+                statusName !== STATUS.FINISHED &&
+                statusName !== STATUS.SUMMARY && (
+                  <AlertDialog
+                    trigger={
+                      <Button className="inline-flex items-center gap-2 bg-white px-3 text-red-700">
+                        <CircleStop className="size-5" aria-hidden="true" />
+                        {t("game:stop")}
+                      </Button>
+                    }
+                    title={t("game:stop")}
+                    description={t("game:stopConfirm")}
+                    confirmLabel={t("game:stop")}
+                    onConfirm={onStop}
+                  />
+                )}
 
               {manager && next && (
                 <div className="ml-auto flex gap-2">

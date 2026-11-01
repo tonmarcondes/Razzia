@@ -1,3 +1,5 @@
+import { authMode } from "@razzia/socket/env"
+import { localResources } from "@razzia/socket/services/local-resources"
 import { EVENTS } from "@razzia/common/constants"
 import type { SocketContext } from "@razzia/socket/handlers/types"
 import { verifyJoinTicket } from "@razzia/socket/services/auth"
@@ -123,6 +125,28 @@ export const gameSocketHandlers = ({ io, socket }: SocketContext) => {
 
   socket.on(EVENTS.MANAGER.ADVANCE, ({ gameId }) =>
     withManagerGame(gameId, socket, (game) => game.advance()),
+  )
+
+  socket.on(EVENTS.MANAGER.STOP_GAME, ({ gameId }) =>
+    withManagerGame(gameId, socket, (game) => {
+      if (authMode === "local") {
+        try {
+          if (!socket.data.claims) {
+            throw new Error("Missing session")
+          }
+
+          localResources.stopRun(socket.data.claims, game.gameId)
+        } catch {
+          socket.emit(EVENTS.GAME.ERROR_MESSAGE, "errors:auth.unauthorized")
+
+          return
+        }
+      }
+
+      registry.removeGame(game.gameId)
+      io.to(game.gameId).emit(EVENTS.GAME.RESET, "game:stopped")
+      io.in(game.gameId).socketsLeave(game.gameId)
+    }),
   )
 
   socket.on(EVENTS.MANAGER.LEAVE, ({ gameId }) => {

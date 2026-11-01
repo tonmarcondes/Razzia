@@ -194,8 +194,7 @@ class Game {
   }
 
   dispose() {
-    this.round.clearAutoAdvance()
-    this.cooldown.abort()
+    this.round.stop()
     this.cancelManagerGrace()
   }
 

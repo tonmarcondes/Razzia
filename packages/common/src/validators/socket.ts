@@ -15,6 +15,7 @@ export const clientEventValidators = {
     playerId: z.string().min(1),
   }),
   [EVENTS.MANAGER.START_GAME]: gameMessageValidator,
+  [EVENTS.MANAGER.STOP_GAME]: gameMessageValidator,
   [EVENTS.MANAGER.ADVANCE]: gameMessageValidator,
   [EVENTS.MANAGER.SET_LOCK]: gameMessageValidator.extend({
     locked: z.boolean(),

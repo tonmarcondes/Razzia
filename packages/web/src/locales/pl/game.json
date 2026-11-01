@@ -64,5 +64,8 @@
   },
   "showQrCode": "Pokaż kod QR",
   "streak": "Seria poprawnych odpowiedzi",
-  "pinDigit": "Cyfra PIN nr {{position}}"
+  "pinDigit": "Cyfra PIN nr {{position}}",
+  "stop": "Stop game",
+  "stopConfirm": "End this game and remove all participants? It cannot be resumed. No partial report will be generated.",
+  "stopped": "The host ended the game."
 }

@@ -332,6 +332,41 @@ test("administers teachers, isolates two simultaneous classes and revokes a live
     )
     expect(JSON.stringify(reportsA.body)).not.toContain("Class B")
     expect(JSON.stringify(reportsB.body)).not.toContain("Class A")
+    await hostA
+      .getByRole("button", { name: tr("common:exit"), exact: true })
+      .click()
+    await hostA.getByRole("button", { name: "Class A", exact: true }).click()
+    await hostA
+      .getByRole("button", { name: tr("manager:quizz.startGame"), exact: true })
+      .click()
+    const stopPin = await hostA.getByText(/^\d{6}$/u).textContent()
+    await joinGame(playerA, stopPin ?? "", "Participant A2")
+    await expect(
+      hostA.getByText("Participant A2", { exact: true }),
+    ).toBeVisible()
+    await hostA
+      .getByRole("button", { name: tr("game:startGame"), exact: true })
+      .click()
+    const stop = hostA.getByRole("button", {
+      name: tr("game:stop"),
+      exact: true,
+    })
+    await expect(stop).toBeVisible()
+    await stop.click()
+    const stopDialog = hostA.getByRole("alertdialog")
+    await stopDialog
+      .getByRole("button", { name: tr("common:cancel"), exact: true })
+      .click()
+    await expect(stop).toBeVisible()
+    await stop.click()
+    await stopDialog
+      .getByRole("button", { name: tr("game:stop"), exact: true })
+      .click()
+    await expect(hostA).toHaveURL(/\/manager\/config$/u)
+    await expect(playerA.getByText(t("game:pinLabel"))).toBeVisible()
+    expect((await api(hostA, "results")).body?.results).toHaveLength(
+      ((reportsA.body?.results ?? []) as unknown[]).length,
+    )
     await hostB
       .getByRole("button", { name: tr("common:exit"), exact: true })
       .click()
