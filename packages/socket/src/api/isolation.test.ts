@@ -9,7 +9,7 @@ import {
 } from "@razzia/socket/services/accounts"
 import { localResources } from "@razzia/socket/services/local-resources"
 import { getPath } from "@razzia/socket/services/config"
-import { mintToken, verifyToken } from "@razzia/socket/services/auth"
+import { mintToken } from "@razzia/socket/services/auth"
 import { setIo } from "@razzia/socket/services/io"
 import Registry from "@razzia/socket/services/registry"
 import { LocalDatabase } from "@razzia/socket/storage/database"
@@ -41,7 +41,6 @@ const fake = createFakeIo()
 let admin = "",
   teacherA = "",
   teacherB = "",
-  teacherAId = "",
   sourceId = "",
   uploaded = ""
 const request = (
@@ -143,14 +142,13 @@ describe("teacher resource isolation", () => {
     await Promise.all([createTeacher("teacher-a"), createTeacher("teacher-b")])
     teacherA = await complete("teacher-a")
     teacherB = await complete("teacher-b")
-    teacherAId = accounts.current(await verifyToken(teacherA)).id
     setIo(fake.io)
   })
   afterAll(() => {
     Registry.getInstance().cleanup()
     getAccounts().store.close()
   })
-  it("assigns legacy content privately to the administrator and supports explicit quiz reassignment", async () => {
+  it("keeps legacy content private and lets administrators publish and withdraw it", async () => {
     expect((await request("quizz", { token: teacherA })).status).toBe(200)
     expect(await (await request("quizz", { token: teacherA })).json()).toEqual({
       quizz: [],
@@ -160,9 +158,9 @@ describe("teacher resource isolation", () => {
     )
     expect(
       (
-        await request("quizz/legacy/owner", {
-          method: "POST",
-          body: { ownerId: teacherAId },
+        await request("quizz/legacy/visibility", {
+          method: "PATCH",
+          body: { visibility: "public" },
         })
       ).status,
     ).toBe(204)
@@ -170,9 +168,18 @@ describe("teacher resource isolation", () => {
       200,
     )
     expect((await request("quizz/legacy", { token: teacherB })).status).toBe(
-      404,
+      200,
     )
-    expect((await media("retained.png", teacherA)).status).toBe(200)
+    expect((await media("retained.png", teacherB)).status).toBe(200)
+    expect(
+      (
+        await request("quizz/legacy/visibility", {
+          method: "PATCH",
+          body: { visibility: "private" },
+        })
+      ).status,
+    ).toBe(204)
+    expect((await media("retained.png", teacherA)).status).toBe(404)
     expect((await media("retained.png", teacherB)).status).toBe(404)
   })
   it("assigns imports to the current teacher and rejects forged owner/ID fields and foreign access", async () => {
@@ -266,6 +273,14 @@ describe("teacher resource isolation", () => {
     })
   })
   it("keeps game snapshots, player media and reports scoped to the hosting session", async () => {
+    expect(
+      (
+        await request("quizz/legacy/visibility", {
+          method: "PATCH",
+          body: { visibility: "public" },
+        })
+      ).status,
+    ).toBe(204)
     const response = await request("games", {
       method: "POST",
       token: teacherA,
@@ -306,7 +321,6 @@ describe("teacher resource isolation", () => {
       (
         await request("quizz/legacy", {
           method: "PATCH",
-          token: teacherA,
           body: createQuizz([createQuestion({ question: "Edited later" })]),
         })
       ).status,
@@ -339,6 +353,136 @@ describe("teacher resource isolation", () => {
     ).toBe(409)
     Registry.getInstance().removeGame(gameId)
     expect((await media("retained.png", player.token)).status).toBe(404)
+  })
+  it("shares public quizzes without granting edits or reports and preserves a running snapshot on withdrawal", async () => {
+    const payload = createQuizz([
+      createQuestion({ media: { url: `/media/${uploaded}`, type: "image" } }),
+    ])
+    const created = await request("quizz", {
+      method: "POST",
+      token: teacherA,
+      body: { ...payload, visibility: "public" },
+    })
+    const { id } = (await created.json()) as { id: string }
+    expect((await request(`quizz/${id}`, { token: teacherB })).status).toBe(404)
+    expect(
+      (
+        await request(`quizz/${id}/visibility`, {
+          method: "PATCH",
+          token: teacherA,
+          body: { visibility: "public" },
+        })
+      ).status,
+    ).toBe(204)
+    const list = (await (
+      await request("quizz", { token: teacherB })
+    ).json()) as {
+      quizz: Array<{ id: string; canEdit: boolean; visibility: string }>
+    }
+    expect(list.quizz.find((q) => q.id === id)).toMatchObject({
+      canEdit: false,
+      visibility: "public",
+    })
+    expect((await request(`quizz/${id}`, { token: teacherB })).status).toBe(200)
+    expect((await media(uploaded, teacherB)).status).toBe(200)
+    expect((await media(uploaded, "")).status).toBe(404)
+    expect(
+      (
+        await request(`quizz/${id}`, {
+          method: "PATCH",
+          token: teacherB,
+          body: payload,
+        })
+      ).status,
+    ).toBe(404)
+    expect(
+      (await request(`quizz/${id}`, { method: "DELETE", token: teacherB }))
+        .status,
+    ).toBe(404)
+    expect(
+      (
+        await request(`quizz/${id}/visibility`, {
+          method: "PATCH",
+          token: teacherB,
+          body: { visibility: "private" },
+        })
+      ).status,
+    ).toBe(404)
+    expect(
+      (
+        await request(`quizz/${id}`, {
+          method: "PATCH",
+          token: teacherA,
+          body: payload,
+        })
+      ).status,
+    ).toBe(200)
+    const started = await request("games", {
+      method: "POST",
+      token: teacherB,
+      body: { quizzId: id },
+    })
+    expect(started.status).toBe(201)
+    const { gameId } = (await started.json()) as { gameId: string }
+    const game = Registry.getInstance().getGameById(gameId)
+    const player = await mintToken("library-player", "player")
+    game?.join(
+      fake.createSocket("library-player-socket", "library-player"),
+      "Reader",
+    )
+    expect(
+      (
+        await request(`quizz/${id}/visibility`, {
+          method: "PATCH",
+          token: teacherA,
+          body: { visibility: "private" },
+        })
+      ).status,
+    ).toBe(204)
+    expect((await request(`quizz/${id}`, { token: teacherB })).status).toBe(404)
+    expect(
+      (
+        await request("games", {
+          method: "POST",
+          token: teacherB,
+          body: { quizzId: id },
+        })
+      ).status,
+    ).toBe(404)
+    expect((await media(uploaded, player.token)).status).toBe(200)
+    expect((await media(uploaded, teacherB)).status).toBe(200)
+    localResources.saveResult(gameId, {
+      id: "library-report",
+      gameMode: "quiz",
+      subject: "Hosted public quiz",
+      date: new Date().toISOString(),
+      players: [],
+      questions: [],
+    })
+    expect(
+      (await request("results/library-report", { token: teacherA })).status,
+    ).toBe(404)
+    expect(
+      (await request("results/library-report", { token: teacherB })).status,
+    ).toBe(200)
+    expect(
+      (
+        await request(`quizz/${id}/visibility`, {
+          method: "PATCH",
+          body: { visibility: "public" },
+        })
+      ).status,
+    ).toBe(204)
+    Registry.getInstance().removeGame(gameId)
+    expect((await media(uploaded, player.token)).status).toBe(404)
+    expect(
+      (
+        await request(`quizz/${id}/owner`, {
+          method: "POST",
+          body: { ownerId: "someone" },
+        })
+      ).status,
+    ).toBe(404)
   })
   it("preserves fractional estimation answers in stored report snapshots", () => {
     const question = {

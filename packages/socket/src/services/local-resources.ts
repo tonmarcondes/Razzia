@@ -47,12 +47,17 @@ export const localResources = {
 
     return a.db
       .prepare(
-        "SELECT q.id,r.payload FROM quizzes q JOIN quiz_revisions r ON r.quiz_id=q.id AND r.revision=q.current_revision WHERE q.archived_at IS NULL AND (q.owner_id=? OR ?='admin') ORDER BY json_extract(r.payload,'$.subject')",
+        "SELECT q.id,q.owner_id,q.visibility,r.payload FROM quizzes q JOIN quiz_revisions r ON r.quiz_id=q.id AND r.revision=q.current_revision WHERE q.archived_at IS NULL AND (q.owner_id=? OR ?='admin' OR q.visibility='library') ORDER BY json_extract(r.payload,'$.subject')",
       )
       .all(user.id, user.role)
       .map((row) => ({
         id: String(row.id),
         subject: (JSON.parse(String(row.payload)) as QuizzValidated).subject,
+        visibility:
+          row.visibility === "library"
+            ? ("public" as const)
+            : ("private" as const),
+        canEdit: row.owner_id === user.id || user.role === "admin",
       }))
   },
   quiz(
@@ -63,7 +68,7 @@ export const localResources = {
       a = getAccounts()
     const row = a.db
       .prepare(
-        "SELECT q.id,q.owner_id,q.current_revision,r.payload FROM quizzes q JOIN quiz_revisions r ON r.quiz_id=q.id AND r.revision=q.current_revision WHERE q.id=? AND q.archived_at IS NULL AND (q.owner_id=? OR ?='admin')",
+        "SELECT q.id,q.owner_id,q.current_revision,r.payload FROM quizzes q JOIN quiz_revisions r ON r.quiz_id=q.id AND r.revision=q.current_revision WHERE q.id=? AND q.archived_at IS NULL AND (q.owner_id=? OR ?='admin' OR q.visibility='library')",
       )
       .get(id, user.id, user.role)
 
@@ -79,6 +84,38 @@ export const localResources = {
       quizz: { id, ...(JSON.parse(String(row.payload)) as QuizzValidated) },
       revision: Number(row.current_revision),
     }
+  },
+  requireQuizEditor(claims: SessionClaims, id: string) {
+    const user = this.principal(claims)
+    const row = getAccounts()
+      .db.prepare(
+        "SELECT id FROM quizzes WHERE id=? AND archived_at IS NULL AND (owner_id=? OR ?='admin')",
+      )
+      .get(id, user.id, user.role)
+
+    if (!row) {
+      throw notFound("errors:quizz.notFound")
+    }
+
+    return user
+  },
+  setVisibility(
+    claims: SessionClaims,
+    id: string,
+    visibility: "private" | "public",
+  ) {
+    const a = getAccounts()
+    a.store.transaction(() => {
+      const user = this.requireQuizEditor(claims, id)
+      a.db
+        .prepare("UPDATE quizzes SET visibility=?,updated_at=? WHERE id=?")
+        .run(
+          visibility === "public" ? "library" : "private",
+          new Date().toISOString(),
+          id,
+        )
+      a.audit(user.id, `quiz.visibility.${visibility}`, id)
+    })
   },
   assertMedia(claims: SessionClaims, quizz: QuizzValidated) {
     for (const name of mediaReferences(JSON.stringify(quizz))) {
@@ -102,6 +139,11 @@ export const localResources = {
 
     return a.store.transaction(() => {
       const user = this.principal(claims)
+
+      if (id) {
+        this.requireQuizEditor(claims, id)
+      }
+
       this.assertMedia(claims, payload)
       const current = id ? this.quiz(claims, id) : undefined
       const quizId = id ?? randomUUID(),
@@ -137,8 +179,7 @@ export const localResources = {
   deleteQuiz(claims: SessionClaims, id: string) {
     const a = getAccounts()
     a.store.transaction(() => {
-      this.quiz(claims, id)
-      const user = this.principal(claims)
+      const user = this.requireQuizEditor(claims, id)
       a.db
         .prepare("UPDATE quizzes SET archived_at=? WHERE id=?")
         .run(new Date().toISOString(), id)
@@ -299,7 +340,7 @@ export const localResources = {
     return Boolean(
       a.db
         .prepare(
-          "SELECT m.media_name FROM media_references m WHERE m.media_name=? AND ((m.resource_kind='quiz_revision' AND EXISTS (SELECT 1 FROM quizzes q WHERE q.id=m.resource_id AND q.current_revision=m.revision AND q.owner_id=? AND q.archived_at IS NULL)) OR (m.resource_kind='result' AND EXISTS (SELECT 1 FROM results r WHERE r.id=m.resource_id AND r.owner_id=? AND r.deleted_at IS NULL))) LIMIT 1",
+          "SELECT m.media_name FROM media_references m WHERE m.media_name=? AND ((m.resource_kind='quiz_revision' AND EXISTS (SELECT 1 FROM quizzes q WHERE q.id=m.resource_id AND q.current_revision=m.revision AND (q.owner_id=? OR q.visibility='library') AND q.archived_at IS NULL)) OR (m.resource_kind='result' AND EXISTS (SELECT 1 FROM results r WHERE r.id=m.resource_id AND r.owner_id=? AND r.deleted_at IS NULL))) LIMIT 1",
         )
         .get(name, user.id, user.id),
     )
@@ -367,21 +408,6 @@ export const localResources = {
     if (fs.lstatSync(filename, { throwIfNoEntry: false })?.isFile()) {
       fs.unlinkSync(filename)
     }
-  },
-  reassign(claims: SessionClaims, id: string, ownerId: string) {
-    const a = getAccounts()
-    a.store.transaction(() => {
-      const actor = a.admin(claims),
-        owner = a.get(ownerId)
-
-      if (!owner.active) {
-        throw invalidInput("errors:accounts.notFound")
-      }
-
-      this.quiz(claims, id)
-      a.db.prepare("UPDATE quizzes SET owner_id=? WHERE id=?").run(ownerId, id)
-      a.audit(actor, "quiz.reassign", id)
-    })
   },
 }
 

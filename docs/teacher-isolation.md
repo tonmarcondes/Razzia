@@ -1,6 +1,6 @@
 # Teacher isolation and local-mode activation
 
-Local accounts are supported after an explicit offline migration, administrator bootstrap and activation. This does not add sharing: quizzes are private to their owner, administrators may inspect/manage them with audit, and teachers cannot list/read/edit/delete/export/apply another teacher's private quiz or report. Imported JSON/XLSX creates a new quiz owned by the current teacher; client-supplied IDs and owners cannot choose or replace stored ownership.
+Local accounts are supported after an explicit offline migration, administrator bootstrap and activation. Quizzes are private by default. Administrators may inspect/manage content with audit. Public quizzes form an authenticated teacher library: other teachers can read, export and apply them, while editing, archival and visibility changes remain restricted to their creator and administrators. Private quizzes and class reports remain isolated. Imported JSON/XLSX creates a new quiz owned by the current teacher; client-supplied IDs and owners cannot choose or replace stored ownership.
 
 ## Content and classes
 
@@ -8,13 +8,15 @@ SQLite is authoritative in local mode. JSON source files remain untouched migrat
 
 Six-digit PINs use cryptographic random generation, check the active registry for collisions and stop after bounded retries. A second login, even for the same account, cannot take over another hosting client/session. Live games remain process-local and end on restart. Database game-run records do not imply resumable classes.
 
-Administrators can explicitly transfer quiz ownership under **Settings → Quizzes → Transfer quiz**, or `POST /api/quizz/:id/owner` with `ownerId`. Reports remain attributed to their actual host; sharing/transfer of a quiz does not transfer class results.
+Creators and administrators choose **Private** or **Public** in **Settings → Quizzes**. `PATCH /api/quizz/:id/visibility` accepts `private` or `public`; the existing schema maps public visibility to `library`. The former ownership-transfer UI and endpoint are removed. Ownership stays with the creator. Public means active signed-in teachers in this instance, never anonymous access. Reports remain attributed to their actual host; making a quiz public does not share class results.
+
+Changing back to private blocks new foreign reads/exports/game creation. Already running games and their participants retain access to the applied snapshot and its referenced media. Quiz imports remain new private quizzes owned by the importer. Visibility is database metadata, not a client-controlled field in native quiz JSON. No schema migration is needed: version 1 already stores private/library visibility; existing private data stays private. A compatible older local-mode image hides library quizzes from other teachers rather than exposing private content.
 
 ## Media boundary
 
 Both nginx and local-mode Vite forward `/media/` to the existing backend. No local-mode static alias bypasses authorization. Browser media requests use a host-only HttpOnly, SameSite=Strict cookie scoped to `/media`; the signed session token is never put in a URL. Cookie lifetime follows the session; the backend revalidates account/session state on every media request. Joining a class also refreshes this cookie for existing anonymous player sessions.
 
-Teachers can access their own uploads and media referenced by their owned current quizzes/results. Active participants can access media in their applicable game snapshot. Hosts retain media access for the applied snapshot even if the source is edited. Leaving/ending removal of the game removes that anonymous capability. Unauthorized requests return 404. Byte ranges are supported for audio/video, responses disable private caching, and content types use a fixed extension map with `nosniff`.
+Teachers can access their own uploads, media referenced by their owned current quizzes/results, and media referenced by current public quizzes. Active participants can access media in their applicable game snapshot. Hosts retain media access for the applied snapshot even if the source is edited. Leaving/ending removal of the game removes that anonymous capability. Unauthorized requests return 404. Byte ranges are supported for audio/video, responses disable private caching, and content types use a fixed extension map with `nosniff`.
 
 Uploads finish atomically on disk before the database makes them visible. Files referenced by retained quiz revisions, games or reports cannot be deleted. This conservative policy can retain old assets; no automatic garbage collection is introduced. Branding remains intentionally public and global changes require an administrator. Previously viewed/downloaded content cannot be erased from an authorized user's device.
 
@@ -38,4 +40,4 @@ Unit/API tests cover direct unauthorized reads/writes/game creation, forged impo
 
 `pnpm test:e2e:local` runs a separate synthetic config on ports 3100/3101. It exercises administrator/teacher UI, mandatory password changes, two simultaneous classes, separate PINs/participants/reports, direct foreign requests, live host disablement and a mobile viewport. It does not use POC data or establish an institutional concurrency guarantee. Browser acceptance is one end-to-end scenario in addition to the existing legacy suite.
 
-Quiz sharing/library, institutional identity integration, retention/cleanup policy and a measured deployment capacity remain separate follow-up work.
+Selected-user grants, institutional identity integration, retention/cleanup policy and a measured deployment capacity remain separate follow-up work. Public library access is implemented; anonymous public links are not.

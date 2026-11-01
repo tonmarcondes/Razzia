@@ -159,5 +159,12 @@
     "profilePassword": "Confirme sua senha para salvar seus dados",
     "saveProfile": "Salvar meus dados",
     "edit": "Editar dados"
+  },
+  "library": {
+    "help": "Quizzes particulares ficam com o criador e os administradores. Públicos podem ser usados por professores logados; apenas o criador e os administradores podem editar.",
+    "visibilityFor": "Visibilidade de {{name}}",
+    "private": "Particular",
+    "public": "Público",
+    "readOnly": "Público · somente leitura"
   }
 }

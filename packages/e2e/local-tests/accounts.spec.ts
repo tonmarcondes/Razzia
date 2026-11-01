@@ -214,6 +214,62 @@ test("administers teachers, isolates two simultaneous classes and revokes a live
       qb = await createQuiz(hostB, "Class B")
     expect((await api(hostB, `quizz/${qa}`)).status).toBe(404)
     expect((await api(hostA, `quizz/${qb}`)).status).toBe(404)
+    await hostA
+      .getByRole("button", { name: tr("manager:tabs.quizz"), exact: true })
+      .click()
+    const owned = hostA.getByText("Class A", { exact: true }).locator("..")
+    await owned
+      .getByRole("combobox", {
+        name: t("manager:library.visibilityFor", {
+          lng: "pt",
+          name: "Class A",
+        }),
+      })
+      .selectOption("public")
+    await hostB.goto("/manager/config")
+    await hostB
+      .getByRole("button", { name: tr("manager:tabs.quizz"), exact: true })
+      .click()
+    const shared = hostB.getByText("Class A", { exact: true }).locator("..")
+    await expect(shared.getByText(tr("manager:library.readOnly"))).toBeVisible()
+    await expect(
+      shared.getByRole("button", {
+        name: tr("manager:quizz.edit"),
+        exact: true,
+      }),
+    ).toHaveCount(0)
+    await expect(
+      shared.getByRole("button", {
+        name: tr("manager:quizz.delete"),
+        exact: true,
+      }),
+    ).toHaveCount(0)
+    expect((await api(hostB, `quizz/${qa}`)).status).toBe(200)
+    expect(
+      (
+        await api(hostB, `quizz/${qa}/visibility`, {
+          method: "PATCH",
+          body: { visibility: "private" },
+        })
+      ).status,
+    ).toBe(404)
+    await hostB.setViewportSize({ width: 390, height: 844 })
+    expect(
+      await hostB.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true)
+    await hostB.screenshot({
+      path: testInfo.outputPath("public-library-mobile.png"),
+      fullPage: true,
+    })
+    await hostB.setViewportSize({ width: 1280, height: 720 })
+    await owned.getByRole("combobox").selectOption("private")
+    await expect
+      .poll(async () => (await api(hostB, `quizz/${qa}`)).status)
+      .toBe(404)
+    await hostA.goto("/manager/config")
+    await hostB.goto("/manager/config")
     await hostA.reload()
     await hostB.reload()
     await hostA.getByRole("button", { name: "Class A", exact: true }).click()

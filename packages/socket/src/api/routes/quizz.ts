@@ -15,7 +15,6 @@ import { StatusCodes } from "http-status-codes"
 import { authMode } from "@razzia/socket/env"
 import { localResources } from "@razzia/socket/services/local-resources"
 import { z } from "zod"
-import { getAccounts } from "@razzia/socket/services/accounts"
 
 const routes = apiFactory
   .createApp()
@@ -54,19 +53,22 @@ const routes = apiFactory
         : updateQuizz(c.req.param("id"), c.req.valid("json")),
     ),
   )
-  .post(
-    "/:id/owner",
-    zValidator("json", z.object({ ownerId: z.string().min(1) }), i18nHook),
+  .patch(
+    "/:id/visibility",
+    zValidator(
+      "json",
+      z.object({ visibility: z.enum(["private", "public"]) }),
+      i18nHook,
+    ),
     (c) => {
       if (authMode !== "local") {
         return c.json({ error: "errors:api.notFound" }, 404)
       }
 
-      getAccounts().admin(c.get("claims"))
-      localResources.reassign(
+      localResources.setVisibility(
         c.get("claims"),
         c.req.param("id"),
-        c.req.valid("json").ownerId,
+        c.req.valid("json").visibility,
       )
 
       return c.body(null, 204)

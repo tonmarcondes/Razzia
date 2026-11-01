@@ -1,6 +1,6 @@
 # Multi-user training-center design
 
-Status: implementation in stages. The appearance editor is delivered; the offline account-storage foundation is implemented. Authentication and resource isolation are implemented with explicit activation; sharing remains planned and unavailable. No institutional identity provider or production capacity has been confirmed.
+Status: implementation in stages. Current public-library behavior is documented in [teacher isolation](teacher-isolation.md); selected grants and explicit copy permissions below remain design proposals. The appearance editor is delivered; the offline account-storage foundation is implemented. Authentication and resource isolation are implemented with explicit activation; an authenticated public teacher library is implemented; selected-user grants remain planned. No institutional identity provider or production capacity has been confirmed.
 
 ## Implementation status
 
@@ -55,7 +55,7 @@ For selected sharing, model `canUse` and `canCopy` separately. `canCopy` permits
 
 Sharing never shares class reports. Hosting a shared quiz makes the hosting teacher the result owner, not the quiz author. Copies are not synchronized with later source edits. Revoking a grant blocks new reads/copies/game creation but does not rewrite a class already started from its authorized snapshot or a copy already created.
 
-Account removal initially means disablement, not hard deletion. Keep ownership/history intact and permit explicit administrator reassignment. Protect the last active administrator from accidental disablement or demotion.
+Account removal initially means disablement, not hard deletion. Keep ownership/history intact and preserve the creator identity and permit administrator corrections. Protect the last active administrator from accidental disablement or demotion.
 
 ## Persistence decision
 
