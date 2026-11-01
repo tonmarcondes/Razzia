@@ -160,3 +160,36 @@ test("lets a player rejoin from the home page after closing the tab", async ({
   await answer(home, "Paris")
   await expect(home.getByText(t("game:correct"))).toBeVisible()
 })
+
+test("stops an active game only after confirmation", async ({
+  page: manager,
+  newPage,
+}) => {
+  const pin = await createGame(manager)
+  const player = await newPage()
+  await joinGame(player, pin, "Stopped player")
+  await expect(
+    manager.getByText("Stopped player", { exact: true }),
+  ).toBeVisible()
+  await startGame(manager)
+  const stop = manager.getByRole("button", {
+    name: t("game:stop"),
+    exact: true,
+  })
+  await expect(stop).toBeVisible()
+  await stop.click()
+  const dialog = manager.getByRole("alertdialog")
+  await dialog
+    .getByRole("button", { name: t("common:cancel"), exact: true })
+    .click()
+  await expect(stop).toBeVisible()
+  await stop.click()
+  await dialog
+    .getByRole("button", { name: t("game:stop"), exact: true })
+    .click()
+  await expect(manager).toHaveURL(/\/manager\/config$/u)
+  await expect(player.getByText(t("game:pinLabel"))).toBeVisible()
+  await expect(
+    player.getByText(t("game:stopped"), { exact: true }),
+  ).toBeVisible()
+})

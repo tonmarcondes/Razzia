@@ -64,5 +64,8 @@
   },
   "showQrCode": "Mostrar código QR",
   "streak": "Sequência de acertos",
-  "pinDigit": "Dígito {{position}} do PIN"
+  "pinDigit": "Dígito {{position}} do PIN",
+  "stop": "Parar partida",
+  "stopConfirm": "Encerrar esta partida e retirar todos os participantes? Ela não poderá ser retomada. Não será gerado relatório parcial.",
+  "stopped": "Partida encerrada pelo professor."
 }

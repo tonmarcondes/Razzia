@@ -9,7 +9,7 @@ import {
 } from "@razzia/socket/services/accounts"
 import { localResources } from "@razzia/socket/services/local-resources"
 import { getPath } from "@razzia/socket/services/config"
-import { mintToken } from "@razzia/socket/services/auth"
+import { mintToken, verifyToken } from "@razzia/socket/services/auth"
 import { setIo } from "@razzia/socket/services/io"
 import Registry from "@razzia/socket/services/registry"
 import { LocalDatabase } from "@razzia/socket/storage/database"
@@ -483,6 +483,44 @@ describe("teacher resource isolation", () => {
         })
       ).status,
     ).toBe(404)
+  })
+  it("records an explicit stop only for the actual hosting session", async () => {
+    const created = await request("games", {
+      method: "POST",
+      token: teacherA,
+      body: { quizzId: sourceId },
+    })
+    const { gameId } = (await created.json()) as { gameId: string }
+    const a = await verifyToken(teacherA),
+      b = await verifyToken(teacherB)
+    expect(() => localResources.stopRun(b, gameId)).toThrow()
+    expect(
+      getAccounts()
+        .db.prepare("SELECT ended_at FROM game_runs WHERE id=?")
+        .get(gameId)?.ended_at,
+    ).toBeNull()
+    localResources.stopRun(a, gameId)
+    expect(
+      getAccounts()
+        .db.prepare("SELECT ended_at FROM game_runs WHERE id=?")
+        .get(gameId)?.ended_at,
+    ).toEqual(expect.any(String))
+    expect(
+      getAccounts()
+        .db.prepare(
+          "SELECT action,actor_id FROM audit_events WHERE action='game.stop' AND resource_id=?",
+        )
+        .get(gameId),
+    ).toMatchObject({
+      action: "game.stop",
+      actor_id: getAccounts().current(a).id,
+    })
+    expect(
+      getAccounts()
+        .db.prepare("SELECT count(*) n FROM results WHERE game_run_id=?")
+        .get(gameId)?.n,
+    ).toBe(0)
+    Registry.getInstance().removeGame(gameId)
   })
   it("preserves fractional estimation answers in stored report snapshots", () => {
     const question = {

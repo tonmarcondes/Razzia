@@ -31,6 +31,7 @@ export const EVENTS = {
     LEAVE: "manager:leave",
     KICK_PLAYER: "manager:kickPlayer",
     START_GAME: "manager:startGame",
+    STOP_GAME: "manager:stopGame",
     ADVANCE: "manager:advance",
     AUTO_ADVANCE: "manager:autoAdvance",
     SET_LOCK: "manager:setLock",

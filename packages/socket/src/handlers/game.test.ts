@@ -514,3 +514,28 @@ describe("socket payload validation", () => {
     expect(await joined).toMatchObject({ username: "Mallory" })
   })
 })
+
+it("only lets the hosting manager stop a running game and removes its PIN", async () => {
+  const { game, manager } = await createGame("stop-host")
+  const other = await createGame("other-host")
+  const player = await joinGame(game, "stop-player", "Student")
+  const denied = waitFor(other.manager, EVENTS.GAME.ERROR_MESSAGE)
+  other.manager.emit(EVENTS.MANAGER.STOP_GAME, { gameId: game.gameId })
+  expect(await denied).toBe("errors:auth.unauthorized")
+  const playerDenied = waitFor(player, EVENTS.GAME.ERROR_MESSAGE)
+  player.emit(EVENTS.MANAGER.STOP_GAME, { gameId: game.gameId })
+  expect(await playerDenied).toBe("errors:auth.unauthorized")
+  const starting = waitFor(manager, EVENTS.GAME.STATUS)
+  manager.emit(EVENTS.MANAGER.START_GAME, { gameId: game.gameId })
+  await starting
+  const stopped = waitFor(manager, EVENTS.GAME.RESET)
+  const participant = waitFor(player, EVENTS.GAME.RESET)
+  manager.emit(EVENTS.MANAGER.STOP_GAME, { gameId: game.gameId })
+  expect(await stopped).toBe("game:stopped")
+  expect(await participant).toBe("game:stopped")
+  expect(Registry.getInstance().getGameById(game.gameId)).toBeUndefined()
+  expect(
+    Registry.getInstance().getGameByInviteCode(game.inviteCode),
+  ).toBeUndefined()
+  expect(Registry.getInstance().getGameById(other.game.gameId)).toBeDefined()
+})

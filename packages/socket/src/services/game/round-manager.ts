@@ -138,6 +138,13 @@ export class RoundManager {
 
   // ── Auto advance ─────────────────────────────────────────────────────────
 
+  stop(): void {
+    this.started = false
+    this.acceptingAnswers = false
+    this.clearAutoAdvance()
+    this.opts.cooldown.abort()
+  }
+
   clearAutoAdvance(): void {
     if (!this.autoAdvanceTimer) {
       return
@@ -211,6 +218,10 @@ export class RoundManager {
     })
 
     await sleep(3)
+
+    if (!this.started) {
+      return
+    }
 
     this.opts.io.to(this.opts.gameId).emit(EVENTS.GAME.START_COOLDOWN)
     await this.opts.cooldown.start(3)

@@ -668,3 +668,27 @@ describe("manager grace period", () => {
     expect(onTimeout).not.toHaveBeenCalled()
   })
 })
+
+describe("disposing an interrupted game", () => {
+  it("does not resume after the opening countdown", async () => {
+    const { game, manager, emitted } = setup(createQuizz([createQuestion()]))
+    const starting = game.start(manager)
+    game.dispose()
+    const count = emitted.length
+    await vi.advanceTimersByTimeAsync(60000)
+    await starting
+    expect(game.started).toBe(false)
+    expect(emitted).toHaveLength(count)
+    expect(getResultsMeta()).toHaveLength(0)
+  })
+  it("cancels an active question without late statuses or a partial report", async () => {
+    const { game, start, emitted } = setup(createQuizz([createQuestion()]))
+    await start()
+    game.dispose()
+    const count = emitted.length
+    await vi.advanceTimersByTimeAsync(120000)
+    expect(game.started).toBe(false)
+    expect(emitted).toHaveLength(count)
+    expect(getResultsMeta()).toHaveLength(0)
+  })
+})

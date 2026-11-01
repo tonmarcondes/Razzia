@@ -72,7 +72,12 @@ const ManagerGamePage = () => {
     navigate({ to: "/manager/config" })
     resetManager()
     setQuestionStates(null)
-    toast.error(t(message))
+
+    if (message === "game:stopped") {
+      toast(t(message))
+    } else {
+      toast.error(t(message))
+    }
   })
 
   const handleSkip = () => {
@@ -120,6 +125,11 @@ const ManagerGamePage = () => {
     <GameWrapper
       statusName={status.name}
       onNext={handleSkip}
+      onStop={() => {
+        if (gameId) {
+          socket.emit(EVENTS.MANAGER.STOP_GAME, { gameId })
+        }
+      }}
       onBack={status.name === STATUS.SHOW_ROOM ? handleBack : undefined}
       manager
     >

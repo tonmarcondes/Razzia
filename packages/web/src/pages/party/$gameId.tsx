@@ -98,7 +98,12 @@ const PlayerGamePage = () => {
     navigate({ to: "/" })
     resetPlayer()
     setQuestionStates(null)
-    toast.error(t(message))
+
+    if (message === "game:stopped") {
+      toast(t(message))
+    } else {
+      toast.error(t(message))
+    }
   })
 
   if (!gameIdParam) {
