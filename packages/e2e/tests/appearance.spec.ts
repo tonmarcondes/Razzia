@@ -101,6 +101,20 @@ test("previews, persists and restores appearance without changing already-open w
       .getByRole("button", { name: t("manager:appearance.save"), exact: true })
       .click()
     await expect(page).toHaveTitle("Training Lab")
+    const sharedHtml = await page.request.get("/manager/config?pin=123456", {
+      headers: { "User-Agent": "facebookexternalhit/1.1" },
+    })
+    expect(sharedHtml.headers()["cache-control"]).toBe("no-store")
+    const source = await sharedHtml.text()
+    expect(source).toContain('property="og:title" content="Training Lab"')
+    expect(source).toContain(
+      `property="og:image" content="http://localhost:3000${assets[0]}"`,
+    )
+    expect(source).not.toContain("123456")
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+      "content",
+      `http://localhost:3000${assets[0]}`,
+    )
     await expect(
       page.getByLabel(t("manager:appearance.appName"), { exact: true }),
     ).toHaveValue("Training Lab")
@@ -117,12 +131,10 @@ test("previews, persists and restores appearance without changing already-open w
     ).toHaveAttribute("src", assets[0])
     await expect(fresh.locator('img[alt=""]')).toHaveAttribute("src", assets[0])
     expect(
-      await fresh.evaluate(() =>
-        document
-          .querySelector<HTMLLinkElement>("link#favicon")
-          ?.getAttribute("href"),
+      await fresh.evaluate(
+        () => document.querySelector<HTMLLinkElement>("link#favicon")?.href,
       ),
-    ).toBe(assets[0])
+    ).toBe(new URL(assets[0], "http://localhost:3000").href)
     expect(
       await fresh.evaluate(() =>
         document.documentElement.style.getPropertyValue("--color-primary"),
@@ -180,6 +192,9 @@ test("previews, persists and restores appearance without changing already-open w
       .click()
     await expect(page).toHaveTitle("Razzia")
     expect((await readSettings(page, headers)).theme).toEqual({})
+    expect(await (await page.request.get("/")).text()).toContain(
+      'property="og:image" content="http://localhost:3000/icon.svg"',
+    )
     await fresh.reload()
     await expect(fresh).toHaveTitle("Razzia")
     for (const url of assets) {

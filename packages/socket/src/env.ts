@@ -3,11 +3,29 @@ import z from "zod"
 
 const MIN_SECRET_LENGTH = 32
 
-const optional = (schema: z.ZodString) =>
+const optional = <T extends z.ZodType>(schema: T) =>
   z.preprocess((value) => (value === "" ? undefined : value), schema.optional())
 
 const envSchema = z
   .object({
+    PUBLIC_ORIGIN: optional(
+      z.url().refine((value) => {
+        try {
+          const url = new URL(value)
+
+          return (
+            ["http:", "https:"].includes(url.protocol) &&
+            !url.username &&
+            !url.password &&
+            url.pathname === "/" &&
+            !url.search &&
+            !url.hash
+          )
+        } catch {
+          return false
+        }
+      }, "PUBLIC_ORIGIN must be an HTTP(S) origin without credentials, path or query"),
+    ),
     AUTH_COOKIE_SECURE: z.enum(["true", "false"]).optional(),
     AUTH_MODE: z.enum(["legacy", "local"]).default("legacy"),
     MANAGER_PASSWORD: optional(

@@ -1,3 +1,4 @@
+import { brandingMetadata } from "@razzia/common/branding-metadata"
 import {
   brandingSchema,
   type BrandingTheme,
@@ -31,6 +32,33 @@ export const loadBranding = async (): Promise<BrandingTheme | null> => {
 }
 
 export const applyBranding = (theme: BrandingTheme | null): void => {
+  const metadata = brandingMetadata(theme, window.location.origin)
+  document.title = metadata.title
+  for (const [property, content] of Object.entries({
+    "og:title": metadata.title,
+    "og:image": metadata.image,
+    "og:type": "website",
+    "og:url": metadata.url,
+  })) {
+    let element = document.head.querySelector<HTMLMetaElement>(
+      `meta[property="${property}"]`,
+    )
+
+    if (!element) {
+      element = document.createElement("meta")
+      element.setAttribute("property", property)
+      document.head.append(element)
+    }
+
+    element.content = content
+  }
+  const favicon = document.querySelector<HTMLLinkElement>("link#favicon")
+
+  if (favicon) {
+    favicon.href = metadata.image
+    favicon.removeAttribute("type")
+  }
+
   if (!theme) {
     return
   }
@@ -59,18 +87,6 @@ export const applyBranding = (theme: BrandingTheme | null): void => {
       "--font-display",
       `"${theme.font.family}", sans-serif`,
     )
-  }
-
-  if (theme.appName) {
-    document.title = theme.appName
-  }
-
-  if (theme.favicon) {
-    const favicon = document.querySelector<HTMLLinkElement>("link#favicon")
-
-    if (favicon) {
-      favicon.href = theme.favicon
-    }
   }
 }
 

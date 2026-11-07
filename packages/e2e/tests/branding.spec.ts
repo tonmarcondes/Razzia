@@ -5,6 +5,7 @@ test("applies the instance branding", async ({ page }) => {
     route.fulfill({
       json: {
         appName: "My Quiz",
+        favicon: "https://images.example/favicon.png",
         colors: { primary: "#123456" },
         answerColors: ["#111111", "#222222"],
         font: { family: "Courier New" },
@@ -15,6 +16,14 @@ test("applies the instance branding", async ({ page }) => {
   await page.goto("/")
 
   await expect(page).toHaveTitle("My Quiz")
+  await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+    "content",
+    "My Quiz",
+  )
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+    "content",
+    "https://images.example/favicon.png",
+  )
   await expect(page.getByRole("heading", { name: "My Quiz" })).toBeVisible()
 
   const cssVariable = (name: string) =>
@@ -36,4 +45,12 @@ test("keeps the default look without branding", async ({ page }) => {
   await page.goto("/")
 
   await expect(page.getByRole("img", { name: "Razzia" })).toBeVisible()
+  await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+    "content",
+    "Razzia",
+  )
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+    "content",
+    "http://localhost:3000/icon.svg",
+  )
 })
