@@ -17,3 +17,8 @@ it("refuses premature local-mode activation instead of falling back to shared ac
     "Local accounts require an explicit durable JWT_SECRET",
   )
 })
+
+it("rejects an unsafe or ambiguous public origin", async () => {
+  vi.stubEnv("PUBLIC_ORIGIN", "https://user:password@quiz.example/private")
+  await expect(import("@razzia/socket/env")).rejects.toThrow("PUBLIC_ORIGIN")
+})

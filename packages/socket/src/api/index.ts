@@ -1,3 +1,4 @@
+import { servePublicPage } from "@razzia/socket/services/public-page"
 import { branding } from "@razzia/socket/api/routes/branding"
 import { auth } from "@razzia/socket/api/routes/auth"
 import { games } from "@razzia/socket/api/routes/games"
@@ -9,6 +10,7 @@ import { Hono } from "hono"
 import { users } from "@razzia/socket/api/routes/accounts"
 
 const routes = new Hono()
+  .get("/page", servePublicPage)
   .get("/health", (c) => c.json({ status: "ok" }))
   .route("/auth", auth)
   .route("/users", users)

@@ -1,3 +1,5 @@
+import { renderBrandingMetadata } from "@razzia/common/src/branding-metadata.ts"
+import { brandingSchema } from "@razzia/common/src/validators/branding.ts"
 import { ACCEPTED_MEDIA_TYPES } from "@razzia/common/src/constants.ts"
 import tailwindcss from "@tailwindcss/vite"
 import { tanstackRouter } from "@tanstack/router-plugin/vite"
@@ -70,10 +72,81 @@ const serveBranding = serveDir(
 
 const serveMedia = serveDir("/media/", configDir("media"), mediaMimeTypes)
 
+const servePage =
+  (template: (_url: string) => string | Promise<string>) =>
+  (
+    req: IncomingMessage,
+    res: ServerResponse,
+    next: (_error?: unknown) => void,
+  ) => {
+    const { pathname } = new URL(req.url ?? "/", "http://localhost")
+
+    if (
+      !["GET", "HEAD"].includes(req.method ?? "") ||
+      [
+        "/api",
+        "/ws",
+        "/media",
+        "/branding",
+        "/assets",
+        "/src",
+        "/node_modules",
+        "/@",
+        "/__",
+      ].some((prefix) => pathname.startsWith(prefix)) ||
+      (pathname !== "/index.html" && path.extname(pathname))
+    ) {
+      next()
+
+      return
+    }
+
+    const send = async () => {
+      let theme = null
+
+      try {
+        const parsed = brandingSchema.safeParse(
+          JSON.parse(
+            fs.readFileSync(
+              path.join(configDir("branding"), "theme.json"),
+              "utf8",
+            ),
+          ),
+        )
+        theme = parsed.success ? parsed.data : null
+      } catch {
+        /* Use the default identity when branding is absent or malformed. */
+      }
+
+      const html = renderBrandingMetadata(
+        await template(req.url ?? "/"),
+        theme,
+        process.env.PUBLIC_ORIGIN?.length
+          ? process.env.PUBLIC_ORIGIN
+          : `http://${req.headers.host ?? "localhost"}`,
+      )
+      res.setHeader("Content-Type", "text/html; charset=UTF-8")
+      res.setHeader("Cache-Control", "no-store")
+      res.end(req.method === "HEAD" ? undefined : html)
+    }
+    void send().catch(next)
+  }
+
 /** Serves the `config/branding` and `config/media` folders in `vite dev` and `vite preview` (nginx does this in prod). */
 const configServer = (): Plugin => ({
   name: "razzia-config-server",
   configureServer(server) {
+    server.middlewares.use(
+      servePage((url) =>
+        server.transformIndexHtml(
+          url,
+          fs.readFileSync(
+            fileURLToPath(new URL("./index.html", import.meta.url)),
+            "utf8",
+          ),
+        ),
+      ),
+    )
     server.middlewares.use(serveBranding)
 
     if (process.env.AUTH_MODE !== "local") {
@@ -81,6 +154,14 @@ const configServer = (): Plugin => ({
     }
   },
   configurePreviewServer(server) {
+    server.middlewares.use(
+      servePage(() =>
+        fs.readFileSync(
+          fileURLToPath(new URL("./dist/index.html", import.meta.url)),
+          "utf8",
+        ),
+      ),
+    )
     server.middlewares.use(serveBranding)
 
     if (process.env.AUTH_MODE !== "local") {

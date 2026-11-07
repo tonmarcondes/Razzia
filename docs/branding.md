@@ -35,7 +35,7 @@ All fields are optional: anything you omit keeps its default value.
 
 ## Appearance editor
 
-Authenticated managers can open **Configurations → Appearance** (`/manager/config#appearance`). This fork's legacy authentication still uses the manager password; individual administrator/teacher roles are not implemented yet.
+Authenticated managers can open **Configurations → Appearance** (`/manager/config#appearance`). In local-account mode global appearance management is restricted to administrators; legacy mode uses the existing manager password.
 
 The panel edits the system name, font family, logo, favicon, system/answer colors and wallpapers. Without a custom logo, a custom name is displayed as text on the entry screen. The original project attribution is retained.
 
@@ -75,3 +75,11 @@ All `/api/branding` routes require a signed manager session and return no-store 
 | `POST /api/branding/assets` | Multipart `file`; return `{ url }` with a generated immutable filename |
 
 Assets and the static theme are intentionally public branding material; do not upload confidential training content here. Settings never write `.env`, quizzes, or reports. For development and preview, Vite honors `CONFIG_PATH` so HTTP management and static assets use the same configuration directory as the backend.
+
+## Link-sharing metadata
+
+The initial HTML contains Open Graph metadata even for crawlers that do not execute JavaScript. `og:title` follows the saved system name and `og:image` follows the configured favicon, not the logo or wallpaper. Without customization they use Razzia and the bundled `/icon.svg`. The browser keeps these tags synchronized with the theme it loads. Saving or restoring appearance affects the next page request without rebuilding the image.
+
+Image URLs are absolute. Behind an HTTPS-terminating reverse proxy, set `PUBLIC_ORIGIN` to the external HTTP(S) origin in the protected deployment environment; it must not contain credentials, a path or a query. Without it, the request origin is used. `og:url` points to the instance root and excludes private routes, quiz identifiers and join parameters. Metadata responses use no-store; sharing platforms may maintain their own preview caches. Image format support depends on the sharing platform, so a public PNG favicon generally has broader preview support than SVG/ICO. Private training media remains authenticated and is not made public by this feature.
+
+The packaged nginx serves the SPA shell through the public `GET /api/page` renderer, while assets and existing API/socket routes keep their original handling. The backend reads the built web index from `WEB_INDEX_PATH`; the image sets `/app/web/index.html`, and the local socket-package default is `../web/dist/index.html`. Vite development and preview render the same metadata from runtime config. Build output remains generic: no instance branding or account/quiz data is baked into the bundle. The renderer escapes HTML text/attributes and falls back to the standard favicon for unsafe legacy URLs.
