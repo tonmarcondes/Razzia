@@ -8,6 +8,7 @@ const readNamespaces = (lang: string) =>
   Object.fromEntries(
     fs
       .readdirSync(join(LOCALES_DIR, lang))
+      .filter((file) => file.endsWith(".json"))
       .map((file) => [
         file.replace(/\.json$/u, ""),
         JSON.parse(
@@ -19,7 +20,11 @@ const readNamespaces = (lang: string) =>
 const resources: Resource = Object.fromEntries(
   fs
     .readdirSync(LOCALES_DIR, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
+    .filter(
+      (entry) =>
+        entry.isDirectory() &&
+        fs.existsSync(join(LOCALES_DIR, entry.name, "common.json")),
+    )
     .map((entry) => [entry.name, readNamespaces(entry.name)]),
 )
 

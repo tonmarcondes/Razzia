@@ -1,6 +1,16 @@
+import { getConnInfo } from "@hono/node-server/conninfo"
 import { zValidator } from "@hono/zod-validator"
-import { SESSION_ROLES } from "@razzia/common/constants"
+import { Hono, type Context } from "hono"
+import { bodyLimit } from "hono/body-limit"
+import { JwtTokenExpired } from "hono/utils/jwt/types"
+import { StatusCodes } from "http-status-codes"
 import type { SessionResponse } from "@razzia/common/types/auth"
+import { SESSION_ROLES } from "@razzia/common/constants"
+import {
+  accountLoginValidator,
+  changePasswordValidator,
+  updateProfileValidator,
+} from "@razzia/common/validators/accounts"
 import {
   managerLoginValidator,
   sessionRequestValidator,
@@ -8,29 +18,18 @@ import {
 import { readClaims } from "@razzia/socket/api/middleware"
 import { i18nHook } from "@razzia/socket/api/validation"
 import { authMode, managerPassword } from "@razzia/socket/env"
+import { getAccounts } from "@razzia/socket/services/accounts"
 import {
   mintToken,
   newClientId,
   verifyIgnoringExpiry,
   verifyToken,
 } from "@razzia/socket/services/auth"
-import { Hono, type Context } from "hono"
-import { JwtTokenExpired } from "hono/utils/jwt/types"
-import { StatusCodes } from "http-status-codes"
-
-import {
-  accountLoginValidator,
-  changePasswordValidator,
-  updateProfileValidator,
-} from "@razzia/common/validators/accounts"
-import { getAccounts } from "@razzia/socket/services/accounts"
-import { passwordPolicy } from "@razzia/socket/services/passwords"
 import {
   checkLoginLimit,
   clearLoginLimit,
 } from "@razzia/socket/services/login-limit"
-import { getConnInfo } from "@hono/node-server/conninfo"
-import { bodyLimit } from "hono/body-limit"
+import { passwordPolicy } from "@razzia/socket/services/passwords"
 
 const readRequestToken = async (c: Context): Promise<string | undefined> => {
   try {

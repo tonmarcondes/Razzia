@@ -1,11 +1,11 @@
+import fs from "fs"
+import { join } from "path"
+import { beforeAll, beforeEach, describe, expect, it } from "vitest"
 import { SESSION_ROLES } from "@razzia/common/constants"
 import { BRANDING_ASSET_MAX_SIZE } from "@razzia/common/validators/branding"
 import { app } from "@razzia/socket/app"
 import { mintToken } from "@razzia/socket/services/auth"
 import { getPath, initConfig } from "@razzia/socket/services/config"
-import fs from "fs"
-import { join } from "path"
-import { beforeAll, beforeEach, describe, expect, it } from "vitest"
 
 let manager = "",
   player = ""

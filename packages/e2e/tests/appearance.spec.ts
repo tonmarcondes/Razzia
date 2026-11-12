@@ -1,5 +1,8 @@
-import type { BrandingTheme } from "@razzia/common/validators/branding"
 import type { Page } from "@playwright/test"
+import fs from "fs"
+import { basename, join } from "path"
+import type { BrandingTheme } from "@razzia/common/validators/branding"
+import { CONFIG_PATH } from "@razzia/e2e/utils/constants"
 import { expect, test } from "@razzia/e2e/utils/fixtures"
 import { t } from "@razzia/e2e/utils/i18n"
 import {
@@ -9,9 +12,6 @@ import {
   startGame,
 } from "@razzia/e2e/utils/manager"
 import { answer, joinGame } from "@razzia/e2e/utils/player"
-import { CONFIG_PATH } from "@razzia/e2e/utils/constants"
-import fs from "fs"
-import { basename, join } from "path"
 
 const readSettings = async (page: Page, headers: Record<string, string>) => {
   const response = await page.request.get("/api/branding", { headers })

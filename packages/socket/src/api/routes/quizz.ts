@@ -1,8 +1,11 @@
 import { zValidator } from "@hono/zod-validator"
+import { StatusCodes } from "http-status-codes"
+import { z } from "zod"
 import { quizzValidator } from "@razzia/common/validators/quizz"
 import { apiFactory } from "@razzia/socket/api/factory"
 import { requireManager } from "@razzia/socket/api/middleware"
 import { i18nHook } from "@razzia/socket/api/validation"
+import { authMode } from "@razzia/socket/env"
 import {
   deleteQuizz,
   getQuizzById,
@@ -10,11 +13,7 @@ import {
   saveQuizz,
   updateQuizz,
 } from "@razzia/socket/services/config"
-import { StatusCodes } from "http-status-codes"
-
-import { authMode } from "@razzia/socket/env"
 import { localResources } from "@razzia/socket/services/local-resources"
-import { z } from "zod"
 
 const routes = apiFactory
   .createApp()

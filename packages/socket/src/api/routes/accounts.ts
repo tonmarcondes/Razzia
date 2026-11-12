@@ -1,4 +1,5 @@
 import { zValidator } from "@hono/zod-validator"
+import { bodyLimit } from "hono/body-limit"
 import {
   createAccountValidator,
   resetAccountValidator,
@@ -12,7 +13,6 @@ import {
 import { i18nHook } from "@razzia/socket/api/validation"
 import { authMode } from "@razzia/socket/env"
 import { getAccounts } from "@razzia/socket/services/accounts"
-import { bodyLimit } from "hono/body-limit"
 
 export const users = apiFactory
   .createApp()

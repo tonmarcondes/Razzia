@@ -1,4 +1,4 @@
-import { createDefaultGameSettings, EVENTS } from "@razzia/common/constants"
+import { v7 as uuid } from "uuid"
 import type {
   GameResult,
   GameSettings,
@@ -7,6 +7,7 @@ import type {
   QuizzMode,
 } from "@razzia/common/types/game"
 import type { Server, Socket } from "@razzia/common/types/game/socket"
+import { createDefaultGameSettings, EVENTS } from "@razzia/common/constants"
 import {
   STATUS,
   type Status,
@@ -21,7 +22,6 @@ import { createInviteCode } from "@razzia/socket/utils/game"
 import { createNickname } from "@razzia/socket/utils/nickname"
 import { SECOND_MS } from "@razzia/socket/utils/sleep"
 import { getClientId } from "@razzia/socket/utils/socket"
-import { v7 as uuid } from "uuid"
 
 const registry = Registry.getInstance()
 
@@ -64,7 +64,8 @@ class Game {
   constructor(
     io: Server,
     manager:
-      string | { clientId: string; onResult: (result: GameResult) => void },
+      | string
+      | { clientId: string; onResult: (result: GameResult) => void },
     source: Quizz,
   ) {
     const quizz = structuredClone(source)

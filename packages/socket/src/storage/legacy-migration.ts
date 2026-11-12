@@ -1,14 +1,14 @@
-import {
-  parseLegacyQuiz,
-  parseLegacyResult,
-} from "@razzia/socket/storage/legacy-validation"
+import { createHash } from "node:crypto"
+import fs from "node:fs"
+import path from "node:path"
 import {
   resolveConfigDirectory,
   type LocalDatabase,
 } from "@razzia/socket/storage/database"
-import { createHash } from "node:crypto"
-import fs from "node:fs"
-import path from "node:path"
+import {
+  parseLegacyQuiz,
+  parseLegacyResult,
+} from "@razzia/socket/storage/legacy-validation"
 
 export const HOLDING_OWNER_ID = "legacy-holding-administrator"
 

@@ -1,9 +1,9 @@
+import type { ReactEventHandler } from "react"
 import { brandingMetadata } from "@razzia/common/branding-metadata"
 import {
   brandingSchema,
   type BrandingTheme,
 } from "@razzia/common/validators/branding"
-import type { ReactEventHandler } from "react"
 
 export type { BrandingTheme }
 

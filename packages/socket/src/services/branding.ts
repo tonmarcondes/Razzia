@@ -1,3 +1,8 @@
+import { createHash, randomUUID } from "crypto"
+import { fileTypeFromBuffer } from "file-type"
+import fs from "fs"
+import { StatusCodes } from "http-status-codes"
+import { join } from "path"
 import {
   brandingSchema,
   brandingUpdateValidator,
@@ -10,11 +15,6 @@ import {
   serverError,
   unsupportedMediaType,
 } from "@razzia/socket/services/errors"
-import { createHash, randomUUID } from "crypto"
-import { fileTypeFromBuffer } from "file-type"
-import fs from "fs"
-import { StatusCodes } from "http-status-codes"
-import { join } from "path"
 
 const directory = () => {
   const dir = getPath("branding")

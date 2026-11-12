@@ -1,7 +1,7 @@
-import { app } from "@razzia/socket/app"
-import { getPath } from "@razzia/socket/services/config"
 import fs from "node:fs"
 import { beforeEach, afterEach, expect, it, vi } from "vitest"
+import { app } from "@razzia/socket/app"
+import { getPath } from "@razzia/socket/services/config"
 beforeEach(() => {
   const file = getPath("shell.html")
   fs.writeFileSync(

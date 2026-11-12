@@ -1,11 +1,11 @@
-import { api, unwrap, unwrapEmpty } from "@razzia/web/lib/api"
-import { queryOptions } from "@tanstack/react-query"
 import type { z } from "zod"
+import { queryOptions } from "@tanstack/react-query"
 import type {
   createAccountValidator,
   updateAccountValidator,
   updateProfileValidator,
 } from "@razzia/common/validators/accounts"
+import { api, unwrap, unwrapEmpty } from "@razzia/web/lib/api"
 
 export const authConfigQuery = () =>
   queryOptions({

@@ -1,17 +1,16 @@
-import { SESSION_ROLES } from "@razzia/common/constants"
-import ManagerPassword from "@razzia/web/features/manager/components/ManagerPassword"
-import { managerLogin } from "@razzia/web/features/manager/queries"
-import { ApiError } from "@razzia/web/lib/api"
-import { getRole, setToken } from "@razzia/web/lib/session"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
 import toast from "react-hot-toast"
 import { useTranslation } from "react-i18next"
-
+import { SESSION_ROLES } from "@razzia/common/constants"
 import {
   authConfigQuery,
   loginAccount,
 } from "@razzia/web/features/manager/accounts"
+import ManagerPassword from "@razzia/web/features/manager/components/ManagerPassword"
+import { managerLogin } from "@razzia/web/features/manager/queries"
+import { ApiError } from "@razzia/web/lib/api"
+import { getRole, setToken } from "@razzia/web/lib/session"
 
 const ManagerAuthPage = () => {
   const client = useQueryClient()

@@ -1,17 +1,15 @@
+import fs from "node:fs"
+import path from "node:path"
+import { Accounts } from "@razzia/socket/services/accounts"
+import {
+  activateLocalStore,
+  isLocalStoreReady,
+} from "@razzia/socket/storage/activation"
 import { LocalDatabase } from "@razzia/socket/storage/database"
 import {
   inspectLegacy,
   migrateLegacy,
 } from "@razzia/socket/storage/legacy-migration"
-import path from "node:path"
-
-import { Accounts } from "@razzia/socket/services/accounts"
-import fs from "node:fs"
-
-import {
-  activateLocalStore,
-  isLocalStoreReady,
-} from "@razzia/socket/storage/activation"
 
 const main = async () => {
   const [command, configArgument, argument] = process.argv.slice(2)

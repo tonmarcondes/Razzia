@@ -1,7 +1,7 @@
+import type { PropsWithChildren } from "react"
 import defaultLogo from "@razzia/web/assets/logo.svg"
 import { getBranding, imageFallback } from "@razzia/web/branding"
 import GithubIcon from "@razzia/web/components/GithubIcon"
-import type { PropsWithChildren } from "react"
 
 const Background = ({ children }: PropsWithChildren) => {
   const branding = getBranding()
@@ -12,8 +12,8 @@ const Background = ({ children }: PropsWithChildren) => {
   return (
     <section className="relative flex min-h-dvh flex-col items-center justify-center">
       <div className="absolute h-full max-h-svh w-full overflow-hidden">
-        <div className="bg-primary/15 absolute top-[-70vmin] left-[-50vmin] min-h-[120vmin] min-w-[120vmin] rotate-20 rounded-4xl" />
-        <div className="bg-primary/15 absolute right-[-10vmin] bottom-[-45vmin] min-h-[75vmin] min-w-[75vmin] rotate-20 rounded-4xl" />
+        <div className="absolute top-[-70vmin] left-[-50vmin] min-h-[120vmin] min-w-[120vmin] rotate-20 rounded-4xl bg-primary/15" />
+        <div className="absolute right-[-10vmin] bottom-[-45vmin] min-h-[75vmin] min-w-[75vmin] rotate-20 rounded-4xl bg-primary/15" />
       </div>
 
       {background && (
@@ -24,7 +24,7 @@ const Background = ({ children }: PropsWithChildren) => {
         />
       )}
       {branding?.appName && !branding.logo ? (
-        <h1 className="text-primary relative mb-10 max-w-full px-4 text-center text-4xl font-black break-words sm:text-6xl">
+        <h1 className="relative mb-10 max-w-full px-4 text-center text-4xl font-black break-words text-primary sm:text-6xl">
           {appName}
         </h1>
       ) : (

@@ -1,13 +1,12 @@
 import { createAdaptorServer } from "@hono/node-server"
 import { app, createSocketServer } from "@razzia/socket/app"
-import { initConfig } from "@razzia/socket/services/config"
-import Registry from "@razzia/socket/services/registry"
-
 import { authMode } from "@razzia/socket/env"
 import {
   assertLegacyModeReady,
   assertAccountModeReady,
 } from "@razzia/socket/services/accounts"
+import { initConfig } from "@razzia/socket/services/config"
+import Registry from "@razzia/socket/services/registry"
 
 if (authMode === "local") {
   assertAccountModeReady()

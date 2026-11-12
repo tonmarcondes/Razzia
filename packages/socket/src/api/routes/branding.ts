@@ -1,4 +1,5 @@
 import { zValidator } from "@hono/zod-validator"
+import { bodyLimit } from "hono/body-limit"
 import {
   BRANDING_ASSET_MAX_SIZE,
   brandingWriteValidator,
@@ -16,7 +17,6 @@ import {
   resetBranding,
   uploadBrandingAsset,
 } from "@razzia/socket/services/branding"
-import { bodyLimit } from "hono/body-limit"
 
 const invalid = (c: {
   json: (body: { error: string }, status: 400) => Response

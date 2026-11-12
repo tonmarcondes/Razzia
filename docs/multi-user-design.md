@@ -65,7 +65,7 @@ Use one authoritative store per mode. In local-account mode, account, session, q
 
 Retain legacy JSON-file mode for existing standalone installations until an explicit migration. After migration, the original JSON files are retained as a read-only backup; do not keep two independently writable versions of the same quiz. Preserve JSON import/export as the portable interchange format.
 
-The implementation ADR must validate a SQLite driver with the pinned Node 24 runtime, bundler, and Alpine runner before adding a dependency. Evaluate the built-in driver against a small maintained alternative; do not assume API stability or copy the old PR #184 dependency choices. Use parameterized SQL, foreign keys, transactional schema migrations, a local-volume WAL configuration, and a documented busy-timeout policy. Keep expensive password work off the event loop.
+The implementation ADR must validate a SQLite driver with the pinned Node runtime, bundler, and Alpine runner before adding a dependency. Evaluate the built-in driver against a small maintained alternative; do not assume API stability or copy the old PR #184 dependency choices. Use parameterized SQL, foreign keys, transactional schema migrations, a local-volume WAL configuration, and a documented busy-timeout policy. Keep expensive password work off the event loop.
 
 ### Logical records
 

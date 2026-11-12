@@ -4,7 +4,7 @@ Thank you for your interest in contributing!
 
 ## Getting Started
 
-Requirements: Node.js 24+ and [pnpm](https://pnpm.io/) 10.16+.
+Requirements: Node.js 26+ and [pnpm](https://pnpm.io/) 10.16+.
 
 1. Fork the repository
 2. Clone your fork: `git clone https://github.com/YOUR_USERNAME/Razzia.git`
@@ -55,7 +55,7 @@ chore: update dependencies
 Run these from the repository root before committing:
 
 ```bash
-pnpm format:fix   # format with Prettier
+pnpm format:fix   # format with Oxfmt
 pnpm lint:fix     # lint with oxlint
 ```
 

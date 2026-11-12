@@ -1,4 +1,6 @@
-import { ACCEPTED_MEDIA_TYPES } from "@razzia/common/constants"
+import { randomUUID } from "node:crypto"
+import fs from "node:fs"
+import path from "node:path"
 import type { SessionClaims } from "@razzia/common/types/auth"
 import type {
   GameResult,
@@ -6,26 +8,24 @@ import type {
   QuizzWithId,
   UploadedMedia,
 } from "@razzia/common/types/game"
+import { ACCEPTED_MEDIA_TYPES } from "@razzia/common/constants"
 import {
   quizzValidator,
   type QuizzValidated,
 } from "@razzia/common/validators/quizz"
 import { getAccounts } from "@razzia/socket/services/accounts"
+import { getPath } from "@razzia/socket/services/config"
 import {
   invalidInput,
   notFound,
   DomainError,
 } from "@razzia/socket/services/errors"
-import { getPath } from "@razzia/socket/services/config"
 import { listMedia, saveMedia } from "@razzia/socket/services/media"
 import {
   mediaReferences,
   sha256,
 } from "@razzia/socket/storage/legacy-migration"
 import { parseLegacyResult } from "@razzia/socket/storage/legacy-validation"
-import fs from "node:fs"
-import { randomUUID } from "node:crypto"
-import path from "node:path"
 
 export const localResources = {
   principal(claims: SessionClaims) {

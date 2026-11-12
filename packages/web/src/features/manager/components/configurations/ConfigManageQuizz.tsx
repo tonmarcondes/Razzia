@@ -1,8 +1,14 @@
-import { accountQuery } from "@razzia/web/features/manager/accounts"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useNavigate } from "@tanstack/react-router"
+import { Braces, Download, SquarePen, Trash2, Upload } from "lucide-react"
+import { type ChangeEvent, useRef, useState } from "react"
+import toast from "react-hot-toast"
+import { useTranslation } from "react-i18next"
 import type { QuizzValidated } from "@razzia/common/validators/quizz"
 import AlertDialog from "@razzia/web/components/AlertDialog"
 import Button from "@razzia/web/components/Button"
 import { SkeletonRows } from "@razzia/web/components/Skeleton"
+import { accountQuery } from "@razzia/web/features/manager/accounts"
 import {
   createQuizz,
   deleteQuizz,
@@ -10,14 +16,6 @@ import {
   quizzListQuery,
 } from "@razzia/web/features/manager/queries"
 import { api, ApiError, unwrap, unwrapEmpty } from "@razzia/web/lib/api"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useNavigate } from "@tanstack/react-router"
-import { Braces, Download, SquarePen, Trash2, Upload } from "lucide-react"
-
-import { type ChangeEvent, useRef, useState } from "react"
-
-import toast from "react-hot-toast"
-import { useTranslation } from "react-i18next"
 
 const downloadJson = (data: unknown, filename: string) => {
   const blob = new Blob([JSON.stringify(data, null, 2)], {
@@ -231,7 +229,7 @@ const ConfigManageQuizz = () => {
           {t("manager:quizz.create")}
         </Button>
         <Button
-          className="bg-accent text-accent-foreground aspect-square px-3"
+          className="aspect-square bg-accent px-3 text-accent-foreground"
           onClick={() => fileInputRef.current?.click()}
           title={t("manager:quizz.import")}
         >
@@ -298,9 +296,9 @@ const ConfigManageQuizz = () => {
         {quizz.map((q) => (
           <div
             key={q.id}
-            className="border-accent flex w-full flex-col gap-2 rounded-md border-2 p-2"
+            className="flex w-full flex-col gap-2 rounded-md border-2 border-accent p-2"
           >
-            <p className="text-foreground truncate font-medium">{q.subject}</p>
+            <p className="truncate font-medium text-foreground">{q.subject}</p>
             <div className="flex flex-wrap items-center justify-end gap-1">
               {me?.user &&
                 (q.canEdit ? (
@@ -309,12 +307,13 @@ const ConfigManageQuizz = () => {
                       {t("manager:library.visibilityFor", { name: q.subject })}
                     </span>
                     <select
-                      className="bg-background rounded border p-1"
+                      className="rounded border bg-background p-1"
                       value={q.visibility}
                       disabled={busy}
                       onChange={async (event) => {
                         const visibility = event.target.value as
-                          "private" | "public"
+                          | "private"
+                          | "public"
                         setBusy(true)
 
                         try {
@@ -347,7 +346,7 @@ const ConfigManageQuizz = () => {
                 ))}
               {q.canEdit && (
                 <button
-                  className="text-accent-foreground hover:bg-accent-foreground/10 rounded-sm p-2"
+                  className="rounded-sm p-2 text-accent-foreground hover:bg-accent-foreground/10"
                   title={t("manager:quizz.edit")}
                   onClick={() =>
                     navigate({
@@ -360,7 +359,7 @@ const ConfigManageQuizz = () => {
                 </button>
               )}
               <button
-                className="text-accent-foreground hover:bg-accent-foreground/10 rounded-sm p-2"
+                className="rounded-sm p-2 text-accent-foreground hover:bg-accent-foreground/10"
                 onClick={() => handleExport(q.id)()}
                 title={t("manager:quizz.export")}
               >
@@ -396,7 +395,7 @@ const ConfigManageQuizz = () => {
           </div>
         ))}
         {!isPending && quizz.length === 0 && (
-          <p className="text-muted-foreground my-8 text-center">
+          <p className="my-8 text-center text-muted-foreground">
             {t("manager:quizz.none")}
           </p>
         )}

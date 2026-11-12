@@ -1,29 +1,29 @@
 import { execFileSync } from "node:child_process"
+import fs from "node:fs"
 import path from "node:path"
-import { parseLegacyResult } from "@razzia/socket/storage/legacy-validation"
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest"
+import type { GameResult } from "@razzia/common/types/game"
 import { app } from "@razzia/socket/app"
 import {
   getAccounts,
   assertAccountModeReady,
   assertLegacyModeReady,
 } from "@razzia/socket/services/accounts"
-import { localResources } from "@razzia/socket/services/local-resources"
-import { getPath } from "@razzia/socket/services/config"
 import { mintToken, verifyToken } from "@razzia/socket/services/auth"
+import { getPath } from "@razzia/socket/services/config"
 import { setIo } from "@razzia/socket/services/io"
+import { localResources } from "@razzia/socket/services/local-resources"
 import Registry from "@razzia/socket/services/registry"
+import { activateLocalStore } from "@razzia/socket/storage/activation"
 import { LocalDatabase } from "@razzia/socket/storage/database"
 import {
   inspectLegacy,
   migrateLegacy,
 } from "@razzia/socket/storage/legacy-migration"
-import { activateLocalStore } from "@razzia/socket/storage/activation"
-import { allocateInviteCode } from "@razzia/socket/utils/game"
+import { parseLegacyResult } from "@razzia/socket/storage/legacy-validation"
 import { createFakeIo } from "@razzia/socket/test/fake-io"
 import { createQuestion, createQuizz } from "@razzia/socket/test/fixtures"
-import type { GameResult } from "@razzia/common/types/game"
-import fs from "node:fs"
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest"
+import { allocateInviteCode } from "@razzia/socket/utils/game"
 
 vi.mock("@razzia/socket/env", () => ({
   authMode: "local",
