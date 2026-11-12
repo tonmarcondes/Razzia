@@ -61,3 +61,34 @@ test("blocks unsupported export without a download", async ({ page }) => {
     review.getByRole("button", { name: t("manager:spreadsheet.confirm") }),
   ).toHaveCount(0)
 })
+
+for (const width of [390, 1280]) {
+  test(`keeps quiz creation and Kahoot import on one row at ${width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 900 })
+    await openQuizzTab(page)
+    const create = page.getByRole("button", {
+      name: t("manager:quizz.create"),
+      exact: true,
+    })
+    const importKahoot = page.getByTitle(t("manager:spreadsheet.import"), {
+      exact: true,
+    })
+    await expect(create).toBeVisible()
+    await expect(importKahoot).toBeVisible()
+    const createBox = await create.boundingBox()
+    const importBox = await importKahoot.boundingBox()
+    expect(createBox).not.toBeNull()
+    expect(importBox).not.toBeNull()
+
+    if (!createBox || !importBox) {
+      throw new Error("Quiz actions have no visible bounds")
+    }
+
+    expect(Math.abs(createBox.y - importBox.y)).toBeLessThan(2)
+    expect(createBox.x + createBox.width).toBeLessThan(importBox.x)
+    expect(importBox.x + importBox.width).toBeLessThanOrEqual(width)
+    await page.screenshot({ path: `test-results/quiz-actions-${width}.png` })
+  })
+}
