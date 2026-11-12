@@ -14,12 +14,16 @@ This folder covers the basic setup (config, quizzes, branding) as well as more a
 
 - [Agent instructions](../AGENTS.md): architecture, contribution conventions, verification and deployment rules for this fork.
 - [Upstream review, 2026-10-29](upstream-review-2026-10-29.md): available changes, reusable capabilities and related proposals.
-- [Multi-user design](multi-user-design.md): accounts, permissions, sharing and delivery gates; account activation remains pending.
+- [Multi-user design](multi-user-design.md): accounts, permissions, sharing and delivery gates; the original plan, with implementation status described in the local-account and isolation guides.
 
-- [Account storage](account-storage.md): offline inventory, transactional migration and consistent backup tooling; local accounts remain disabled.
+- [Account storage](account-storage.md): offline inventory, transactional migration and consistent backup tooling; offline storage foundation and tooling.
 
 - [Local accounts](local-accounts.md): authentication, password policy and user administration.
 
 - [Teacher isolation](teacher-isolation.md): private quizzes/results/media, simultaneous-class acceptance and controlled local-mode activation.
+
+- [Upstream review, 2026-11-12](upstream-review-2026-11-12.md): Node 26, Oxfmt and test layout synchronization.
+- [Acceptance and capacity, 2026-11-12](acceptance-and-capacity-2026-11-12.md): functional checks and the measured 300-player rehearsal.
+- [Kahoot comparison](kahoot-comparison.md): implemented capabilities, differences and next product priorities.
 
 Back to the [main README](../README.md).
