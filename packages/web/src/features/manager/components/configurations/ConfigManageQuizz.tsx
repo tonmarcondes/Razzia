@@ -223,9 +223,9 @@ const ConfigManageQuizz = () => {
     <div className="flex min-h-0 flex-1 flex-col">
       <p className="mb-2 text-sm">{t("manager:spreadsheet.help")}</p>
       {me?.user && <p className="mb-2 text-sm">{t("manager:library.help")}</p>}
-      <div className="mb-4 flex shrink-0 flex-wrap gap-2">
+      <div className="mb-4 flex shrink-0 items-center gap-2">
         <Button
-          className="flex-1"
+          className="min-w-0 flex-1 px-3"
           onClick={() => navigate({ to: "/manager/quizz" })}
         >
           {t("manager:quizz.create")}
@@ -245,15 +245,13 @@ const ConfigManageQuizz = () => {
           className="hidden"
           onChange={handleImport}
         />
-      </div>
-      <div className="mb-2">
         <Button
           disabled={busy}
           title={t("manager:spreadsheet.import")}
-          className="inline-flex items-center gap-2"
+          className="inline-flex shrink-0 items-center gap-2 px-3"
           onClick={() => spreadsheetInput.current?.click()}
         >
-          <Download className="size-4" aria-hidden="true" /> Kahoot
+          <Upload className="size-4" aria-hidden="true" /> Kahoot
         </Button>
         <input
           ref={spreadsheetInput}
@@ -374,7 +372,7 @@ const ConfigManageQuizz = () => {
                 title={t("manager:spreadsheet.export")}
                 onClick={() => handleSpreadsheetExport(q.id)}
               >
-                <Upload className="size-4" aria-hidden="true" /> Kahoot
+                <Download className="size-4" aria-hidden="true" /> Kahoot
               </button>
               {q.canEdit && (
                 <AlertDialog
