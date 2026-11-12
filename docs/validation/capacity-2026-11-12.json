@@ -1,0 +1,129 @@
+{
+  "date": "2026-11-12",
+  "sourceCommit": "f1d07b252497452dfc12e77d11db1bebc0d351e0",
+  "image": "razzia-local:node26-f1d07b2",
+  "imageId": "sha256:f6c306ed877aa5a865b14ae3f6e9213c513f279cf0ad733bebbac4b609e51053",
+  "builderNode": "26.13.0",
+  "runnerNode": "26.12.1",
+  "containerLimits": {
+    "cpus": 2,
+    "memoryMiB": 1024
+  },
+  "harnessSha256": "2865658216002cc23414a1f04bd9100d6267dfad0d3993916ce7cb5d11dc6744",
+  "runs": [
+    {
+      "classes": 1,
+      "players": 30,
+      "questionsPerClass": 10,
+      "answers": 300,
+      "persistedAnswers": 300,
+      "elapsedSeconds": 79.2,
+      "http": {
+        "count": 76,
+        "p50Ms": 63.7,
+        "p95Ms": 392,
+        "maxMs": 934.2
+      },
+      "join": {
+        "count": 30,
+        "p50Ms": 543,
+        "p95Ms": 609.6,
+        "maxMs": 610
+      },
+      "answerToResult": {
+        "count": 300,
+        "p50Ms": 1001.8,
+        "p95Ms": 1087.2,
+        "maxMs": 1116.2
+      },
+      "httpErrors": [],
+      "errors": [],
+      "unexpectedDisconnects": [],
+      "transport": "websocket",
+      "mode": "local",
+      "media": false,
+      "holdSeconds": 5,
+      "resources": {
+        "samples": 422,
+        "sampledMaxCpuPercent": 91.51,
+        "sampledMaxMemoryMiB": 75.12
+      }
+    },
+    {
+      "classes": 5,
+      "players": 150,
+      "questionsPerClass": 10,
+      "answers": 1500,
+      "persistedAnswers": 1500,
+      "elapsedSeconds": 93.9,
+      "http": {
+        "count": 348,
+        "p50Ms": 56.8,
+        "p95Ms": 325.2,
+        "maxMs": 931.1
+      },
+      "join": {
+        "count": 150,
+        "p50Ms": 414,
+        "p95Ms": 550.6,
+        "maxMs": 592.2
+      },
+      "answerToResult": {
+        "count": 1500,
+        "p50Ms": 986.1,
+        "p95Ms": 1045,
+        "maxMs": 1076.1
+      },
+      "httpErrors": [],
+      "errors": [],
+      "unexpectedDisconnects": [],
+      "transport": "websocket",
+      "mode": "local",
+      "media": false,
+      "holdSeconds": 5,
+      "resources": {
+        "samples": 458,
+        "sampledMaxCpuPercent": 93.85,
+        "sampledMaxMemoryMiB": 78.96
+      }
+    },
+    {
+      "classes": 10,
+      "players": 300,
+      "questionsPerClass": 10,
+      "answers": 3000,
+      "persistedAnswers": 3000,
+      "elapsedSeconds": 169.9,
+      "http": {
+        "count": 743,
+        "p50Ms": 58.2,
+        "p95Ms": 324.1,
+        "maxMs": 1023.9
+      },
+      "join": {
+        "count": 300,
+        "p50Ms": 421.1,
+        "p95Ms": 484.3,
+        "maxMs": 547.7
+      },
+      "answerToResult": {
+        "count": 3000,
+        "p50Ms": 959.3,
+        "p95Ms": 1345.6,
+        "maxMs": 1370.7
+      },
+      "httpErrors": [],
+      "errors": [],
+      "unexpectedDisconnects": [],
+      "transport": "websocket",
+      "mode": "local",
+      "media": false,
+      "holdSeconds": 60,
+      "resources": {
+        "samples": 750,
+        "sampledMaxCpuPercent": 96.0,
+        "sampledMaxMemoryMiB": 83.47
+      }
+    }
+  ]
+}
