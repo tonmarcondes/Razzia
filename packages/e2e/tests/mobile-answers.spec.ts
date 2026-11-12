@@ -4,6 +4,11 @@ import { t } from "@razzia/e2e/utils/i18n"
 import { createGame, startGame } from "@razzia/e2e/utils/manager"
 import { joinGame } from "@razzia/e2e/utils/player"
 
+const nextAnimationFrame = () =>
+  new Promise<void>((resolve) => {
+    requestAnimationFrame(() => resolve())
+  })
+
 for (const type of ["single", "multi"] as const) {
   test(`scrolls long ${type} answers with touch and submits the bottom option`, async ({
     page: manager,
@@ -46,14 +51,26 @@ for (const type of ["single", "multi"] as const) {
     expect(initialBounds).not.toBeNull()
     expect(initialBounds?.y).toBeGreaterThan(viewport.height)
     const cdp = await player.context().newCDPSession(player)
-    const swipe = () =>
-      cdp.send("Input.synthesizeScrollGesture", {
-        x: viewport.width / 2,
-        y: viewport.height - 50,
-        yDistance: -viewport.height * 0.7,
-        speed: 1000,
-        gestureSourceType: "touch",
+    const swipe = async () => {
+      const x = viewport.width / 2
+      const startY = viewport.height - 50
+      await cdp.send("Input.dispatchTouchEvent", {
+        type: "touchStart",
+        touchPoints: [{ x, y: startY }],
       })
+      await Array.from({ length: 12 }).reduce(async (previous, _, index) => {
+        await previous
+        await player.evaluate(nextAnimationFrame)
+        await cdp.send("Input.dispatchTouchEvent", {
+          type: "touchMove",
+          touchPoints: [{ x, y: startY - ((startY - 50) * (index + 1)) / 12 }],
+        })
+      }, Promise.resolve())
+      await cdp.send("Input.dispatchTouchEvent", {
+        type: "touchEnd",
+        touchPoints: [],
+      })
+    }
     await swipe()
     await expect
       .poll(() => player.evaluate(() => window.scrollY))
