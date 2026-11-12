@@ -1,3 +1,4 @@
+import fs from "fs"
 import {
   openQuizzTab,
   quizzRow,
@@ -6,7 +7,6 @@ import {
 } from "@razzia/e2e/utils/editor"
 import { expect, test } from "@razzia/e2e/utils/fixtures"
 import { t } from "@razzia/e2e/utils/i18n"
-import fs from "fs"
 
 test("exports a quiz and imports it only after review", async ({ page }) => {
   const subject = `Spreadsheet ${Date.now()}`

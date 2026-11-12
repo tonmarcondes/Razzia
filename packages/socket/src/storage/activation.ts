@@ -1,7 +1,7 @@
-import type { LocalDatabase } from "@razzia/socket/storage/database"
-import { inspectLegacy } from "@razzia/socket/storage/legacy-migration"
-import { ACCEPTED_MEDIA_TYPES } from "@razzia/common/constants"
 import path from "node:path"
+import type { LocalDatabase } from "@razzia/socket/storage/database"
+import { ACCEPTED_MEDIA_TYPES } from "@razzia/common/constants"
+import { inspectLegacy } from "@razzia/socket/storage/legacy-migration"
 
 /** Offline cutover only, after stopping the legacy service and verifying a backup. */
 export const activateLocalStore = (

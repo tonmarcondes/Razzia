@@ -1,4 +1,7 @@
-import { isLocalStoreReady } from "@razzia/socket/storage/activation"
+import type { SQLOutputValue } from "node:sqlite"
+import { randomUUID } from "node:crypto"
+import { EventEmitter } from "node:events"
+import fs from "node:fs"
 import type { SessionClaims } from "@razzia/common/types/auth"
 import {
   accountLogin,
@@ -6,8 +9,6 @@ import {
   updateProfileValidator,
   type AccountPublic,
 } from "@razzia/common/validators/accounts"
-import { LocalDatabase } from "@razzia/socket/storage/database"
-import { HOLDING_OWNER_ID } from "@razzia/socket/storage/legacy-migration"
 import { getPath } from "@razzia/socket/services/config"
 import {
   DomainError,
@@ -15,10 +16,9 @@ import {
   notFound,
 } from "@razzia/socket/services/errors"
 import { hashPassword, verifyPassword } from "@razzia/socket/services/passwords"
-import { randomUUID } from "node:crypto"
-import { EventEmitter } from "node:events"
-import fs from "node:fs"
-import type { SQLOutputValue } from "node:sqlite"
+import { isLocalStoreReady } from "@razzia/socket/storage/activation"
+import { LocalDatabase } from "@razzia/socket/storage/database"
+import { HOLDING_OWNER_ID } from "@razzia/socket/storage/legacy-migration"
 
 const unauthorized = () =>
   new DomainError("errors:accounts.invalidCredentials", 403)

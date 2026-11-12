@@ -2,7 +2,7 @@
 
 Razzia has two test suites:
 
-- **Unit and integration tests** with [Vitest](https://vitest.dev), next to the code they test (`*.test.ts`).
+- **Unit and integration tests** with [Vitest](https://vitest.dev), in the source `test/` folders (`*.test.ts`), with fork-specific tests also matched recursively.
 - **End-to-end tests** with [Playwright](https://playwright.dev), in the `packages/e2e` package.
 
 ## Commands

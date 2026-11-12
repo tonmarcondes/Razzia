@@ -1,4 +1,5 @@
 import { zValidator } from "@hono/zod-validator"
+import { StatusCodes } from "http-status-codes"
 import {
   checkGameValidator,
   createGameValidator,
@@ -8,17 +9,14 @@ import {
 import { apiFactory } from "@razzia/socket/api/factory"
 import { requireManager, requireSession } from "@razzia/socket/api/middleware"
 import { i18nHook } from "@razzia/socket/api/validation"
+import { authMode } from "@razzia/socket/env"
 import { mintJoinTicket } from "@razzia/socket/services/auth"
 import { getQuizz } from "@razzia/socket/services/config"
 import Game from "@razzia/socket/services/game"
 import { getIo } from "@razzia/socket/services/io"
-import Registry from "@razzia/socket/services/registry"
-import { StatusCodes } from "http-status-codes"
-
-import { authMode } from "@razzia/socket/env"
 import { localResources } from "@razzia/socket/services/local-resources"
-
 import { setMediaCookie } from "@razzia/socket/services/media-cookie"
+import Registry from "@razzia/socket/services/registry"
 
 const routes = apiFactory
   .createApp()

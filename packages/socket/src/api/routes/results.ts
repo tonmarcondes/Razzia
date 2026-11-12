@@ -1,13 +1,12 @@
+import { StatusCodes } from "http-status-codes"
 import { apiFactory } from "@razzia/socket/api/factory"
 import { requireManager } from "@razzia/socket/api/middleware"
+import { authMode } from "@razzia/socket/env"
 import {
   deleteResult,
   getResultById,
   getResultsMeta,
 } from "@razzia/socket/services/config"
-import { StatusCodes } from "http-status-codes"
-
-import { authMode } from "@razzia/socket/env"
 import { localResources } from "@razzia/socket/services/local-resources"
 
 const routes = apiFactory

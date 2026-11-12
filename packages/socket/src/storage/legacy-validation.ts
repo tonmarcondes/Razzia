@@ -1,9 +1,9 @@
+import { z } from "zod"
 import type { GameResult } from "@razzia/common/types/game"
 import {
   normalizeLegacyQuizz,
   quizzValidator,
 } from "@razzia/common/validators/quizz"
-import { z } from "zod"
 
 const playerAnswer = z.strictObject({
   playerName: z.string(),

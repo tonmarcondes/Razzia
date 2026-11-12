@@ -1,12 +1,12 @@
-import { mintToken } from "@razzia/socket/services/auth"
-import { app, createSocketServer } from "@razzia/socket/app"
-import { getPath } from "@razzia/socket/services/config"
-import { getAccounts } from "@razzia/socket/services/accounts"
-import { LocalDatabase } from "@razzia/socket/storage/database"
+import type { AddressInfo } from "node:net"
 import { createAdaptorServer } from "@hono/node-server"
 import { io as connect } from "socket.io-client"
-import type { AddressInfo } from "node:net"
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest"
+import { app, createSocketServer } from "@razzia/socket/app"
+import { getAccounts } from "@razzia/socket/services/accounts"
+import { mintToken } from "@razzia/socket/services/auth"
+import { getPath } from "@razzia/socket/services/config"
+import { LocalDatabase } from "@razzia/socket/storage/database"
 
 vi.mock("@razzia/socket/env", () => ({
   authMode: "local",

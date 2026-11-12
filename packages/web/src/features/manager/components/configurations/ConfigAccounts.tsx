@@ -1,3 +1,7 @@
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { useState } from "react"
+import toast from "react-hot-toast"
+import { useTranslation } from "react-i18next"
 import type { AccountPublic } from "@razzia/common/validators/accounts"
 import Button from "@razzia/web/components/Button"
 import Input from "@razzia/web/components/Input"
@@ -13,10 +17,6 @@ import {
 } from "@razzia/web/features/manager/accounts"
 import { ApiError } from "@razzia/web/lib/api"
 import { setToken } from "@razzia/web/lib/session"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
-import toast from "react-hot-toast"
-import { useTranslation } from "react-i18next"
 
 const AccountAdministration = () => {
   const { t } = useTranslation()
@@ -100,7 +100,7 @@ const AccountAdministration = () => {
             <label className="block">
               {t("manager:accounts.role")}
               <select
-                className="bg-background border-input w-full rounded border p-2"
+                className="border-input w-full rounded border bg-background p-2"
                 value={role}
                 onChange={(e) =>
                   setRole(e.target.value as AccountPublic["role"])

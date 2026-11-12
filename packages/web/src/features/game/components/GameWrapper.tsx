@@ -1,4 +1,10 @@
+import clsx from "clsx"
+import { CircleStop, Maximize, Minimize, Users } from "lucide-react"
+import { type PropsWithChildren, useState } from "react"
+import toast from "react-hot-toast"
+import { useTranslation } from "react-i18next"
 import type { BackgroundStage } from "@razzia/common/validators/branding"
+import type { Status as GameStatus } from "@razzia/web/features/game/utils/createStatus"
 import { EVENTS, QUIZZ_MODES } from "@razzia/common/constants"
 import {
   STATUS,
@@ -20,13 +26,7 @@ import { useManagerStore } from "@razzia/web/features/game/stores/manager"
 import { usePlayerStore } from "@razzia/web/features/game/stores/player"
 import { useQuestionStore } from "@razzia/web/features/game/stores/question"
 import { MANAGER_SKIP_BTN } from "@razzia/web/features/game/utils/constants"
-import type { Status as GameStatus } from "@razzia/web/features/game/utils/createStatus"
 import { useFullscreen } from "@razzia/web/hooks/useFullscreen"
-import clsx from "clsx"
-import { CircleStop, Maximize, Minimize, Users } from "lucide-react"
-import { type PropsWithChildren, useState } from "react"
-import toast from "react-hot-toast"
-import { useTranslation } from "react-i18next"
 
 type Props = PropsWithChildren & {
   statusName: Status | undefined
@@ -138,7 +138,7 @@ const GameWrapper = ({
               {manager && onBack && (
                 <Button
                   onClick={onBack}
-                  className="hover:bg-accent bg-white px-4 text-black"
+                  className="bg-white px-4 text-black hover:bg-accent"
                 >
                   {t("common:exit")}
                 </Button>
@@ -166,19 +166,19 @@ const GameWrapper = ({
               {manager && next && (
                 <div className="ml-auto flex gap-2">
                   {statusName === STATUS.SHOW_ROOM && (
-                    <RoomLockButton className="hover:bg-accent rounded-lg bg-white px-3 text-black" />
+                    <RoomLockButton className="rounded-lg bg-white px-3 text-black hover:bg-accent" />
                   )}
 
                   <Button
                     className={clsx(
-                      "hover:bg-accent relative overflow-hidden bg-white px-4 text-black",
+                      "relative overflow-hidden bg-white px-4 text-black hover:bg-accent",
                       { "pointer-events-none": isDisabled },
                     )}
                     onClick={handleNext}
                   >
                     {countdown && (
                       <span
-                        className="bg-primary/40 absolute inset-y-0 left-0"
+                        className="absolute inset-y-0 left-0 bg-primary/40"
                         style={{
                           animation: `progressBar ${countdown.total}s linear forwards`,
                         }}

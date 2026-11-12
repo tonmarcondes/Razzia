@@ -1,9 +1,9 @@
-import type { BrandingTheme } from "@razzia/common/validators/branding"
-import { renderBrandingMetadata } from "@razzia/common/branding-metadata"
-import { readBranding } from "@razzia/socket/services/branding"
 import type { Context } from "hono"
 import fs from "node:fs"
 import path from "node:path"
+import type { BrandingTheme } from "@razzia/common/validators/branding"
+import { renderBrandingMetadata } from "@razzia/common/branding-metadata"
+import { readBranding } from "@razzia/socket/services/branding"
 
 export const servePublicPage = (c: Context) => {
   let theme: BrandingTheme | null = null

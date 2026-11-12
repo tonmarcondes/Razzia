@@ -1,16 +1,16 @@
-import { getPath } from "@razzia/socket/services/config"
-import { authMode } from "@razzia/socket/env"
-import { verifyToken } from "@razzia/socket/services/auth"
-import {
-  localResources,
-  mediaMimeByExtension,
-} from "@razzia/socket/services/local-resources"
-import Registry from "@razzia/socket/services/registry"
 import type { Context } from "hono"
 import { getCookie } from "hono/cookie"
 import fs from "node:fs"
 import path from "node:path"
 import { Readable } from "node:stream"
+import { authMode } from "@razzia/socket/env"
+import { verifyToken } from "@razzia/socket/services/auth"
+import { getPath } from "@razzia/socket/services/config"
+import {
+  localResources,
+  mediaMimeByExtension,
+} from "@razzia/socket/services/local-resources"
+import Registry from "@razzia/socket/services/registry"
 
 export const serveTrainingMedia = async (c: Context) => {
   const name = c.req.param("name")

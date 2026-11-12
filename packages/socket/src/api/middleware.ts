@@ -1,13 +1,12 @@
-import { SESSION_ROLES } from "@razzia/common/constants"
-import type { SessionClaims } from "@razzia/common/types/auth"
-import { type ApiEnv } from "@razzia/socket/api/factory"
-import { verifyToken } from "@razzia/socket/services/auth"
 import type { Context } from "hono"
 import { createMiddleware } from "hono/factory"
 import { StatusCodes } from "http-status-codes"
-
+import type { SessionClaims } from "@razzia/common/types/auth"
+import { SESSION_ROLES } from "@razzia/common/constants"
+import { type ApiEnv } from "@razzia/socket/api/factory"
 import { authMode } from "@razzia/socket/env"
 import { getAccounts } from "@razzia/socket/services/accounts"
+import { verifyToken } from "@razzia/socket/services/auth"
 
 const UNAUTHORIZED = { error: "errors:auth.unauthorized" } as const
 

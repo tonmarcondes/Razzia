@@ -1,11 +1,15 @@
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
+import { useTranslation } from "react-i18next"
 import {
   BACKGROUND_STAGES,
   BRANDING_ASSET_MAX_SIZE,
   type BackgroundStage,
   type BrandingTheme,
 } from "@razzia/common/validators/branding"
-import defaultLogo from "@razzia/web/assets/logo.svg"
 import defaultBackground from "@razzia/web/assets/background.png"
+import defaultLogo from "@razzia/web/assets/logo.svg"
 import { imageFallback } from "@razzia/web/branding"
 import AlertDialog from "@razzia/web/components/AlertDialog"
 import Button from "@razzia/web/components/Button"
@@ -16,10 +20,6 @@ import {
   uploadBranding,
 } from "@razzia/web/features/manager/queries"
 import { ApiError } from "@razzia/web/lib/api"
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
-import { useTranslation } from "react-i18next"
 
 const inputClass =
   "border-accent bg-background text-foreground min-w-0 w-full rounded-lg border px-3 py-2 text-sm"

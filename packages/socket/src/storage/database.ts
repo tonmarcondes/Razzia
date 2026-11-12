@@ -1,7 +1,7 @@
-import { SCHEMA_SQL, SCHEMA_VERSION } from "@razzia/socket/storage/schema"
 import fs from "node:fs"
 import path from "node:path"
 import { backup, DatabaseSync } from "node:sqlite"
+import { SCHEMA_SQL, SCHEMA_VERSION } from "@razzia/socket/storage/schema"
 
 export const DATABASE_NAME = "accounts.sqlite"
 

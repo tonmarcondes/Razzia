@@ -1,12 +1,12 @@
 import fs from "node:fs"
 import path from "node:path"
+import { Accounts } from "@razzia/socket/services/accounts"
+import { activateLocalStore } from "@razzia/socket/storage/activation"
 import { LocalDatabase } from "@razzia/socket/storage/database"
 import {
   inspectLegacy,
   migrateLegacy,
 } from "@razzia/socket/storage/legacy-migration"
-import { activateLocalStore } from "@razzia/socket/storage/activation"
-import { Accounts } from "@razzia/socket/services/accounts"
 
 const root = path.resolve(import.meta.dirname, "../../../e2e/.local-config")
 

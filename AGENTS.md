@@ -29,7 +29,7 @@ The golden rule is to follow the original project's conventions for commits, bra
 
 ## Toolchain and verification
 
-- Use the Node major selected by `.nvmrc` and `package.json`, and the exact pnpm version declared in `packageManager`. The baseline on 2026-10-29 uses Node 24 and pnpm 11.28.7; those files remain authoritative.
+- Use the Node major selected by `.nvmrc` and `package.json`, and the exact pnpm version declared in `packageManager`. The baseline on 2026-11-12 uses Node 26 and pnpm 11.28.7; those files remain authoritative.
 - Install dependencies from the repository root with `pnpm install --frozen-lockfile`. Never update a lockfile merely to make a different local tool version work.
 - Before committing, run `pnpm format:fix` and `pnpm lint:fix`, and inspect the resulting diff for unrelated changes. Check `pnpm format` and `pnpm lint`.
 - For behavior changes, run `pnpm build`, `pnpm test`, and the full `pnpm test:e2e`. Install the Playwright browser as described in `docs/testing.md`.

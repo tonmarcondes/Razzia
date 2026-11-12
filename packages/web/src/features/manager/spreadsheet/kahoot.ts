@@ -1,9 +1,8 @@
+import ExcelJS from "exceljs"
 import {
   quizzValidator,
   type QuizzValidated,
 } from "@razzia/common/validators/quizz"
-
-import ExcelJS from "exceljs"
 
 export const KAHOOT_TIMES = [5, 10, 20, 30, 60, 120]
 
