@@ -54,7 +54,7 @@ export interface CommonStatusDataMap {
   WAIT: { text: string }
   FINISHED: {
     subject: string
-    top: Array<Pick<Player, "username" | "points">>
+    top: Array<Pick<Player, "username" | "points" | "avatar">>
     rank?: number
   }
   SUMMARY: { subject: string; totalPlayers: number; totalQuestions: number }

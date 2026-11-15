@@ -1,4 +1,5 @@
 import z from "zod"
+import { avatarSchema } from "@razzia/common/avatar"
 import { AUTO_ADVANCE_DELAY } from "@razzia/common/constants"
 import {
   inviteCodeValidator,
@@ -14,6 +15,8 @@ export const checkGameValidator = z.object({
 })
 
 export const joinGameValidator = z.object({
+  avatar: avatarSchema.optional(),
+  avatarReady: z.boolean().optional(),
   inviteCode: inviteCodeValidator,
   username: usernameValidator.optional(),
 })
@@ -25,6 +28,10 @@ const delayValidator = z
   .max(AUTO_ADVANCE_DELAY.MAX, "errors:game.invalidAutoAdvanceDelay")
 
 export const gameSettingsSchema = z.object({
+  avatars: z.object({
+    enabled: z.boolean(),
+    seconds: z.number().int().min(10).max(180),
+  }),
   generatedUsernames: z.boolean(),
   answersOnly: z.boolean(),
   autoAdvance: z.object({

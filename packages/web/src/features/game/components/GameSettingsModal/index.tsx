@@ -16,6 +16,7 @@ import GeneratedUsernames from "@razzia/web/features/game/components/GameSetting
 import { useManagerStore } from "@razzia/web/features/game/stores/manager"
 import { updateGameSettings } from "@razzia/web/features/manager/queries"
 import { ApiError } from "@razzia/web/lib/api"
+import Avatars from "./Avatars"
 
 const GameSettingsModal = () => {
   const { gameId, settings, updateManager } = useManagerStore()
@@ -89,6 +90,7 @@ const GameSettingsModal = () => {
             >
               <div className="min-h-0 flex-1 overflow-y-auto">
                 <GeneratedUsernames />
+                <Avatars />
                 <AnswersOnly />
                 <AutoAdvance />
               </div>

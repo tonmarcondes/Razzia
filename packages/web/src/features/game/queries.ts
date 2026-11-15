@@ -1,4 +1,5 @@
 import { queryOptions } from "@tanstack/react-query"
+import type { Avatar } from "@razzia/common/avatar"
 import { api, unwrap } from "@razzia/web/lib/api"
 
 export const checkInviteCode = (inviteCode: string) =>
@@ -11,5 +12,9 @@ export const inviteCodeQuery = (inviteCode: string) =>
     staleTime: 0,
   })
 
-export const joinGame = (json: { inviteCode: string; username?: string }) =>
-  unwrap(api.games.join.$post({ json }))
+export const joinGame = (json: {
+  inviteCode: string
+  username?: string
+  avatar?: Avatar
+  avatarReady?: boolean
+}) => unwrap(api.games.join.$post({ json }))

@@ -477,6 +477,7 @@ export class RoundManager {
       date: new Date().toISOString(),
       players: finalPlayers.map((player, index) => ({
         username: player.username,
+        ...(player.avatar ? { avatar: player.avatar } : {}),
         points: player.points,
         rank: index + 1,
       })),
@@ -491,7 +492,11 @@ export class RoundManager {
 
     const top = this.leaderboard
       .slice(0, 3)
-      .map(({ username, points }) => ({ username, points }))
+      .map(({ username, points, avatar }) => ({
+        username,
+        points,
+        ...(avatar ? { avatar } : {}),
+      }))
 
     this.opts.send(this.opts.getManagerId(), STATUS.FINISHED, {
       subject: this.opts.quizz.subject,

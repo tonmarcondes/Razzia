@@ -7,6 +7,7 @@ import type {
   QuizzMode,
 } from "@razzia/common/types/game"
 import type { Server, Socket } from "@razzia/common/types/game/socket"
+import { randomAvatar, type Avatar } from "@razzia/common/avatar"
 import { createDefaultGameSettings, EVENTS } from "@razzia/common/constants"
 import {
   STATUS,
@@ -28,6 +29,32 @@ const registry = Registry.getInstance()
 const MANAGER_GRACE_SECONDS = 30
 
 class Game {
+  private avatarDrafts = new Map<
+    string,
+    { deadline: number; avatar: Avatar; username?: string }
+  >()
+
+  prepareAvatar(clientId: string, username?: string) {
+    const existing = this.avatarDrafts.get(clientId)
+
+    if (existing) {
+      return existing
+    }
+
+    if (this.avatarDrafts.size >= 1000) {
+      return null
+    }
+
+    const draft = {
+      deadline: Date.now() + this.settings.avatars.seconds * 1000,
+      avatar: randomAvatar(),
+      username,
+    }
+    this.avatarDrafts.set(clientId, draft)
+
+    return draft
+  }
+
   readonly gameId: string
   readonly inviteCode: string
   readonly gameMode: QuizzMode
@@ -176,7 +203,7 @@ class Game {
 
   // Player actions
 
-  join(socket: Socket, username?: string): string | null {
+  join(socket: Socket, username?: string, avatar?: Avatar): string | null {
     if (this._locked) {
       return "errors:game.locked"
     }
@@ -184,17 +211,26 @@ class Game {
     if (this._settings.generatedUsernames) {
       const taken = this.playerManager.getAll().map((player) => player.username)
 
-      return this.playerManager.join(socket, createNickname(taken))
+      return this.playerManager.join(
+        socket,
+        createNickname(taken),
+        this.settings.avatars.enabled ? (avatar ?? randomAvatar()) : undefined,
+      )
     }
 
     if (!username) {
       return "errors:auth.usernameTooShort"
     }
 
-    return this.playerManager.join(socket, username)
+    return this.playerManager.join(
+      socket,
+      username,
+      this.settings.avatars.enabled ? (avatar ?? randomAvatar()) : undefined,
+    )
   }
 
   dispose() {
+    this.avatarDrafts.clear()
     this.round.stop()
     this.cancelManagerGrace()
   }
@@ -324,7 +360,11 @@ class Game {
       gameMode: this.gameMode,
       currentQuestion: this.round.getReconnectInfo(),
       status,
-      player: { username: player.username, points: player.points },
+      player: {
+        username: player.username,
+        points: player.points,
+        ...(player.avatar ? { avatar: player.avatar } : {}),
+      },
     })
     this.playerManager.broadcastCount()
 

@@ -2,6 +2,7 @@ import { AnimatePresence, motion, useSpring, useTransform } from "motion/react"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import type { ManagerStatusDataMap } from "@razzia/common/types/game/status"
+import AvatarView from "@razzia/web/features/avatars/AvatarView"
 import Fire from "@razzia/web/features/game/components/icons/Fire"
 
 interface Props {
@@ -72,43 +73,48 @@ const Leaderboard = ({ data: { oldLeaderboard, leaderboard } }: Props) => {
       </h2>
       <div className="flex w-full flex-col gap-2">
         <AnimatePresence mode="popLayout">
-          {displayedLeaderboard.map(({ id, username, points, streak }) => (
-            <motion.div
-              key={id}
-              layout
-              initial={{ opacity: 0, y: 50 }}
-              animate={{
-                opacity: 1,
-                y: 0,
-              }}
-              exit={{
-                opacity: 0,
-                y: 50,
-                transition: { duration: 0.2 },
-              }}
-              transition={{
-                layout: {
-                  type: "spring",
-                  stiffness: 350,
-                  damping: 25,
-                },
-              }}
-              className="flex w-full justify-between rounded-xl bg-primary p-3 text-3xl font-bold text-white"
-            >
-              <span className="flex items-center gap-2 drop-shadow-md">
-                {username}
-                <StreakBadge streak={streak} />
-              </span>
-              {isAnimating ? (
-                <AnimatedPoints
-                  from={oldLeaderboard.find((u) => u.id === id)?.points ?? 0}
-                  to={leaderboard.find((u) => u.id === id)?.points ?? 0}
-                />
-              ) : (
-                <span className="drop-shadow-md">{points}</span>
-              )}
-            </motion.div>
-          ))}
+          {displayedLeaderboard.map(
+            ({ id, username, points, streak, avatar }) => (
+              <motion.div
+                key={id}
+                layout
+                initial={{ opacity: 0, y: 50 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                exit={{
+                  opacity: 0,
+                  y: 50,
+                  transition: { duration: 0.2 },
+                }}
+                transition={{
+                  layout: {
+                    type: "spring",
+                    stiffness: 350,
+                    damping: 25,
+                  },
+                }}
+                className="flex w-full justify-between rounded-xl bg-primary p-3 text-3xl font-bold text-white"
+              >
+                <span className="flex items-center gap-2 drop-shadow-md">
+                  {avatar && (
+                    <AvatarView avatar={avatar} className="size-14 shrink-0" />
+                  )}
+                  {username}
+                  <StreakBadge streak={streak} />
+                </span>
+                {isAnimating ? (
+                  <AnimatedPoints
+                    from={oldLeaderboard.find((u) => u.id === id)?.points ?? 0}
+                    to={leaderboard.find((u) => u.id === id)?.points ?? 0}
+                  />
+                ) : (
+                  <span className="drop-shadow-md">{points}</span>
+                )}
+              </motion.div>
+            ),
+          )}
         </AnimatePresence>
       </div>
     </section>

@@ -1,5 +1,6 @@
 import { sign, verify } from "hono/jwt"
 import { v7 as uuid } from "uuid"
+import type { Avatar } from "@razzia/common/avatar"
 import type {
   JoinTicketClaims,
   SessionClaims,
@@ -71,12 +72,16 @@ const JOIN_TICKET_TTL = 60 * 5
 export const mintJoinTicket = (
   sub: string,
   gameId: string,
-  username?: string,
+  details?: string | { username?: string; avatar?: Avatar },
 ): Promise<string> => {
   const iat = Math.floor(Date.now() / 1000)
+  const { username, avatar } =
+    typeof details === "string"
+      ? { username: details, avatar: undefined }
+      : (details ?? {})
 
   return sign(
-    { sub, gameId, username, iat, exp: iat + JOIN_TICKET_TTL },
+    { sub, gameId, username, avatar, iat, exp: iat + JOIN_TICKET_TTL },
     jwtSecret,
     ALGORITHM,
   )

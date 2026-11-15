@@ -4,6 +4,7 @@ import toast from "react-hot-toast"
 import { useTranslation } from "react-i18next"
 import { EVENTS } from "@razzia/common/constants"
 import { STATUS } from "@razzia/common/types/game/status"
+import AvatarView from "@razzia/web/features/avatars/AvatarView"
 import GameWrapper from "@razzia/web/features/game/components/GameWrapper"
 import {
   socketClient,
@@ -56,12 +57,12 @@ const PlayerGamePage = () => {
 
   useEvent(
     EVENTS.GAME.SUCCESS_JOIN,
-    ({ gameId: joinedGameId, username, gameMode }) => {
+    ({ gameId: joinedGameId, username, gameMode, avatar }) => {
       updatePlayer({
         gameId: joinedGameId,
         gameMode,
         joinTicket: null,
-        player: { username, points: 0 },
+        player: { username, points: 0, avatar },
         status: createStatus(STATUS.WAIT, { text: "game:waitingForPlayers" }),
       })
     },
@@ -106,6 +107,8 @@ const PlayerGamePage = () => {
     }
   })
 
+  const ownAvatar = usePlayerStore((state) => state.player?.avatar)
+
   if (!gameIdParam) {
     return null
   }
@@ -121,6 +124,9 @@ const PlayerGamePage = () => {
 
   return (
     <GameWrapper statusName={status.name}>
+      {status.name === STATUS.WAIT && ownAvatar && (
+        <AvatarView avatar={ownAvatar} className="mx-auto h-28 w-24" />
+      )}
       {CurrentComponent && <CurrentComponent data={status.data as never} />}
     </GameWrapper>
   )

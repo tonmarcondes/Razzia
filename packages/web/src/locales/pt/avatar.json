@@ -1,0 +1,204 @@
+{
+  "title": "Crie seu avatar",
+  "preview": "Prévia do avatar",
+  "randomize": "Surpreenda-me",
+  "confirm": "Usar avatar e entrar",
+  "skip": "Entrar com avatar aleatório",
+  "remaining": "Tempo restante: {{count}} s",
+  "expired": "O tempo terminou. Entrando com avatar aleatório…",
+  "retry": "Tentar entrar novamente",
+  "enabled": "Permitir avatares dos alunos",
+  "hint": "Os alunos podem criar um avatar em blocos antes de entrar. O servidor controla o prazo.",
+  "seconds": "Tempo para criar o avatar (segundos)",
+  "categories": {
+    "base": "1. Base e pele",
+    "detail": "2. Detalhes da pele",
+    "brows": "3. Sobrancelhas",
+    "eyes": "4. Olhos e expressões",
+    "mouth": "5. Boca",
+    "hair": "6. Cabelos",
+    "clothes": "7. Roupas",
+    "accessories": "8. Acessórios"
+  },
+  "fields": {
+    "skin": "Tom de pele",
+    "detail": "Detalhes da pele",
+    "brows": "Sobrancelhas",
+    "eyes": "Olhos e expressão",
+    "glasses": "Óculos",
+    "shadow": "Sombra",
+    "mouth": "Boca",
+    "lipstick": "Batom",
+    "hair": "Modelo do cabelo",
+    "hairColor": "Cor do cabelo",
+    "clothes": "Roupa",
+    "clothesColor": "Cor da roupa",
+    "badge": "Crachá",
+    "hat": "Chapéu ou capacete",
+    "headset": "Fone de ouvido",
+    "hand": "Item na mão",
+    "neck": "Acessório de pescoço",
+    "ears": "Orelhas",
+    "earrings": "Brincos"
+  },
+  "options": {
+    "skin": {
+      "light": "Claro",
+      "medium": "Médio",
+      "tan": "Pardo",
+      "deep": "Retinto",
+      "golden": "Dourado",
+      "zombie": "Verde zumbi",
+      "sky": "Azul claro",
+      "purple": "Roxo",
+      "robot": "Cinza robô"
+    },
+    "detail": {
+      "none": "Pele lisa",
+      "acne": "Espinhas",
+      "freckles": "Sardas",
+      "darkCircles": "Olheiras",
+      "noseBandage": "Curativo no nariz",
+      "cheekBandage": "Curativo na bochecha",
+      "blush": "Blush"
+    },
+    "brows": {
+      "fine": "Finas",
+      "thick": "Grossas",
+      "unibrow": "Monocelha",
+      "angry": "Arqueadas",
+      "slit": "Com risquinho"
+    },
+    "eyes": {
+      "normal": "Pixels clássicos",
+      "sleepy": "Sono",
+      "surprised": "Espanto",
+      "wink": "Piscadinha",
+      "confused": "Confuso",
+      "hearts": "Corações"
+    },
+    "glasses": {
+      "none": "Sem óculos",
+      "square": "Óculos quadrados",
+      "round": "Óculos redondos",
+      "safety": "Óculos de proteção",
+      "sun": "Óculos escuros"
+    },
+    "shadow": {
+      "none": "Sem sombra",
+      "blue": "Sombra azul",
+      "pink": "Sombra rosa",
+      "purple": "Sombra roxa"
+    },
+    "mouth": {
+      "smile": "Sorriso",
+      "smirk": "Sorriso de canto",
+      "missingTooth": "Faltando dente",
+      "dirtyTooth": "Sujeira no dente",
+      "yawn": "Bocejo",
+      "surprised": "Boca em O",
+      "tongue": "Língua de fora",
+      "gum": "Bolha de chiclete"
+    },
+    "lipstick": {
+      "none": "Sem batom",
+      "red": "Batom vermelho",
+      "pink": "Batom rosa",
+      "purple": "Batom roxo"
+    },
+    "hair": {
+      "bald": "Careca",
+      "balding": "Calvo",
+      "short": "Curto liso",
+      "spiky": "Arrepiado",
+      "curly": "Cacheado",
+      "afro": "Crespo / black power",
+      "sideFringe": "Franja lateral",
+      "bun": "Coque",
+      "braids": "Tranças",
+      "mohawk": "Moicano",
+      "bob": "Chanel",
+      "long": "Comprido"
+    },
+    "hairColor": {
+      "black": "Preto",
+      "brown": "Castanho",
+      "blond": "Loiro",
+      "red": "Ruivo",
+      "grey": "Grisalho",
+      "neonBlue": "Azul neon",
+      "pink": "Rosa",
+      "green": "Verde"
+    },
+    "clothes": {
+      "uniformNavy": "Uniforme azul-marinho",
+      "uniformGrey": "Uniforme cinza",
+      "vest": "Colete refletivo vermelho",
+      "tshirt": "Camiseta",
+      "hoodie": "Moletom com capuz",
+      "plaid": "Camisa xadrez"
+    },
+    "clothesColor": {
+      "navy": "Azul-marinho",
+      "grey": "Cinza",
+      "red": "Vermelho",
+      "yellow": "Amarelo",
+      "green": "Verde",
+      "blue": "Azul",
+      "pink": "Rosa",
+      "purple": "Roxo"
+    },
+    "badge": {
+      "none": "Sem crachá",
+      "badge": "Crachá com cordão"
+    },
+    "hat": {
+      "none": "Sem chapéu",
+      "cap": "Boné",
+      "beanie": "Gorro",
+      "hardHat": "Capacete amarelo",
+      "crown": "Coroa de ouro",
+      "pilot": "Quepe de piloto",
+      "chef": "Chapéu de cozinheiro",
+      "balaclava": "Balaclava",
+      "nurse": "Chapéu de enfermagem",
+      "straw": "Chapéu de palha",
+      "panamaWhite": "Panamá branco",
+      "panamaBlack": "Panamá preto",
+      "santa": "Chapéu de Papai Noel"
+    },
+    "headset": {
+      "none": "Sem fone",
+      "head": "Headset com microfone",
+      "neck": "Fone no pescoço"
+    },
+    "hand": {
+      "none": "Sem item",
+      "wrench": "Chave inglesa",
+      "screwdriver": "Chave de fenda",
+      "pliers": "Alicate",
+      "flashlight": "Lanterna de inspeção",
+      "multimeter": "Multímetro",
+      "checklist": "Prancheta de checklist",
+      "spanner": "Chave de boca",
+      "coffee": "Caneca de café",
+      "plane": "Miniavião",
+      "controller": "Controle de videogame",
+      "book": "Livro técnico"
+    },
+    "neck": {
+      "none": "Sem acessório",
+      "gold": "Cordão de ouro",
+      "stethoscope": "Estetoscópio"
+    },
+    "ears": {
+      "normal": "Orelhas comuns",
+      "large": "Orelhas grandes"
+    },
+    "earrings": {
+      "none": "Sem brincos",
+      "studs": "Brincos pequenos",
+      "hoops": "Argolas"
+    }
+  }
+}

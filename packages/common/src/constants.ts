@@ -49,6 +49,7 @@ export const NO_TIME_LIMIT = -1
 export const AUTO_ADVANCE_DELAY = { MIN: 3, MAX: 600 } as const
 
 export const createDefaultGameSettings = (): GameSettings => ({
+  avatars: { enabled: false, seconds: 60 },
   generatedUsernames: false,
   answersOnly: false,
   autoAdvance: {

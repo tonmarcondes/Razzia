@@ -101,7 +101,7 @@ const routes = apiFactory
     requireSession,
     zValidator("json", joinGameValidator, i18nHook),
     async (c) => {
-      const { inviteCode, username } = c.req.valid("json")
+      const { inviteCode, username, avatar, avatarReady } = c.req.valid("json")
       const game = Registry.getInstance().getGameByInviteCode(inviteCode)
 
       if (!game) {
@@ -128,6 +128,7 @@ const routes = apiFactory
         return c.json({
           gameId: game.gameId,
           ticket: null,
+          avatarSetup: null,
           username: existing.username,
         })
       }
@@ -145,9 +146,39 @@ const routes = apiFactory
 
       const name = game.settings.generatedUsernames ? undefined : username
 
+      const draft = game.settings.avatars.enabled
+        ? game.prepareAvatar(sub, username)
+        : null
+
+      if (game.settings.avatars.enabled && !draft) {
+        return c.json(
+          { error: "errors:game.locked" },
+          StatusCodes.TOO_MANY_REQUESTS,
+        )
+      }
+
+      if (draft && !avatarReady && Date.now() < draft.deadline) {
+        return c.json({
+          gameId: game.gameId,
+          ticket: null,
+          username: name ?? null,
+          avatarSetup: { ...draft, serverNow: Date.now() },
+        })
+      }
+
+      let selectedAvatar = draft?.avatar
+
+      if (draft && Date.now() < draft.deadline && avatarReady && avatar) {
+        selectedAvatar = avatar
+      }
+
       return c.json({
+        avatarSetup: null,
         gameId: game.gameId,
-        ticket: await mintJoinTicket(sub, game.gameId, name),
+        ticket: await mintJoinTicket(sub, game.gameId, {
+          username: draft?.username ?? name,
+          avatar: selectedAvatar,
+        }),
         username: name ?? null,
       })
     },
