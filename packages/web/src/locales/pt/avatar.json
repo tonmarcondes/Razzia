@@ -39,14 +39,15 @@
     "hand": "Item na mão",
     "neck": "Acessório de pescoço",
     "ears": "Orelhas",
-    "earrings": "Brincos"
+    "earrings": "Brincos",
+    "nose": "Nariz"
   },
   "options": {
     "skin": {
       "light": "Claro",
       "medium": "Médio",
       "tan": "Pardo",
-      "deep": "Retinto",
+      "deep": "Negro",
       "golden": "Dourado",
       "zombie": "Verde zumbi",
       "sky": "Azul claro",
@@ -98,7 +99,9 @@
       "yawn": "Bocejo",
       "surprised": "Boca em O",
       "tongue": "Língua de fora",
-      "gum": "Bolha de chiclete"
+      "gum": "Bolha de chiclete",
+      "pacifier": "Chupeta grande",
+      "zipper": "Zíper na boca"
     },
     "lipstick": {
       "none": "Sem batom",
@@ -184,7 +187,8 @@
       "coffee": "Caneca de café",
       "plane": "Miniavião",
       "controller": "Controle de videogame",
-      "book": "Livro técnico"
+      "book": "Livro técnico",
+      "bottle": "Mamadeira"
     },
     "neck": {
       "none": "Sem acessório",
@@ -199,6 +203,10 @@
       "none": "Sem brincos",
       "studs": "Brincos pequenos",
       "hoops": "Argolas"
+    },
+    "nose": {
+      "normal": "Padrão",
+      "large": "Nariz grande"
     }
   }
 }

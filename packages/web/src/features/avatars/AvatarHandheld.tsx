@@ -15,6 +15,18 @@ const AvatarHandheld = ({ avatar: a }: { avatar: Avatar }) => {
             </>
           ) : (
             (() => {
+              if (a.hand === "bottle") {
+                return (
+                  <>
+                    <path d="M3-8h5v5H3z" fill="#edbd87" />
+                    <path d="M0-3h11v4H0z" fill="#78bfe0" />
+                    <path d="M0 1h11v16H0z" fill="#e1f3f7" />
+                    <path d="M1 6h9v10H1z" fill="#fff5d8" />
+                    <path d="M1 4h3m-3 4h3m-3 4h3" stroke="#6e9fae" />
+                  </>
+                )
+              }
+
               if (a.hand === "plane") {
                 return (
                   <path

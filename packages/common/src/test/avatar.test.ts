@@ -35,3 +35,16 @@ test("bounds the teacher's creation time without allowing an infinite window", (
     ).toBe(false)
   }
 })
+
+test("loads existing avatars without a nose field and validates the new accessories", () => {
+  const { nose: _nose, ...legacy } = randomAvatar()
+  expect(avatarSchema.parse(legacy).nose).toBe("normal")
+  for (const mouth of ["pacifier", "zipper"]) {
+    expect(
+      avatarSchema.parse({ ...legacy, nose: "large", mouth, hand: "bottle" }),
+    ).toMatchObject({ nose: "large", mouth, hand: "bottle" })
+  }
+  expect(avatarSchema.safeParse({ ...legacy, nose: "unknown" }).success).toBe(
+    false,
+  )
+})
