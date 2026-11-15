@@ -292,7 +292,28 @@ test("administers teachers, isolates two simultaneous classes and revokes a live
         })
       ).status,
     ).toBe(404)
-    await joinGame(playerA, pinA ?? "", "Participant A")
+    expect(
+      (
+        await api(hostA, `games/${gameA}/settings`, {
+          method: "PATCH",
+          body: { avatars: { enabled: true, seconds: 60 } },
+        })
+      ).status,
+    ).toBe(200)
+    await playerA.goto(`/?pin=${pinA ?? ""}`)
+    await playerA
+      .getByPlaceholder(t("game:usernamePlaceholder"))
+      .fill("Participant A")
+    await playerA
+      .getByRole("button", { name: t("common:submit"), exact: true })
+      .click()
+    await expect(
+      playerA.getByRole("region", { name: t("avatar:title") }),
+    ).toBeVisible()
+    await playerA
+      .getByRole("button", { name: t("avatar:confirm"), exact: true })
+      .click()
+    await expect(playerA.getByText(t("game:waitingForPlayers"))).toBeVisible()
     await joinGame(playerB, pinB ?? "", "Participant B")
     await expect(
       hostA.getByText("Participant A", { exact: true }),
@@ -329,6 +350,23 @@ test("administers teachers, isolates two simultaneous classes and revokes a live
     )
     expect(reportsB.body?.results).toEqual(
       expect.arrayContaining([expect.objectContaining({ subject: "Class B" })]),
+    )
+    const resultId = (
+      (reportsA.body?.results ?? []) as Array<{ id: string; subject: string }>
+    ).find((result) => result.subject === "Class A")?.id
+    expect(resultId).toBeTruthy()
+    const avatarReport = await api(hostA, `results/${resultId}`)
+    expect(avatarReport.status).toBe(200)
+    expect(avatarReport.body?.players).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          username: "Participant A",
+          avatar: expect.objectContaining({
+            skin: expect.any(String),
+            hat: expect.any(String),
+          }),
+        }),
+      ]),
     )
     expect(JSON.stringify(reportsA.body)).not.toContain("Class B")
     expect(JSON.stringify(reportsB.body)).not.toContain("Class A")

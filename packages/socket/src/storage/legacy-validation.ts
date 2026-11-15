@@ -1,5 +1,6 @@
 import { z } from "zod"
 import type { GameResult } from "@razzia/common/types/game"
+import { avatarSchema } from "@razzia/common/avatar"
 import {
   normalizeLegacyQuizz,
   quizzValidator,
@@ -19,6 +20,7 @@ const resultEnvelope = z.strictObject({
   players: z.array(
     z.strictObject({
       username: z.string(),
+      avatar: avatarSchema.optional(),
       points: z.number(),
       rank: z.number().int().min(1),
     }),
