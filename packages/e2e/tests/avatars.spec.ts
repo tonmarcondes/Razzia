@@ -5,6 +5,13 @@ import { t } from "@razzia/e2e/utils/i18n"
 import { createGame, startGame, next } from "@razzia/e2e/utils/manager"
 import { answer } from "@razzia/e2e/utils/player"
 
+const avatarLabelsRevealed = (nodes: Array<HTMLElement | SVGElement>) =>
+  nodes.every(
+    (node) =>
+      node.parentElement &&
+      getComputedStyle(node.parentElement).opacity === "1",
+  )
+
 test("creates a mobile avatar and retains it through reload, ranking and final report", async ({
   page: manager,
   newPage,
@@ -307,17 +314,7 @@ test("renders distinct new accessories for six simultaneous players and preserve
   await next(manager)
   await expect(manager.getByText(subject, { exact: true })).toBeVisible()
   await expect(avatars).toHaveCount(3)
-  await expect
-    .poll(() =>
-      avatars.evaluateAll((nodes) =>
-        nodes.every(
-          (node) =>
-            node.parentElement &&
-            getComputedStyle(node.parentElement).opacity === "1",
-        ),
-      ),
-    )
-    .toBe(true)
+  await expect.poll(() => avatars.evaluateAll(avatarLabelsRevealed)).toBe(true)
   await Promise.all(
     [0, 1, 2].map((i) => expect(avatars.nth(i)).toBeInViewport()),
   )
