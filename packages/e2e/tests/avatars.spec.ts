@@ -318,8 +318,34 @@ test("renders distinct new accessories for six simultaneous players and preserve
   await Promise.all(
     [0, 1, 2].map((i) => expect(avatars.nth(i)).toBeInViewport()),
   )
+  const scores = manager.getByText(/^\d{3,4}$/u)
+  await expect(scores).toHaveCount(3)
+  await Promise.all(
+    [0, 1, 2].map((i) => expect(scores.nth(i)).toBeInViewport()),
+  )
   await manager.screenshot({
     path: "test-results/avatar-six-player-podium.png",
+    fullPage: true,
+  })
+  await manager.setViewportSize({ width: 390, height: 720 })
+  await expect
+    .poll(() =>
+      manager.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    )
+    .toBe(true)
+  await scores.last().scrollIntoViewIfNeeded()
+  await expect(scores.last()).toBeInViewport()
+  await manager.screenshot({
+    path: "test-results/avatar-six-player-podium-mobile.png",
+    fullPage: true,
+  })
+  await manager.setViewportSize({ width: 720, height: 390 })
+  await scores.last().scrollIntoViewIfNeeded()
+  await expect(scores.last()).toBeInViewport()
+  await manager.screenshot({
+    path: "test-results/avatar-six-player-podium-landscape.png",
     fullPage: true,
   })
   const reports = await manager.evaluate(async () => {
