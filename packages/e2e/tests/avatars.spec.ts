@@ -306,6 +306,21 @@ test("renders distinct new accessories for six simultaneous players and preserve
   await Promise.all(players.map((p) => answer(p, "Yes")))
   await next(manager)
   await expect(manager.getByText(subject, { exact: true })).toBeVisible()
+  await expect(avatars).toHaveCount(3)
+  await expect
+    .poll(() =>
+      avatars.evaluateAll((nodes) =>
+        nodes.every(
+          (node) =>
+            node.parentElement &&
+            getComputedStyle(node.parentElement).opacity === "1",
+        ),
+      ),
+    )
+    .toBe(true)
+  await Promise.all(
+    [0, 1, 2].map((i) => expect(avatars.nth(i)).toBeInViewport()),
+  )
   await manager.screenshot({
     path: "test-results/avatar-six-player-podium.png",
     fullPage: true,
