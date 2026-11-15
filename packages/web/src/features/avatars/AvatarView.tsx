@@ -4,6 +4,7 @@ import { getBranding } from "@razzia/web/branding"
 import AvatarHair from "./AvatarHair"
 import AvatarHandheld from "./AvatarHandheld"
 import AvatarHeadwear from "./AvatarHeadwear"
+import AvatarMouth from "./AvatarMouth"
 import { skinColors, colors } from "./palette"
 const AvatarView = ({
   avatar: a,
@@ -227,7 +228,15 @@ const AvatarView = ({
           </>
         )
       })()}
-      <path d="M30 35h4v5h-4z" fill="#000" opacity=".1" />
+      {a.nose === "large" ? (
+        <g>
+          <path d="M29 33h6v4h5v7H26v-7h3z" fill={skin} />
+          <path d="M26 40h14v4H26z" fill="#000" opacity=".18" />
+          <path d="M29 35h3v4h-3z" fill="#fff" opacity=".2" />
+        </g>
+      ) : (
+        <path d="M30 35h4v5h-4z" fill="#000" opacity=".1" />
+      )}
       {a.detail === "noseBandage" && (
         <g>
           <rect x="26" y="36" width="12" height="4" fill="#e8d7b1" />
@@ -237,51 +246,7 @@ const AvatarView = ({
       {a.detail === "cheekBandage" && (
         <rect x="39" y="38" width="8" height="4" fill="#e8d7b1" />
       )}
-      <g fill={a.lipstick === "none" ? "#713d44" : colors[a.lipstick]}>
-        {a.mouth === "smile" ? (
-          <path d="M25 43h3v2h8v-2h3v4H25z" />
-        ) : (
-          (() => {
-            if (a.mouth === "smirk") {
-              return <path d="M29 44h10v-3h2v5H29z" />
-            }
-
-            if (a.mouth === "yawn" || a.mouth === "surprised") {
-              return (
-                <rect
-                  x="28"
-                  y="41"
-                  width="8"
-                  height={a.mouth === "yawn" ? 9 : 7}
-                />
-              )
-            }
-
-            return <rect x="24" y="42" width="16" height="7" />
-          })()
-        )}
-      </g>
-      {["missingTooth", "dirtyTooth"].includes(a.mouth) && (
-        <>
-          <rect x="25" y="42" width="14" height="3" fill="#fff" />
-          <rect
-            x={a.mouth === "missingTooth" ? 29 : 34}
-            y="42"
-            width="3"
-            height="3"
-            fill={a.mouth === "missingTooth" ? "#713d44" : "#a18c59"}
-          />
-        </>
-      )}
-      {a.mouth === "tongue" && (
-        <rect x="30" y="46" width="6" height="5" fill="#ed7e99" />
-      )}
-      {a.mouth === "gum" && (
-        <>
-          <rect x="28" y="40" width="16" height="14" fill="#f19ecb" />
-          <path d="M30 42h4v2h-4z" fill="#ffd7ed" />
-        </>
-      )}
+      <AvatarMouth avatar={a} />
       {a.glasses !== "none" && (
         <g
           fill={a.glasses === "sun" ? "#243148" : "none"}

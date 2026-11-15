@@ -121,12 +121,12 @@ const Podium = ({ data: { subject, top } }: Props) => {
 
         <div
           style={{ gridTemplateColumns: `repeat(${top.length}, 1fr)` }}
-          className={`grid w-full max-w-200 flex-1 items-end justify-center justify-self-end overflow-x-visible overflow-y-hidden`}
+          className={`grid min-h-96 w-full max-w-200 flex-1 items-end justify-center justify-self-end overflow-x-visible overflow-y-hidden`}
         >
           {top[1] && (
             <div
               className={clsx(
-                "z-20 flex h-[50%] w-full translate-y-full flex-col items-center justify-center gap-3 opacity-0 transition-all",
+                "z-20 flex h-[50%] min-h-max w-full translate-y-full flex-col items-center justify-center gap-3 opacity-0 transition-all",
                 { "translate-y-0! opacity-100": apparition >= 2 },
               )}
             >
@@ -157,7 +157,7 @@ const Podium = ({ data: { subject, top } }: Props) => {
 
           <div
             className={clsx(
-              "z-30 flex h-[60%] w-full translate-y-full flex-col items-center gap-3 opacity-0 transition-all",
+              "z-30 flex h-[60%] min-h-max w-full translate-y-full flex-col items-center gap-3 opacity-0 transition-all",
               {
                 "translate-y-0! opacity-100": apparition >= 3,
               },
@@ -191,7 +191,7 @@ const Podium = ({ data: { subject, top } }: Props) => {
           {top[2] && (
             <div
               className={clsx(
-                "z-10 flex h-[40%] w-full translate-y-full flex-col items-center gap-3 opacity-0 transition-all",
+                "z-10 flex h-[40%] min-h-max w-full translate-y-full flex-col items-center gap-3 opacity-0 transition-all",
                 {
                   "translate-y-0! opacity-100": apparition >= 1,
                 },

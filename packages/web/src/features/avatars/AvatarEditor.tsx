@@ -10,7 +10,7 @@ import Button from "@razzia/web/components/Button"
 import AvatarView from "./AvatarView"
 
 const groups = {
-  base: ["skin", "ears"],
+  base: ["skin", "ears", "nose"],
   detail: ["detail"],
   brows: ["brows"],
   eyes: ["eyes", "glasses", "shadow"],

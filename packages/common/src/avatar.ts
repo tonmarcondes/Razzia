@@ -21,6 +21,7 @@ export const AVATAR_OPTIONS = {
     "cheekBandage",
     "blush",
   ],
+  nose: ["normal", "large"],
   brows: ["fine", "thick", "unibrow", "angry", "slit"],
   eyes: ["normal", "sleepy", "surprised", "wink", "confused", "hearts"],
   glasses: ["none", "square", "round", "safety", "sun"],
@@ -34,6 +35,8 @@ export const AVATAR_OPTIONS = {
     "surprised",
     "tongue",
     "gum",
+    "pacifier",
+    "zipper",
   ],
   lipstick: ["none", "red", "pink", "purple"],
   hair: [
@@ -98,6 +101,7 @@ export const AVATAR_OPTIONS = {
     "checklist",
     "spanner",
     "coffee",
+    "bottle",
     "plane",
     "controller",
     "book",
@@ -111,6 +115,7 @@ export const avatarSchema = z
   .object({
     skin: z.enum(AVATAR_OPTIONS.skin),
     detail: z.enum(AVATAR_OPTIONS.detail),
+    nose: z.enum(AVATAR_OPTIONS.nose).default("normal"),
     brows: z.enum(AVATAR_OPTIONS.brows),
     eyes: z.enum(AVATAR_OPTIONS.eyes),
     glasses: z.enum(AVATAR_OPTIONS.glasses),
@@ -140,6 +145,7 @@ export const randomAvatar = (): Avatar => {
   return {
     skin: pick(AVATAR_OPTIONS.skin),
     detail: pick(AVATAR_OPTIONS.detail),
+    nose: pick(AVATAR_OPTIONS.nose),
     brows: pick(AVATAR_OPTIONS.brows),
     eyes: pick(AVATAR_OPTIONS.eyes),
     glasses: pick(AVATAR_OPTIONS.glasses),

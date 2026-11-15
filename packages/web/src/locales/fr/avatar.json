@@ -39,7 +39,8 @@
     "hand": "Handheld item",
     "neck": "Neck accessory",
     "ears": "Ears",
-    "earrings": "Earrings"
+    "earrings": "Earrings",
+    "nose": "Nose"
   },
   "options": {
     "skin": {
@@ -98,7 +99,9 @@
       "yawn": "Yawn",
       "surprised": "Surprised",
       "tongue": "Tongue",
-      "gum": "Gum"
+      "gum": "Gum",
+      "pacifier": "Large pacifier",
+      "zipper": "Zipper mouth"
     },
     "lipstick": {
       "none": "None",
@@ -184,7 +187,8 @@
       "coffee": "Coffee",
       "plane": "Plane",
       "controller": "Controller",
-      "book": "Book"
+      "book": "Book",
+      "bottle": "Baby bottle"
     },
     "neck": {
       "none": "None",
@@ -199,6 +203,10 @@
       "none": "None",
       "studs": "Studs",
       "hoops": "Hoops"
+    },
+    "nose": {
+      "normal": "Normal",
+      "large": "Large nose"
     }
   }
 }
