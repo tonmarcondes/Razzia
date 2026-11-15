@@ -1,3 +1,4 @@
+import type { Avatar } from "@razzia/common/avatar"
 import type { Player, QuizzMode } from "@razzia/common/types/game"
 import type { Server, Socket } from "@razzia/common/types/game/socket"
 import { EVENTS } from "@razzia/common/constants"
@@ -34,7 +35,7 @@ export class PlayerManager {
     this.isStarted = isStarted
   }
 
-  join(socket: Socket, username: string): string | null {
+  join(socket: Socket, username: string, avatar?: Avatar): string | null {
     const clientId = getClientId(socket)
 
     if (this.findByClientId(clientId)) {
@@ -56,6 +57,7 @@ export class PlayerManager {
       username,
       points: 0,
       streak: 0,
+      ...(avatar ? { avatar } : {}),
     }
 
     this.players.push(player)
@@ -64,6 +66,7 @@ export class PlayerManager {
     socket.emit(EVENTS.GAME.SUCCESS_JOIN, {
       gameId: this.gameId,
       username,
+      ...(avatar ? { avatar } : {}),
       gameMode: this.gameMode,
     })
 

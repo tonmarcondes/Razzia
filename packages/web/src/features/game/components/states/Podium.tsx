@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import ReactConfetti from "react-confetti"
 import useSound from "use-sound"
 import type { ManagerStatusDataMap } from "@razzia/common/types/game/status"
+import AvatarView from "@razzia/web/features/avatars/AvatarView"
 import { SFX } from "@razzia/web/features/game/utils/constants"
 import useScreenSize from "@razzia/web/hooks/useScreenSize"
 
@@ -137,6 +138,12 @@ const Podium = ({ data: { subject, top } }: Props) => {
                   },
                 )}
               >
+                {top[1].avatar && (
+                  <AvatarView
+                    avatar={top[1].avatar}
+                    className="mx-auto size-20"
+                  />
+                )}
                 {top[1].username}
               </p>
               <div className="flex h-full w-full flex-col items-center gap-4 rounded-t-xl bg-primary pt-6 text-center shadow-2xl">
@@ -165,6 +172,12 @@ const Podium = ({ data: { subject, top } }: Props) => {
                 { "anim-balanced opacity-100": apparition >= 4 },
               )}
             >
+              {top[0].avatar && (
+                <AvatarView
+                  avatar={top[0].avatar}
+                  className="mx-auto size-20"
+                />
+              )}
               {top[0].username}
             </p>
             <div className="flex h-full w-full flex-col items-center gap-4 rounded-t-xl bg-primary pt-6 text-center shadow-2xl">
@@ -192,6 +205,12 @@ const Podium = ({ data: { subject, top } }: Props) => {
                   },
                 )}
               >
+                {top[2].avatar && (
+                  <AvatarView
+                    avatar={top[2].avatar}
+                    className="mx-auto size-20"
+                  />
+                )}
                 {top[2].username}
               </p>
               <div className="flex h-full w-full flex-col items-center gap-4 rounded-t-xl bg-primary pt-6 text-center shadow-2xl">

@@ -1,3 +1,4 @@
+import type { Avatar } from "@razzia/common/avatar"
 import type {
   ACCEPTED_MEDIA_TYPES,
   ESTIMATION_INPUT_MODES,
@@ -31,6 +32,7 @@ export interface EstimationQuestionOptions {
 export type QuestionOptions = MultiQuestionOptions | EstimationQuestionOptions
 
 export interface Player {
+  avatar?: Avatar
   id: string
   clientId: string
   connected: boolean
@@ -98,6 +100,7 @@ export interface AutoAdvanceSettings {
 }
 
 export interface GameSettings {
+  avatars: { enabled: boolean; seconds: number }
   generatedUsernames: boolean
   answersOnly: boolean
   autoAdvance: AutoAdvanceSettings
@@ -120,6 +123,7 @@ export type QuestionResult = Question & {
 }
 
 export interface GameResultPlayer {
+  avatar?: Avatar
   username: string
   points: number
   rank: number

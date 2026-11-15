@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next"
 import type { Player } from "@razzia/common/types/game"
 import type { ManagerStatusDataMap } from "@razzia/common/types/game/status"
 import { EVENTS } from "@razzia/common/constants"
+import AvatarView from "@razzia/web/features/avatars/AvatarView"
 import PlayerConnectionStatus from "@razzia/web/features/game/components/PlayerConnectionStatus"
 import {
   useEvent,
@@ -151,6 +152,12 @@ const Room = ({ data: { text, inviteCode } }: Props) => {
             className="relative rounded-xl bg-primary px-4 py-3 font-bold text-white has-[[data-lost]]:bg-primary/50 has-[[data-lost]]:text-white/60"
             onClick={handleKick(player.id)}
           >
+            {player.avatar && (
+              <AvatarView
+                avatar={player.avatar}
+                className="mx-auto mb-1 size-16"
+              />
+            )}
             <span className="cursor-pointer text-3xl drop-shadow-sm hover:line-through hover:decoration-3">
               {player.username}
             </span>

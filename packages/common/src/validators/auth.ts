@@ -1,4 +1,5 @@
 import z from "zod"
+import { avatarSchema } from "@razzia/common/avatar"
 import { SESSION_ROLES } from "@razzia/common/constants"
 
 export const usernameValidator = z
@@ -19,6 +20,7 @@ export const sessionClaimsValidator = z.object({
 })
 
 export const joinTicketClaimsValidator = z.object({
+  avatar: avatarSchema.optional(),
   sub: z.string().min(1),
   gameId: z.string().min(1),
   username: usernameValidator.optional(),

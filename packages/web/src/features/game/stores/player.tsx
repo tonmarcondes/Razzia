@@ -1,10 +1,12 @@
 import { create } from "zustand"
+import type { Avatar } from "@razzia/common/avatar"
 import type { QuizzMode } from "@razzia/common/types/game"
 import type { StatusDataMap } from "@razzia/common/types/game/status"
 import type { Status } from "@razzia/web/features/game/utils/createStatus"
 import { QUIZZ_MODES } from "@razzia/common/constants"
 
 interface PlayerInfo {
+  avatar?: Avatar
   username?: string
   points?: number
 }

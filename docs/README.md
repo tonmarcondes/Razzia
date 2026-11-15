@@ -24,6 +24,7 @@ This folder covers the basic setup (config, quizzes, branding) as well as more a
 
 - [Upstream review, 2026-11-12](upstream-review-2026-11-12.md): Node 26, Oxfmt and test layout synchronization.
 - [Acceptance and capacity, 2026-11-12](acceptance-and-capacity-2026-11-12.md): functional checks and the measured 300-player rehearsal.
+- [Player avatars](player-avatars.md): optional block-style character creation, server deadlines and automatic fallback.
 - [Kahoot comparison](kahoot-comparison.md): implemented capabilities, differences and next product priorities.
 
 Back to the [main README](../README.md).

@@ -1,3 +1,4 @@
+import type { Avatar } from "@razzia/common/avatar"
 import type { SESSION_ROLES } from "@razzia/common/constants"
 
 export type SessionRole = (typeof SESSION_ROLES)[keyof typeof SESSION_ROLES]
@@ -18,6 +19,7 @@ export interface SessionResponse {
 }
 
 export interface JoinTicketClaims {
+  avatar?: Avatar
   sub: string
   gameId: string
   username?: string

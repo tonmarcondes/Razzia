@@ -4,6 +4,7 @@ import {
   Socket as SocketIO,
   type DefaultEventsMap,
 } from "socket.io"
+import type { Avatar } from "@razzia/common/avatar"
 import type { SessionClaims, SessionRole } from "@razzia/common/types/auth"
 import type {
   GameSettings,
@@ -46,6 +47,7 @@ export interface ServerToClientEvents {
   [EVENTS.GAME.SUCCESS_JOIN]: (_data: {
     gameId: string
     username: string
+    avatar?: Avatar
     gameMode: QuizzMode
   }) => void
   [EVENTS.GAME.TOTAL_PLAYERS]: (_count: number) => void
@@ -64,7 +66,7 @@ export interface ServerToClientEvents {
     gameId: string
     gameMode: QuizzMode
     status: { name: Status; data: StatusDataMap[Status] }
-    player: { username: string; points: number }
+    player: { username: string; points: number; avatar?: Avatar }
     currentQuestion: GameUpdateQuestion | null
   }) => void
   [EVENTS.PLAYER.UPDATE_LEADERBOARD]: (_data: { leaderboard: Player[] }) => void

@@ -1,0 +1,204 @@
+{
+  "title": "Create your avatar",
+  "preview": "Avatar preview",
+  "randomize": "Surprise me",
+  "confirm": "Use avatar and join",
+  "skip": "Join with a random avatar",
+  "remaining": "Time remaining: {{count}} s",
+  "expired": "Time is up. Joining with a random avatar…",
+  "retry": "Try joining again",
+  "enabled": "Allow player avatars",
+  "hint": "Players can create a block-style avatar before joining. The server controls the deadline.",
+  "seconds": "Avatar creation time (seconds)",
+  "categories": {
+    "base": "1. Base and skin",
+    "detail": "2. Skin details",
+    "brows": "3. Eyebrows",
+    "eyes": "4. Eyes and expressions",
+    "mouth": "5. Mouth",
+    "hair": "6. Hair",
+    "clothes": "7. Clothes",
+    "accessories": "8. Accessories"
+  },
+  "fields": {
+    "skin": "Skin tone",
+    "detail": "Skin details",
+    "brows": "Eyebrows",
+    "eyes": "Eyes and expression",
+    "glasses": "Glasses",
+    "shadow": "Eye shadow",
+    "mouth": "Mouth",
+    "lipstick": "Lipstick",
+    "hair": "Hair style",
+    "hairColor": "Hair color",
+    "clothes": "Clothing",
+    "clothesColor": "Clothing color",
+    "badge": "Badge",
+    "hat": "Headwear",
+    "headset": "Headphones",
+    "hand": "Handheld item",
+    "neck": "Neck accessory",
+    "ears": "Ears",
+    "earrings": "Earrings"
+  },
+  "options": {
+    "skin": {
+      "light": "Light",
+      "medium": "Medium",
+      "tan": "Tan",
+      "deep": "Deep",
+      "golden": "Golden",
+      "zombie": "Zombie",
+      "sky": "Sky",
+      "purple": "Purple",
+      "robot": "Robot"
+    },
+    "detail": {
+      "none": "None",
+      "acne": "Acne",
+      "freckles": "Freckles",
+      "darkCircles": "Dark circles",
+      "noseBandage": "Nose bandage",
+      "cheekBandage": "Cheek bandage",
+      "blush": "Blush"
+    },
+    "brows": {
+      "fine": "Fine",
+      "thick": "Thick",
+      "unibrow": "Unibrow",
+      "angry": "Angry",
+      "slit": "Slit"
+    },
+    "eyes": {
+      "normal": "Normal",
+      "sleepy": "Sleepy",
+      "surprised": "Surprised",
+      "wink": "Wink",
+      "confused": "Confused",
+      "hearts": "Hearts"
+    },
+    "glasses": {
+      "none": "None",
+      "square": "Square",
+      "round": "Round",
+      "safety": "Safety",
+      "sun": "Sun"
+    },
+    "shadow": {
+      "none": "None",
+      "blue": "Blue",
+      "pink": "Pink",
+      "purple": "Purple"
+    },
+    "mouth": {
+      "smile": "Smile",
+      "smirk": "Smirk",
+      "missingTooth": "Missing tooth",
+      "dirtyTooth": "Dirty tooth",
+      "yawn": "Yawn",
+      "surprised": "Surprised",
+      "tongue": "Tongue",
+      "gum": "Gum"
+    },
+    "lipstick": {
+      "none": "None",
+      "red": "Red",
+      "pink": "Pink",
+      "purple": "Purple"
+    },
+    "hair": {
+      "bald": "Bald",
+      "balding": "Balding",
+      "short": "Short",
+      "spiky": "Spiky",
+      "curly": "Curly",
+      "afro": "Afro",
+      "sideFringe": "Side fringe",
+      "bun": "Bun",
+      "braids": "Braids",
+      "mohawk": "Mohawk",
+      "bob": "Bob",
+      "long": "Long"
+    },
+    "hairColor": {
+      "black": "Black",
+      "brown": "Brown",
+      "blond": "Blond",
+      "red": "Red",
+      "grey": "Grey",
+      "neonBlue": "Neon blue",
+      "pink": "Pink",
+      "green": "Green"
+    },
+    "clothes": {
+      "uniformNavy": "Uniform navy",
+      "uniformGrey": "Uniform grey",
+      "vest": "Vest",
+      "tshirt": "Tshirt",
+      "hoodie": "Hoodie",
+      "plaid": "Plaid"
+    },
+    "clothesColor": {
+      "navy": "Navy",
+      "grey": "Grey",
+      "red": "Red",
+      "yellow": "Yellow",
+      "green": "Green",
+      "blue": "Blue",
+      "pink": "Pink",
+      "purple": "Purple"
+    },
+    "badge": {
+      "none": "None",
+      "badge": "Badge"
+    },
+    "hat": {
+      "none": "None",
+      "cap": "Cap",
+      "beanie": "Beanie",
+      "hardHat": "Hard hat",
+      "crown": "Crown",
+      "pilot": "Pilot",
+      "chef": "Chef",
+      "balaclava": "Balaclava",
+      "nurse": "Nurse",
+      "straw": "Straw",
+      "panamaWhite": "Panama white",
+      "panamaBlack": "Panama black",
+      "santa": "Santa"
+    },
+    "headset": {
+      "none": "None",
+      "head": "Head",
+      "neck": "Neck"
+    },
+    "hand": {
+      "none": "None",
+      "wrench": "Wrench",
+      "screwdriver": "Screwdriver",
+      "pliers": "Pliers",
+      "flashlight": "Flashlight",
+      "multimeter": "Multimeter",
+      "checklist": "Checklist",
+      "spanner": "Spanner",
+      "coffee": "Coffee",
+      "plane": "Plane",
+      "controller": "Controller",
+      "book": "Book"
+    },
+    "neck": {
+      "none": "None",
+      "gold": "Gold",
+      "stethoscope": "Stethoscope"
+    },
+    "ears": {
+      "normal": "Normal",
+      "large": "Large"
+    },
+    "earrings": {
+      "none": "None",
+      "studs": "Studs",
+      "hoops": "Hoops"
+    }
+  }
+}
