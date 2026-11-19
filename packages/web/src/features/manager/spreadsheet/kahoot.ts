@@ -236,15 +236,18 @@ export const readKahoot = async (
     sheet: ExcelJS.Worksheet
     header: number
     adapted: boolean
+    column: number
   }> = []
   for (const sheet of workbook.worksheets) {
     for (let r = 1; r <= Math.min(sheet.rowCount, 30); r += 1) {
-      if (
+      const column = [1, 2].find((start) =>
         official.every((name, i) =>
-          sheet.getCell(r, i + 2).text.startsWith(name),
-        )
-      ) {
-        matches.push({ sheet, header: r, adapted: false })
+          sheet.getCell(r, i + start).text.startsWith(name),
+        ),
+      )
+
+      if (column !== undefined) {
+        matches.push({ sheet, header: r, adapted: false, column })
 
         break
       }
@@ -252,7 +255,7 @@ export const readKahoot = async (
       if (
         portuguese.every((name, i) => sheet.getCell(r, i + 1).value === name)
       ) {
-        matches.push({ sheet, header: r, adapted: true })
+        matches.push({ sheet, header: r, adapted: true, column: 2 })
 
         break
       }
@@ -264,7 +267,7 @@ export const readKahoot = async (
     throw new Error("template")
   }
 
-  const [{ sheet, header, adapted }] = matches
+  const [{ sheet, header, adapted, column }] = matches
   const warnings = [issue(0, "defaults")]
 
   if (adapted) {
@@ -281,7 +284,7 @@ export const readKahoot = async (
 
   for (let r = header + 1; r <= sheet.rowCount; r += 1) {
     const cells = Array.from({ length: adapted ? 8 : 7 }, (_, i) =>
-      sheet.getCell(r, i + 2),
+      sheet.getCell(r, i + column),
     )
 
     if (cells.every((c) => c.value === null || c.value === "")) {
