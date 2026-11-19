@@ -92,3 +92,48 @@ for (const width of [390, 1280]) {
     await page.screenshot({ path: `test-results/quiz-actions-${width}.png` })
   })
 }
+
+test("imports an unnumbered A–G question template after compatibility review", async ({
+  page,
+}) => {
+  const name = `Unnumbered ${Date.now()}`
+  await openQuizzTab(page)
+  await page
+    .getByLabel(t("manager:spreadsheet.import"), { exact: true })
+    .setInputFiles({
+      name: `${name}.xlsx`,
+      mimeType:
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      buffer: fs.readFileSync(
+        new URL("../fixtures/spreadsheets/unnumbered.xlsx", import.meta.url),
+      ),
+    })
+  const review = page.getByRole("region", {
+    name: t("manager:spreadsheet.review"),
+  })
+  await expect(review).toBeVisible()
+  await expect(
+    review.getByText(
+      t("manager:spreadsheet.summary", { subject: name, count: 2 }),
+    ),
+  ).toBeVisible()
+  expect(readQuizz(name)).toBeUndefined()
+  await review
+    .getByRole("button", { name: t("manager:spreadsheet.confirm") })
+    .click()
+  await expect(page.getByText(t("quizz:quizzSaved"))).toBeVisible()
+  expect(readQuizz(name)?.questions).toMatchObject([
+    {
+      question: "Qual é a unidade de resistência?",
+      answers: ["Volt", "Ohm (Ω)", "Ampère", "Watt"],
+      solutions: [1],
+      time: 20,
+    },
+    {
+      question: "Quais alternativas?",
+      answers: ["Ação", "Não", "Sim", "Outra"],
+      solutions: [0, 2],
+      time: 30,
+    },
+  ])
+})

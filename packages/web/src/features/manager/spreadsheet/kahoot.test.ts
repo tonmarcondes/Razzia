@@ -210,3 +210,94 @@ describe("Portuguese question workbook", () => {
     })
   })
 })
+
+const unnumberedWorkbook = () => {
+  const workbook = new ExcelJS.Workbook()
+  const sheet = workbook.addWorksheet("Questions")
+  sheet.addRow([
+    "Question - max 120 characters",
+    "Answer 1 - max 75 characters",
+    "Answer 2 - max 75 characters",
+    "Answer 3 - max 75 characters",
+    "Answer 4 - max 75 characters",
+    "Time limit (sec)",
+    "Correct answer(s)",
+  ])
+  sheet.addRow([
+    "Qual é a unidade de resistência?",
+    "Volt",
+    "Ohm (Ω)",
+    "Ampère",
+    "Watt",
+    20,
+    "2",
+  ])
+  sheet.addRow([
+    "Quais alternativas?",
+    "Ação",
+    "Não",
+    "Sim",
+    "Outra",
+    30,
+    "1,3",
+  ])
+
+  return { workbook, sheet }
+}
+
+describe("Kahoot template without a numbering column", () => {
+  it("preserves question text, alternatives, times and correct answers from columns A–G", async () => {
+    const { workbook } = unnumberedWorkbook()
+    const result = await readKahoot(
+      await workbook.xlsx.writeBuffer(),
+      "Eletricidade",
+    )
+    expect(result.errors).toEqual([])
+    expect(result.quizz.questions).toEqual([
+      {
+        type: "single",
+        question: "Qual é a unidade de resistência?",
+        answers: ["Volt", "Ohm (Ω)", "Ampère", "Watt"],
+        solutions: [1],
+        cooldown: 5,
+        time: 20,
+      },
+      {
+        type: "multi",
+        question: "Quais alternativas?",
+        answers: ["Ação", "Não", "Sim", "Outra"],
+        solutions: [0, 2],
+        cooldown: 5,
+        time: 30,
+        options: { scoringMode: "strict" },
+      },
+    ])
+    const roundTrip = await readKahoot(
+      await writeKahoot(result.quizz),
+      "Eletricidade",
+    )
+    expect(roundTrip.quizz).toEqual(result.quizz)
+  })
+  it("keeps source row numbers and rejects formulas and nonexistent correct answers", async () => {
+    const { workbook, sheet } = unnumberedWorkbook()
+    sheet.getCell("G2").value = "5"
+    sheet.getCell("A3").value = { formula: "1+1" }
+    const result = await readKahoot(await workbook.xlsx.writeBuffer(), "Test")
+    expect(result.errors).toEqual([
+      { row: 2, key: "solutions" },
+      { row: 3, key: "cell" },
+    ])
+  })
+  it("refuses ambiguous workbooks containing both numbered and unnumbered question sheets", async () => {
+    const { workbook } = unnumberedWorkbook()
+    const numbered = new ExcelJS.Workbook()
+    await numbered.xlsx.load(await writeKahoot(quiz()))
+    const copy = workbook.addWorksheet("Numbered")
+    numbered.worksheets[0].eachRow((row, index) => {
+      copy.getRow(index).values = row.values
+    })
+    await expect(
+      readKahoot(await workbook.xlsx.writeBuffer(), "Test"),
+    ).rejects.toThrow("template")
+  })
+})

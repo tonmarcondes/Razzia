@@ -4,7 +4,7 @@ In **Settings → Quizzes**, use **Import Kahoot XLSX** or the **XLSX** button n
 
 ## Supported interchange
 
-The adapter uses the question template documented in [Kahoot's official import guide](https://support.kahoot.com/hc/en-us/articles/115002812547-How-to-import-questions-from-a-spreadsheet-to-your-kahoot), checked on 2026-10-31. Export places the header in row 8 and data from row 9, with question, four answer columns, time and correct answer numbers in columns B–H. Correct answer numbers are converted between Kahoot's one-based and Razzia's zero-based indices.
+The adapter uses the question template documented in [Kahoot's official import guide](https://support.kahoot.com/hc/en-us/articles/115002812547-How-to-import-questions-from-a-spreadsheet-to-your-kahoot), checked on 2026-10-31. Export places the header in row 8 and data from row 9, with question, four answer columns, time and correct answer numbers in columns B–H. Import also accepts the same seven contiguous question columns in A–G without a leading question-number column, including headers in the first row. Export retains the B–H template layout. Correct answer numbers are converted between Kahoot's one-based and Razzia's zero-based indices.
 
 - Standard choice questions only, 2–4 alternatives, 120 characters per question and 75 per answer.
 - Times: 5, 10, 20, 30, 60 or 120 seconds, following the current guide. Other values are blocked rather than rounded.
